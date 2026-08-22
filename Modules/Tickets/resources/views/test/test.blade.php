@@ -7,6 +7,12 @@
     <title>Document</title>
 </head>
 <body>
+    <?php 
+      /**
+       * Este archivo es de prueba 
+       * Mega travel help desk
+       * */ 
+    ?>
     Pruebitaa
 </body>
 </html>
