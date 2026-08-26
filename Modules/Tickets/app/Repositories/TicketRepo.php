@@ -43,11 +43,6 @@ class TicketRepo implements ITicketRepo {
         )
     {    
 
-        // Subconsulta optimizada para obtener el primer usuario asignado por ticket
-        $firstAssignation = DB::table('tickets_users_assignations as tua')
-            ->select('tua.ticket_id', DB::raw('MIN(tua.user_id) as user_id'))
-            ->groupBy('tua.ticket_id');
-
         return DB::table('tickets as t')
             ->select([
                 't.id',
@@ -75,10 +70,14 @@ class TicketRepo implements ITicketRepo {
             })
             ->leftJoin('tickets_services as ts', 'ts.id', '=', 't.ticket_service_id')
             ->leftJoin('tickets_priorities as tp', 'tp.id', '=', 't.ticket_priority_id')
-            ->leftJoinSub($firstAssignation, 'fa', function ($join) {
-                $join->on('fa.ticket_id', '=', 't.id');
+            ->leftJoin('tickets_users_assignations as tua', function ($join) {
+                $join->on('tua.id', '=', DB::raw('(
+                    SELECT id FROM tickets_users_assignations
+                    WHERE ticket_id = t.id 
+                    ORDER BY id ASC LIMIT 1
+                )'));
             })
-            ->leftJoin('users as u', 'u.id', '=', 'fa.user_id')
+            ->leftJoin('users as u', 'u.id', '=', 'tua.user_id')
             ->orderByDesc('t.id')
             ->get();
     }
