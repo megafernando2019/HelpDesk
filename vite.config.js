@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import path from 'path';
 
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 export default defineConfig({
@@ -26,7 +27,9 @@ export default defineConfig({
             input: [
             'resources/css/style.css',
             'resources/css/app.css',
-            'resources/js/script.js'
+            'resources/js/script.js',
+            'resources/js/helpers/helper.js',
+            'Modules/Tickets/resources/assets/js/index.js',
             ],
             refresh: true,
         }),
@@ -61,5 +64,10 @@ export default defineConfig({
                
             ]
         }),
-    ]
+    ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './resources/js'),
+        },
+    }
 });

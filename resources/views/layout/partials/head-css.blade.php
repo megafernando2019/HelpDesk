@@ -1,5 +1,5 @@
 	<!-- Favicon -->
-	<link rel="shortcut icon" type="image/x-icon" href="{{URL::asset('build/img/favicon.png')}}">
+	<link rel="shortcut icon" type="image/x-icon" href="{{URL::asset('build/img/icons/mt-diamante.svg')}}">
 
 	<!-- Apple Touch Icon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="{{URL::asset('build/img/apple-touch-icon.png')}}">
@@ -221,6 +221,11 @@
 @if (!Route::is(['signin', 'signin-2', 'signin-3', 'register', 'register-2', 'register-3', 'forgot-password', 'forgot-password-2', 'forgot-password-3', 'reset-password', 'reset-password-2', 'reset-password-3', 'email-verification', 'email-verification-2', 'email-verification-3', 'two-step-verification', 'two-step-verification-2', 'two-step-verification-3', 'lock-screen', 'error-404', 'error-500', 'coming-soon', 'under-maintenance', 'success', 'success-2', 'success-3']))     
     <!-- Color Picker Css -->
     <link rel="stylesheet" href="{{URL::asset('build/plugins/@simonwep/pickr/themes/nano.min.css')}}">
+@endif
+
+@if (Route::is(['tickets.index']))
+    <!-- flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endif
 
     <!-- Main CSS -->

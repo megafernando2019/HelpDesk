@@ -18,6 +18,14 @@
     color: #0049fc !important;
 }
 
+.text-mega {
+    color: #0049fc !important;
+}
+
+.text-primary-deep {
+    color: #001528 !important;
+}
+
 .border-none {
     border: none !important;
 }
@@ -28,6 +36,15 @@
 
 .float-right {
     float: right !important;
+}
+
+.item-disabled {
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+}
+
+.current-rounded {
+    border-radius: 11px !important;
 }
 
 .sidebar .sidebar-menu > ul > li > ul > li.submenu > a.subdrop,  a.subdrop .menu-arrow {

@@ -4,7 +4,7 @@
     $acronyms = ['ui', 'ai', 'js', 'api', 'css', 'html', 'php', 'seo', 'faq', 'rtl'];
 
     if ($filename === 'index') {
-        $title = 'Admin Dashboard';
+        $title = 'Mega Travel';
     } else {
         $parts = explode('-', str_replace('ui-', '', strtolower($filename)));
 
@@ -45,7 +45,7 @@
 <!-- Meta Tags -->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title> {{ $title }} | Dreams Timer - Time Tracking Boostrap 5 Admin Dashboard</title>
+<title> {{ $title }} | HelpDesk</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Dreams Timer is a sleek time tracking admin dashboard for managing work hours, productivity, and teams.">
 <meta name="keywords" content="time tracking dashboard, admin template, workforce management, employee productivity, project time tracker, Dreams Timer admin panel, business dashboard UI">

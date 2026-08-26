@@ -3,11 +3,21 @@
 namespace Modules\Tickets\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
+use Modules\Tickets\Services\TicketService;
 
 class TicketsController extends Controller
 {
+    public function __construct(
+        private readonly TicketService $service
+    )
+    {
+        
+    }
+    
     /**
+     * Ruta para vista de prueba arquitectura modular
      * Test
      */
     public function test()
@@ -15,12 +25,32 @@ class TicketsController extends Controller
         return view('tickets::test.test');
     }
 
+    public function getTicketsByUserStatus(Request $request)
+    {
+        try {
+            $data = $this->service->getDataIndexCard($request);
+
+            return response()->json([
+                'data' => $data
+            ], 200);
+
+        } catch (\Throwable $th) {
+            \Log::info($th->getMessage());
+
+             return response()->json([
+                'message' => 'Ocurrio un error al recuperar los tickets'
+            ], 500);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('tickets::index');
+        $dto = $this->service->getDetailsIndex();
+       
+        return view('tickets::index', compact('dto'));
     }
 
     /**

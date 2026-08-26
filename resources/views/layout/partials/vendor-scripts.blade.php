@@ -249,6 +249,8 @@
     <script src="{{URL::asset('build/js/forms-pickers.js')}}"></script>
 @endif
 
+
+
 @if(Route::is(['maps-vector']))     
     <!-- JSVector Maps MapsJS -->
     <script src="{{URL::asset('build/plugins/jsvectormap/js/jsvectormap.min.js')}}"></script>
@@ -304,5 +306,12 @@
 
     <script src="{{URL::asset('build/js/theme-colorpicker.js')}}"></script>
 @endif    
+
+@if(Route::is(['tickets.index']))     
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+@endif
+
+    @vite('resources/js/helpers/helper.js')
 
     <script src = "{{URL::asset('build/js/script.js')}}"></script>

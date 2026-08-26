@@ -99,7 +99,7 @@
                                 </a>
                                 <ul>
                                    <li><a href="{{route('tickets.create')}}">Crear</a></li>
-                                   <li><a href="#">Mis tickets</a></li>
+                                   <li><a href="{{route('tickets.index')}}">Mis tickets</a></li>
                                    <li><a href="#">Asignar</a></li>
                                    <li><a href="#">Mi trabajo diario</a></li>
                                    <li><a href="#">Archivo</a></li>

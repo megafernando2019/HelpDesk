@@ -2,8 +2,12 @@
 
 namespace Modules\Tickets\Providers;
 
+use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
+use Modules\Tickets\Repositories\TicketRepo;
+
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Modules\Tickets\Services\TicketService;
 
 class TicketsServiceProvider extends ModuleServiceProvider
 {
@@ -33,6 +37,23 @@ class TicketsServiceProvider extends ModuleServiceProvider
         EventServiceProvider::class,
         RouteServiceProvider::class,
     ];
+
+    /**
+     * Register the service provider.
+     */
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->bind(
+            ITicketRepo::class,
+            TicketRepo::class
+        );
+
+        $this->app->bind(
+            TicketService::class
+        );
+    }
 
     /**
      * Define module schedules.

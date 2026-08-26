@@ -1,7 +1,6 @@
-<x-tickets::layouts.master>
-    @extends('layout.mainlayout')
+@extends('layout.mainlayout')
 
-    @section('content')
+@section('content')
         <div class="page-wrapper">
             <div class="content container-fluid">
             
@@ -155,5 +154,4 @@
 
             </div>
         </div>
-    @endsection
-</x-tickets::layouts.master>
+@endsection

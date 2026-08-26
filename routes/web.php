@@ -15,7 +15,8 @@ use App\Http\Controllers\CustomAuthController;
 */
 
 Route::get('/', function () {
-    return view('demo.demo_index');
+    // return view('demo.demo_index');
+    return redirect(route('tickets.index'));
 });
 
 require __DIR__.'/template.php';
