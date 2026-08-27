@@ -228,6 +228,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endif
 
+@if (Route::is('tickets.create'))
+    @vite('Modules/Tickets/resources/assets/css/create.css')
+@endif
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{URL::asset('build/css/style.css')}}">
 

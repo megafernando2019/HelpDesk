@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Modules\Tickets\Support\Mappers\TicketMapper;
 use Modules\Tickets\Support\Mappers\ViewParamsIndexMapper;
+use Illuminate\Support\Str;
+use Modules\Tickets\Models\Ticket;
 
 class TicketService {
 
@@ -82,4 +84,121 @@ class TicketService {
         );
 
     }
+
+    public function getTicketsTypes()
+    {
+        return $this->repo->getTicketsTypes();
+    }
+
+    public function getTicketPriorities()
+    {
+        return $this->repo->getPriorities();
+    }
+
+    /**
+     * Regresa un array con los datos de cada archivo para guardarlo en la BD
+     *
+     * @param array $files
+     * @return array
+     */
+    public function uploadAttachments(
+        $files, $uid
+    ): array
+    {
+        $data = [];
+
+        if (!empty($files)) {
+            foreach ($files as $file) {
+
+                if (!$file) {
+                    continue;
+                }
+
+                $timestamp = str_replace(".", "", (string) microtime(true));
+                $extension = $file->getClientOriginalExtension();
+                $hashName = sprintf(
+                                    '%s_%s_%s.%s', 
+                                              md5($file->getClientOriginalName()),
+                                              date('d_m_Y_His'),
+                                              $timestamp,
+                                              $extension
+
+                            );
+
+                $path = $file->storeAs('tickets/'.$uid.'/attachments', $hashName, 'public');
+
+                $data[] = [
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_path' => $path,
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ];
+            }
+
+            return $data;
+        }
+
+        return $data;
+
+    }
+
+    /**
+     * Crea un nuevo ticket o actualiza* en proximos comits
+     *
+     * @param $args
+     * @return void
+     */
+    public function saveTicket($request)
+    {
+       $values = $request->all();
+       $uid = $this->generateUniqueUid();
+       $files = $request->file('attachments') ?? [];
+
+       $values['uid'] = $uid;
+       $values['user_id'] = Auth::user()->id;
+       $values['status_id'] = 1;
+
+       $ticket = $this->repo->addTicket($values);
+
+       if (!empty($values['url']) && isset($values['url'])) {
+                $this->repo->addTicketUrl(
+                    $ticket->id, 
+                    $values['url']
+                );
+       }
+
+       //Subir archivos adjuntos
+       $records = $this->uploadAttachments($files, $ticket->uid);
+
+       //Si ya se subieron al servidor los archivos adjuntos
+       if (!empty($records)) {
+    
+        foreach ($records as $record) {
+            
+            $record['ticket_id'] = $ticket->id;
+
+            $this->repo->storeAttachment($record);
+        }
+
+       }
+
+    }
+
+
+    /**
+     * Genera un UID para el ticket unico
+     * @return string
+     */
+    public function generateUniqueUid()
+    {
+        do {
+            $randomString = strtoupper(Str::random(5));
+            $uid = "TKT{$randomString}";
+            
+            // Repite el bucle solo si el UID ya existe en la base de datos
+        } while (Ticket::where('uid', $uid)->exists());
+
+        return $uid;
+    }
+
 }

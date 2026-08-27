@@ -27,9 +27,11 @@ export default defineConfig({
             input: [
             'resources/css/style.css',
             'resources/css/app.css',
+            'Modules/Tickets/resources/assets/css/create.css',
             'resources/js/script.js',
             'resources/js/helpers/helper.js',
             'Modules/Tickets/resources/assets/js/index.js',
+            'Modules/Tickets/resources/assets/js/create.js',
             ],
             refresh: true,
         }),

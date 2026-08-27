@@ -312,6 +312,10 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 @endif
 
+@if (Route::is('tickets.create'))
+    @vite('Modules/Tickets/resources/assets/js/create.js')
+@endif
+
     @vite('resources/js/helpers/helper.js')
 
     <script src = "{{URL::asset('build/js/script.js')}}"></script>

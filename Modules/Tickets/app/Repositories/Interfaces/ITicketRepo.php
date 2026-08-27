@@ -36,6 +36,38 @@ interface ITicketRepo {
         $endDate = null
     );
 
-   
+   /**
+    *
+    * @return Illuminate\Database\Eloquent\Collection
+    */
+    public function getTicketsTypes();
+
+    /**
+     *
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function getTicketPriorities();
+
+    /**
+     *
+     * @param [type] $args
+     * @return void
+     */
+    public function addTicket($args);
+
+    /**
+     *
+     * @param [type] $ticket_id
+     * @param [type] $url
+     * @return void
+     */
+    public function addTicketUrl($ticket_id, $url);
+
+    /**
+     *
+     * @param [type] $args
+     * @return void
+     */
+    public function storeAttachment($args);
 
 }

@@ -5,6 +5,9 @@ namespace Modules\Tickets\Repositories;
 use Illuminate\Support\Facades\Auth;
 use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Illuminate\Support\Facades\DB;
+use Modules\Tickets\Models\Ticket;
+use Modules\Tickets\Models\TicketAttachment;
+use Override;
 
 class TicketRepo implements ITicketRepo {
 
@@ -15,7 +18,7 @@ class TicketRepo implements ITicketRepo {
 
     public function getPriorities()
     {
-       return DB::table('tickets_priorities')->select('id', 'name')->get();
+       return DB::table('tickets_priorities')->get();
     }
 
     public function getStatusesWithCount($userId)
@@ -80,5 +83,35 @@ class TicketRepo implements ITicketRepo {
             ->leftJoin('users as u', 'u.id', '=', 'tua.user_id')
             ->orderByDesc('t.id')
             ->get();
+    }
+
+    public function getTicketsTypes()
+    {
+        return DB::table('tickets_types')->get();
+    }
+
+    public function getTicketPriorities()
+    {
+        return DB::table('tickets_priorities')->get();
+    }
+
+    public function addTicket($args)
+    {
+        return Ticket::create($args);
+    }
+
+    public function addTicketUrl($ticket_id, $url)
+    {
+        return DB::table('tickets_urls')->insert([
+            'ticket_id'   => $ticket_id, 
+            'url'         => $url,
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
+    }
+
+    public function storeAttachment($args)
+    {
+        return TicketAttachment::create($args);
     }
 }

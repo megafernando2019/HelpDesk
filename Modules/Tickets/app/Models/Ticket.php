@@ -13,7 +13,16 @@ class Ticket extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'uid',
+        'ticket_type_id',
+        'ticket_service_id',
+        'ticket_priority_id',
+        'user_id',
+        'status_id',
+        'title',
+        'description'
+    ];
 
     // protected static function newFactory(): TicketFactory
     // {

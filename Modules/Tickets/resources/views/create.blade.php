@@ -15,7 +15,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row current-info" data-department-id="{{$department_session_id}}">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
@@ -24,7 +24,7 @@
                                 </h3>
                             </div>
                             <div class="card-body">
-                                <form action="#" method="POST">
+                                <form class="action-create" action="#" method="POST">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-12 mb-2">
@@ -33,46 +33,60 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Título <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" name="title" placeholder="Añade un título al ticket">
+                                                <input 
+                                                    type="text" 
+                                                    class="form-control" 
+                                                    name="title" 
+                                                    placeholder="Añade un título al ticket">
+                                                <div class="message-feedback error-title text-danger"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Tipo <span class="text-danger">*</span></label>
-                                                <select class="form-control" name="type">
+                                                <select class="form-control ticket-types-s" name="ticket_type_id">
                                                     <option>Selecciona un tipo de ticket</option>
                                                 </select>
+                                                <div class="message-feedback error-ticket_type_id text-danger"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Categoria <span class="text-danger">*</span></label>
-                                                <select class="form-control" name="type">
+                                                <select class="form-control category-select select2" name="category">
                                                     <option>Selecciona una categoria</option>
                                                 </select>
+                                                <div class="message-feedback error-category text-danger"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Servicio <span class="text-danger">*</span></label>
-                                                <select class="form-control" name="type">
+                                                <select class="form-control service-select select2" name="ticket_service_id">
                                                     <option>Selecciona un servicio</option>
                                                 </select>
+                                                <div class="message-feedback error-ticket_service_id text-danger"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Prioridad  <span class="text-danger">*</span></label>
-                                                <select class="form-control" name="type">
+                                                <select class="form-control ticket-priorities-s" name="ticket_priority_id">
                                                     <option>Selecciona una prioridad </option>
                                                 </select>
+                                                <div class="message-feedback error-ticket_priority_id"></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6"></div>
                                         <div class="col-md-12">
                                             <div class="mb-3">
-                                                <label class="form-label">Descripción   <span class="text-danger">*</span></label>
-                                                <textarea class="form-control" name="" id="" placeholder="Describe tu solicitud"></textarea>
+                                                <label class="form-label">Descripción <span class="text-danger">*</span></label>
+                                                <textarea class="form-control" 
+                                                         name="description" 
+                                                         id="" 
+                                                         placeholder="Describe tu solicitud"
+                                                ></textarea>
+                                                <div class="message-feedback error-description text-danger"></div>
                                             </div>
                                         </div>
                                         
@@ -80,49 +94,19 @@
                                             <h3 class="text-info">INFORMACIÓN ADICIONAL</h3>
                                         </div>
 
-                                        <div class="col-md-6 d-flex justify-content-center">
-                                            <style>
-                                                /* Contenedor principal de la zona de arrastre */
-                                                .drop-zone {
-                                                  padding: 14px;
-                                                  display: flex;
-                                                  flex-direction: column;
-                                                  align-items: center;
-                                                  justify-content: center;
-                                                  text-align: center;
-                                                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                                                  font-weight: 500;
-                                                  font-size: 1.2rem;
-                                                  cursor: pointer;
-                                                  border-radius: 10px;
-                                                  transition: background-color 0.3s, border-color 0.3s;
-                                                }
-
-                                                /* Cambio de color interactivo al pasar el mouse */
-                                                .drop-zone:hover {
-                                                  background-color: #f8f9fa;
-                                                  border-color: #007058;
-                                                }
-
-                                                /* Ocultar el input original de manera segura */
-                                                .drop-zone__input {
-                                                  display: none;
-                                                }
-
-                                                /* Estilo opcional para cuando el archivo ya está cargado (se gestiona con JS) */
-                                                .drop-zone--over {
-                                                  border-style: solid;
-                                                  background-color: #e8f4f1;
-                                                  color: #009578;
-                                                }
-                                            </style>
-
+                                        <div class="col-md-6 justify-content-center">
                                             <div class="w-100 drop-zone rounded border-grey bg-ocean">
                                               <span class="drop-zone__prompt">Agrega archivos</span>
                                               <small class="text-muted fs-11">Puedes cargar archivos PDF, JPG, PNG</small>
-                                              <!-- El input real permanece oculto pero vinculado al flujo -->
-                                              <input type="file" name="myFile" id="myFile" class="drop-zone__input">
                                             </div>
+                                            <!-- Contenedor donde se apilan los archivos -->
+                                            <div id="file-list" class="file-list"></div>
+                                            <div class="message-feedback error-attachments text-danger"></div>
+                                            <input multiple 
+                                            type="file" 
+                                            name="attachments[]" 
+                                            id="myFile" 
+                                            class="drop-zone__input">
                                         </div>
 
                                         <div class="col-md-6">
@@ -131,6 +115,7 @@
                                                 <input type="text" class="form-control" 
                                                 name="url" 
                                                 placeholder="Agregar enlace de ayuda complementaria">
+                                                <div class="message-feedback error-url text-danger"></div>
                                             </div>
                                         </div>
 
