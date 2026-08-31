@@ -7,9 +7,14 @@ use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Illuminate\Support\Facades\DB;
 use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Models\TicketAttachment;
-use Override;
+use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
+
+    public function getTicket($id, $relations = [])
+    {
+       return Ticket::with($relations)->find($id);
+    }
 
     public function getStatus()
     {
@@ -113,5 +118,18 @@ class TicketRepo implements ITicketRepo {
     public function storeAttachment($args)
     {
         return TicketAttachment::create($args);
+    }
+
+    public function saveObservations($args)
+    {
+       return TicketObservation::updateOrCreate(
+         ['ticket_id' => $args['ticket_id']],
+         $args
+       );
+    }
+
+    public function assignUser(Ticket $ticket, array $users_ids)
+    {
+       return $ticket->assignees()->sync($users_ids);
     }
 }

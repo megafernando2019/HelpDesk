@@ -232,6 +232,11 @@
     @vite('Modules/Tickets/resources/assets/css/create.css')
 @endif
 
+@if (Route::is('tickets.show'))
+    @vite('Modules/Tickets/resources/assets/css/show.css')
+@endif
+    
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{URL::asset('build/css/style.css')}}">
 

@@ -7,20 +7,31 @@ import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     build: {
-        outDir: '../../public/build-tickets',
+        outDir: '../../public/build-tags',
         emptyOutDir: true,
         manifest: true,
     },
     plugins: [
         laravel({
             publicDirectory: '../../public',
-            buildDirectory: 'build-tickets',
+            buildDirectory: 'build-tags',
             input: [
                 __dirname + '/resources/assets/sass/app.scss',
                 __dirname + '/resources/assets/js/app.js'
             ],
             refresh: true,
         }),
+        // Uncomment the plugin for your frontend framework:
+        // vue({
+        //     template: {
+        //         transformAssetUrls: {
+        //             base: null,
+        //             includeAbsolute: false,
+        //         },
+        //     },
+        // }),
+        // react(),
+        // svelte(),
     ],
     resolve: {
         alias: {

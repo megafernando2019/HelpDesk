@@ -18,6 +18,12 @@
     color: #0049fc !important;
 }
 
+.btn-grey{
+    background: #a3a4ac !important;
+    border: 1px solid #a3a4ac !important;
+    color: #fff !important;
+}
+
 .text-mega {
     color: #0049fc !important;
 }
@@ -45,6 +51,11 @@
 
 .current-rounded {
     border-radius: 11px !important;
+}
+
+/* Override BS */
+.shadow {
+    box-shadow: 0 0.5rem 0.7rem rgba(0, 0, 0, 0.15) !important;
 }
 
 .sidebar .sidebar-menu > ul > li > ul > li.submenu > a.subdrop,  a.subdrop .menu-arrow {

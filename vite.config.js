@@ -28,10 +28,12 @@ export default defineConfig({
             'resources/css/style.css',
             'resources/css/app.css',
             'Modules/Tickets/resources/assets/css/create.css',
+            'Modules/Tickets/resources/assets/css/show.css',
             'resources/js/script.js',
             'resources/js/helpers/helper.js',
             'Modules/Tickets/resources/assets/js/index.js',
             'Modules/Tickets/resources/assets/js/create.js',
+            'Modules/Tickets/resources/assets/js/show.js'
             ],
             refresh: true,
         }),

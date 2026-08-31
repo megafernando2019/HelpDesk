@@ -3,7 +3,8 @@
 namespace Modules\Tickets\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\User;
+use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
@@ -11,6 +12,10 @@ use Modules\Tickets\Services\TicketService;
 
 class TicketsController extends Controller
 {
+    use HelpDeskUtils;
+
+    const SUPPORT_DEPARTMENT = 2;
+
     public function __construct(
         private readonly TicketService $service
     )
@@ -115,7 +120,90 @@ class TicketsController extends Controller
             abort(404, 'La vista de este ticket aún no está disponible.');
         }
 
-        return view('tickets::show');
+        $user = Auth::user();
+        $relations = [
+                      'ticketService.category', 
+                      'priority', 
+                      'status', 
+                      'url', 
+                      'attachments',
+                      'assignees'
+                      ];
+        $full_name =  sprintf(
+             '%s %s',
+              $user?->first_name,
+              $user?->last_name
+        );
+
+        $ticket = $this->service->getTicket($id, $relations);
+
+        $initials = $this->getInitials($full_name);
+        $attachments = $ticket?->attachments ?? collect();
+        $assignedUserIds = $ticket?->assignees?->pluck('id')->toArray() ?? [];
+
+        $supportUsers = User::where('department_id', self::SUPPORT_DEPARTMENT)
+        ->where('active', 1)
+        ->select('id', 'first_name', 'last_name', 'email')
+        ->get();
+
+        $supportUsers = $supportUsers->map(function($u) {
+             $full_name =  sprintf(
+                 '%s %s',
+                  $u?->first_name,
+                  $u?->last_name
+            );
+
+            $u->initials = $this->getInitials($full_name);
+
+            return $u;
+        });
+
+        return view('tickets::show', compact(
+        'user', 
+        'initials', 
+        'full_name',
+        'ticket',
+        'attachments',
+        'supportUsers',
+        'assignedUserIds'
+        ));
+    }
+
+    public function assingUserTicket(Request $request)
+    {
+        try {
+                $result = $this->service->assignUser($request);
+
+                return response()->json([
+                    'data' => $result,
+                ], 200);
+
+           } catch (\Throwable $th) {
+               \Log::info($th);
+
+               return response()->json([
+                    'message' => 'No se pudo asignar al usuario, pruebe más tarde.',
+               ], 500);
+           }
+    }
+
+    public function updateOrSaveObservations(Request $request)
+    {
+       try {
+            
+            $entity = $this->service->saveObservations($request);
+
+            return response()->json([
+                'description_observation_record' => $entity?->description ?? '',
+            ], 200);
+
+       } catch (\Throwable $th) {
+           \Log::info($th);
+
+           return response()->json([
+                'message' => 'No se pudo guardar la observación, pruebe más tarde.',
+           ], 500);
+       }
     }
 
     /**

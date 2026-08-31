@@ -1,0 +1,57 @@
+/* Generador de colores aleatorios según el nombre/ID */
+.avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+/* Ajustes visuales a las opciones del menú desplegable */
+.select2-user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 2px;
+}
+
+.select2-user-card .user-name {
+    font-weight: 600;
+    color: #333;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.select2-user-card .user-email {
+    font-size: 11px;
+    color: #888;
+    margin: 0;
+}
+
+/* Personalizar las etiquetas seleccionadas (Tags) */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e9eb !important;
+    border-radius: 12px !important;
+    padding: 6px 12px !important;
+    margin-top: 5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.select2-selection__choice__remove {
+    background: none !important;
+    color: #333 !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #888 !important;
+    margin-right: 8px !important;
+    border: none !important;
+    font-size: 16px;
+}

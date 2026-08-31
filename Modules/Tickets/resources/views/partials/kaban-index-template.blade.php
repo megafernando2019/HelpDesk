@@ -35,7 +35,7 @@
                     <div>
                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                         <div class="d-flex gap-2">
-                            <a href="javascript:void(0);" data-action="ticket-show" data-id="{id}" class="text-secondary" title="Ver">
+                            <a href="tickets/{id}" data-action="ticket-show" data-id="{id}" class="text-secondary" title="Ver">
                                 <i class="ti ti-eye fs-18"></i>
                             </a>
                             <a href="javascript:void(0);" data-action="ticket-edit" data-id="{id}" class="text-secondary" title="Editar">

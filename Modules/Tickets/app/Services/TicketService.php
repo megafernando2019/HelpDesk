@@ -7,6 +7,7 @@ use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Modules\Tickets\Support\Mappers\TicketMapper;
 use Modules\Tickets\Support\Mappers\ViewParamsIndexMapper;
 use Illuminate\Support\Str;
+use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Models\Ticket;
 
 class TicketService {
@@ -15,6 +16,11 @@ class TicketService {
        private readonly ITicketRepo $repo
     ) {
        
+    }
+
+    public function getTicket($id, $relations = [])
+    {
+       return $this->repo->getTicket($id, $relations);
     }
 
     public function getAllStatus() 
@@ -182,6 +188,40 @@ class TicketService {
 
        }
 
+    }
+
+    public function saveObservations($request)
+    {
+        $records = [
+            'ticket_id' => $request->ticket_id,
+            'status_id' => $request->status_id,
+            'user_id' => $request->user_id,
+            'ticket_priority_id' => $request->ticket_priority_id,
+            'description' => $request->observation_d
+        ];
+
+        return $this->repo->saveObservations($records);
+    }
+
+
+    public function assignUser($request)
+    {
+        $ticket_id = $request?->ticket_id;
+        $ticket =  $this->getTicket($ticket_id);
+        $users_ids = $request?->assignees ?? [];
+
+        if (!$ticket || $ticket === null) {
+            throw new TicketException('No se encontro un ticket válido');
+        }
+
+        return $this->repo->assignUser($ticket, $users_ids);
+
+        // Registrar en los logs
+        // $this->logAction(
+        //     $ticket->id,
+        //     'assigned_user',
+        //     "Se asignó el ticket al usuario ID: {$userId}"
+        // );
     }
 
 

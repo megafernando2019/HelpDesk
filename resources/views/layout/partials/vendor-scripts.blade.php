@@ -316,6 +316,10 @@
     @vite('Modules/Tickets/resources/assets/js/create.js')
 @endif
 
+@if (Route::is('tickets.show'))
+    @vite(['Modules/Tickets/resources/assets/js/show.js'])  
+@endif
+    
     @vite('resources/js/helpers/helper.js')
 
     <script src = "{{URL::asset('build/js/script.js')}}"></script>

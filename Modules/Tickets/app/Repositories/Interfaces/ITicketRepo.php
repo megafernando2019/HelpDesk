@@ -2,7 +2,17 @@
 
 namespace Modules\Tickets\Repositories\Interfaces;
 
+use Modules\Tickets\Models\Ticket;
+
 interface ITicketRepo {
+
+    /**
+     *
+     * @param int $id
+     * @param array $relations
+     * @return void
+     */
+    public function getTicket($id, $relations = []);
 
     /**
      *
@@ -69,5 +79,21 @@ interface ITicketRepo {
      * @return void
      */
     public function storeAttachment($args);
+
+
+    /**
+     *
+     * @param array $args
+     * @return void
+     */
+    public function saveObservations($args);
+
+    /**
+     *
+     * @param Ticket $ticket
+     * @param array $userId
+     * @return void
+     */
+    public function assignUser(Ticket $ticket, array $users_ids);
 
 }

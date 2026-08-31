@@ -2,5 +2,6 @@
     "Tickets": true,
     "Categories": true,
     "Departments": true,
-    "Services": true
+    "Services": true,
+    "Tags": true
 }
