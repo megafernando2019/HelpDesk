@@ -39,7 +39,7 @@
                                 <i class="ti ti-eye fs-18"></i>
                             </a>
                             <a href="javascript:void(0);" data-action="ticket-edit" data-id="{id}" class="text-secondary" title="Editar">
-                                <i class="ti ti-edit fs-18"></i>
+                                <i class="ti ti-edit-circle fs-18"></i>
                             </a>
                         </div>
                     </div>
