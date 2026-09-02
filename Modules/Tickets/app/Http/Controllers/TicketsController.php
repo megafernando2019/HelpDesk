@@ -22,6 +22,25 @@ class TicketsController extends Controller
     {
         
     }
+
+    public function updateStatus(Request $request)
+    {
+        try {
+
+            $result = $this->service->updateStatus($request);
+
+            return response()->json([
+                'result' => $result,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            \Log::info($th->getMessage());
+
+             return response()->json([
+                'message' => 'Ocurrió un error al actualizar el estatus del ticket.'
+            ], 500);
+        }
+    }
     
     /**
      * Ruta para vista de prueba arquitectura modular
@@ -139,7 +158,14 @@ class TicketsController extends Controller
 
         $initials = $this->getInitials($full_name);
         $attachments = $ticket?->attachments ?? collect();
-        $assignedUserIds = $ticket?->assignees?->pluck('id')->toArray() ?? [];
+        $UserAssignEntity = [];
+        $assignedUserIds = $ticket?->assignees?->pluck('id')?->toArray() ?? [];
+        $currentUserAssing = 0;
+
+        if (!empty($assignedUserIds) && isset($assignedUserIds[0])) {
+           $currentUserAssing = $assignedUserIds[0];
+           $UserAssignEntity = $ticket?->assignees[0]?->toArray() ?? [];
+        }
 
         $supportUsers = User::where('department_id', self::SUPPORT_DEPARTMENT)
         ->where('active', 1)
@@ -165,7 +191,8 @@ class TicketsController extends Controller
         'ticket',
         'attachments',
         'supportUsers',
-        'assignedUserIds'
+        'currentUserAssing',
+        'UserAssignEntity'
         ));
     }
 

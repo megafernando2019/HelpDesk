@@ -10,6 +10,7 @@ Route::middleware(['auto_login'])->group(function () {
     Route::get('/tickets/get_current_details_create', [TicketsController::class, 'getDetailsCreateForm']);
     Route::get('/get_my_tickets', [TicketsController::class, 'getTicketsByUserStatus']);
     Route::post('/save_observation', [TicketsController::class, 'updateOrSaveObservations']);
-    Route::post('/assing_ticket_user', [TicketsController::class, 'assingUserTicket']);
+    Route::post('/assing_ticket_user', [TicketsController::class, 'assingUserTicket']);    
+    Route::post('/updated_status', [TicketsController::class, 'updateStatus']);    
     Route::resource('tickets', TicketsController::class)->names('tickets');
 });

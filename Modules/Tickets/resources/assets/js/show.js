@@ -33,6 +33,50 @@ $(document).ready(function () {
     /**
      * Events
      */
+    $('.btn-status-observation').on('click', function () {
+        $('.observation_d').addClass('focus-input');
+
+        $('html, body').animate({
+            scrollTop: $('.observation_d').offset().top - 100
+        }, 500); 
+    });
+
+
+     $('.observation_d').on('input', function () {
+        $(this).removeClass('focus-input');
+    });
+
+
+    $('.btn-status-action').on('click', function () {
+        const $btn = $(this);
+        const ticketId = $('.content-show').data('ticket-id');
+        const nameStatus = $btn.data('name');
+        const value = $btn.data('status');
+       
+        $btn.prop('disabled', true);
+
+        axios.post('/updated_status', {
+            ticket_id: ticketId,
+            ticket_status: value
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => {
+            ui.showToast('success', `Se ha actualizado a estatus (${nameStatus}).`);
+            window.location.href = '/tickets/'+ticketId
+        })
+        .catch(error => {
+            console.error(error);
+            ui.showToast('error', error.response?.data?.message || 'Ocurrió un error al actualizar el estatus.');
+        })
+        .finally(() => {
+            $btn.prop('disabled', false);
+        });
+    });
+
+
     $('.action-save-observation').on('submit', function (e) {
         e.preventDefault(); 
 
@@ -49,7 +93,6 @@ $(document).ready(function () {
         .then(response => {
             ui.showToast('success','Observación y etiquetas guardadas correctamente');
 
-            console.log(response?.data?.description_observation_record)
             $('.observation_d').text(response?.data?.description_observation_record ?? '');
         })
         .catch(error => {
@@ -69,13 +112,22 @@ $(document).ready(function () {
 
         const $btn = $(this);
         const ticketId = $('.content-show').data('ticket-id');
-        const selectedUsers = $('.select2-assignees').val() || [];
+        const selected = $('.select2-assignees').val() || 0;
+        const selectedData = $('.select2-assignees').select2('data');
+        const selectedName = selectedData.length ? selectedData[0].text : '';
+        let rawData = $btn.data('existUserAssing');
+        let flagExistAssigned = (typeof rawData === 'string') ? JSON.parse(rawData) : rawData;
+        
+
+        console.log(selectedName);
 
         $btn.prop('disabled', true);
 
         axios.post('/assing_ticket_user', {
             ticket_id: ticketId,
-            assignees: selectedUsers
+            assignees: [selected],
+            selectedName: selectedName,
+            flag_exist_assigned: flagExistAssigned
         }, {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -96,10 +148,10 @@ $(document).ready(function () {
 
 
     $('.select2-assignees').on('change', function () {
-        const selectedValues = $(this).val() || [];
+        const value = parseInt($(this).val()) || 0;
         const $btn = $('.btn-assign-users');
 
-        if (selectedValues.length > 0) {
+        if (value !== 0) {
             $btn.prop('disabled', false).removeClass('btn-grey').addClass('btn-mega');
         } else {
             $btn.prop('disabled', true).removeClass('btn-mega').addClass('btn-grey');
@@ -139,30 +191,46 @@ $(document).ready(function () {
     }
 
     function formatUserSelection(state) {
-        if (!state.id) return state.text;
+        if (!state.id || state.id === 'Seleccionar encargados de soporte...') return state.text;
 
-        const email = $(state.element).data('email') || '';
-        const initials = $(state.element).data('initials') || 'NA';
-        const name = $(state.element).data('name') || '';
+        // Obtener el elemento DOM de forma segura (soporta carga inicial y selección activa)
+        const $option = state.element 
+            ? $(state.element) 
+            : $('.select2-assignees').find(`option[value="${state.id}"]`);
+
+        const email = $option.data('email') || '';
+        const initials = $option.data('initials') || 'NA';
+        const name = $option.data('name') || state.text;
         const bgColor = getColorFromString(state.id + state.text);
 
         return $(`
-            <div class="d-flex align-items-center gap-2">
-                <div class="avatar-circle" style="background-color: ${bgColor}; width: 28px; height: 28px; font-size: 11px;">
+            <div class="d-flex align-items-center gap-2" style="height: 100%;">
+                <div class="avatar-circle" style="
+                    background-color: ${bgColor};
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #ffffff;
+                    font-weight: 700;
+                    font-size: 11px;
+                    flex-shrink: 0;
+                ">
                     ${initials}
                 </div>
-                <div>
-                    <span style="font-weight: 600; font-size: 13px; color: #333;">${state.text}</span>
-                    <b class="d-block text-muted" style="font-size: 10px;">${name}</b>
-                    <small class="d-block text-muted" style="font-size: 10px;">${email}</small>
+                <div style="line-height: 1.1;">
+                    <span class="d-block font-weight-bold" style="font-size: 13px; color: #333;">${name}</span>
+                    <small class="text-muted" style="font-size: 10px; display: block;">${email}</small>
                 </div>
             </div>
         `);
     }
 
+
     $('.select2-assignees').select2({
         placeholder: "Seleccionar encargados de soporte...",
-        allowClear: true,
         templateResult: formatUserOption,
         templateSelection: formatUserSelection
     });

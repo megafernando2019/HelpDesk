@@ -18,6 +18,14 @@ class TicketService {
        
     }
 
+    public function updateStatus($request)
+    {
+       $status = (int) $request?->ticket_status ?? 0;
+       $ticket_id = (int) $request?->ticket_id ?? 0;
+
+       return $this->repo->updateStatus($status, $ticket_id);
+    }
+
     public function getTicket($id, $relations = [])
     {
        return $this->repo->getTicket($id, $relations);
@@ -214,7 +222,7 @@ class TicketService {
             throw new TicketException('No se encontro un ticket válido');
         }
 
-        return $this->repo->assignUser($ticket, $users_ids);
+        $this->repo->assignUser($ticket, $users_ids);
 
         // Registrar en los logs
         // $this->logAction(
@@ -224,6 +232,13 @@ class TicketService {
         // );
     }
 
+
+
+    public function logAction()
+    {
+
+    }
+    
 
     /**
      * Genera un UID para el ticket unico

@@ -53,6 +53,11 @@
     border-radius: 11px !important;
 }
 
+.focus-input {
+    border: 1px solid #155EEF !important;
+    box-shadow: 0.0 0.15px 9px 1px #155EEF !important;
+}
+
 /* Override BS */
 .shadow {
     box-shadow: 0 0.5rem 0.7rem rgba(0, 0, 0, 0.15) !important;

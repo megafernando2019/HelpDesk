@@ -96,4 +96,11 @@ interface ITicketRepo {
      */
     public function assignUser(Ticket $ticket, array $users_ids);
 
+    /**
+     *
+     * @param int $status
+     * @return void
+     */
+    public function updateStatus(int $status, int $ticket_id);
+
 }

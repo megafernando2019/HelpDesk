@@ -132,4 +132,12 @@ class TicketRepo implements ITicketRepo {
     {
        return $ticket->assignees()->sync($users_ids);
     }
+
+    public function updateStatus(int $status, int $ticket_id)
+    {
+        return Ticket::where('id', $ticket_id)->update([
+            'status_id' => $status,
+            'updated_at' => now()
+            ]);
+    }
 }

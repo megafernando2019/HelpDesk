@@ -234,10 +234,10 @@
                                                         Guardar observación
                                                     </button>
                                                 </div>
-                                                <div class="col-md-12 mt-2">
-                                                    <textarea class="form-control"
+                                                <div class="col-md-12 mt-2 focus-area">
+                                                    <textarea 
+                                                     class="form-control observation_d"
                                                      name="observation_d" 
-                                                     class="observation_d"
                                                      id="" 
                                                      rows="3" 
                                                      placeholder="Agregar observación">{{$ticket?->observation?->description ?? ''}}</textarea>
@@ -268,11 +268,14 @@
                                     Encargado
                                 </h3>
 
-                                <button {{empty($assignedUserIds) ? 'disabled' : ''}} class="btn btn-sm {{empty($assignedUserIds) ? 'btn-grey' : 'btn-mega'}} btn-assign-users">
+                                <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
+                                        class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
+                                        data-exist-user-assing='@json($UserAssignEntity)'
+                                        >
                                     <i 
-                                      class="{{empty($assignedUserIds) ? 'ti ti-user-check' 
+                                      class="{{$currentUserAssing === 0 ? 'ti ti-user-check' 
                                                                        : 'ti ti-replace-user'}}"></i>
-                                    {{empty($assignedUserIds) ? 'Confirmar asignación' : 'Confirmar reasignación'}}
+                                    {{$currentUserAssing === 0 ? 'Confirmar asignación' : 'Confirmar reasignación'}}
                                 </button>
                             </div>
                             <div class="card-body">
@@ -280,13 +283,48 @@
                                     <div class="col-md-12">
                                         @include(
                                             'tickets::partials.show.view-user-permision-action',
-                                            ['supportUsers' => $supportUsers]
+                                            [
+                                                'supportUsers' => $supportUsers,
+                                                'currentUserAssing' => $currentUserAssing
+                                            ]
                                         )
                                     </div>
                                 </div>
                             </div>
                             <div  style="border: none;" class="card-footer text-body-secondary"></div>
                         </div>
+
+                        <div class="card" style="border: none;">
+                            <div style="border: none;" class="card-header">
+                                <h3>
+                                    Acciones rápidas
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 icons-group-actions">
+                                    <button type="button" 
+                                            class="btn btn-status-action"
+                                            data-status="2"
+                                            data-name="En proceso">
+                                        <i class="ti ti-progress-check"></i>
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-status-action"
+                                            data-status="6"
+                                            data-name="Cancelado">
+                                        <i class="ti ti-cancel"></i>
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-status-observation"
+                                            >
+                                        <i class="ti ti-edit-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="border: none;" 
+                                 class="card-footer text-body-secondary"></div>
+                        </div>
+                        
                         
                     </div>
                 </div>

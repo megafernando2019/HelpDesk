@@ -55,3 +55,13 @@
     border: none !important;
     font-size: 16px;
 }
+
+.icons-group-actions > button{
+    font-size: 1.5em;
+}
+
+.icons-group-actions > button:hover{
+    font-size: 1.5em;
+    background-color: #155EEF;
+    color: #fff;
+}
