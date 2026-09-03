@@ -69,6 +69,11 @@ class Ticket extends Model
         )->withTimestamps();
     }
 
+    public function logs(): HasMany
+    {
+        return $this->hasMany(TicketLog::class, 'ticket_id');
+    }
+
     // protected static function newFactory(): TicketFactory
     // {
     //     // return TicketFactory::new();

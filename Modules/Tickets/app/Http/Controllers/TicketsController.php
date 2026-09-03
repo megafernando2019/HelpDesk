@@ -8,7 +8,9 @@ use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
+use Modules\Tickets\Services\TicketLogService;
 use Modules\Tickets\Services\TicketService;
+use Modules\Tickets\Support\Enums\TicketAction;
 
 class TicketsController extends Controller
 {
@@ -17,7 +19,8 @@ class TicketsController extends Controller
     const SUPPORT_DEPARTMENT = 2;
 
     public function __construct(
-        private readonly TicketService $service
+        private readonly TicketService $service,
+        private readonly TicketLogService $ticketLogService
     )
     {
         
@@ -146,7 +149,8 @@ class TicketsController extends Controller
                       'status', 
                       'url', 
                       'attachments',
-                      'assignees'
+                      'assignees',
+                      'logs'
                       ];
         $full_name =  sprintf(
              '%s %s',
@@ -214,11 +218,43 @@ class TicketsController extends Controller
            }
     }
 
+    public function getLogsByTicketId(Request $request)
+    {
+        try {
+            
+            //deberia mandarse el ticket_id en la request
+            $logs = $this->service->getLogsTicketFormat($request);
+
+            return response()->json([
+                'data' => $logs,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            
+            \Log::info($th);
+
+            return response()->json([
+                    'message' => 'No se pudo recuperar los logs de este ticket, pruebe más tarde.',
+            ], 500);
+        }
+    }
+
     public function updateOrSaveObservations(Request $request)
     {
        try {
             
             $entity = $this->service->saveObservations($request);
+            $enum_action = TicketAction::OBSERVE_TICKET;
+
+            $ticket = $this->service->getTicket($entity->ticket_id);
+
+            //guardar logs
+            $this->ticketLogService->logAction(
+                $ticket,
+                $enum_action,
+                'update',
+                'tickets/show'
+            );
 
             return response()->json([
                 'description_observation_record' => $entity?->description ?? '',

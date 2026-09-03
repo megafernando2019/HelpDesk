@@ -9,11 +9,13 @@ use Modules\Tickets\Support\Mappers\ViewParamsIndexMapper;
 use Illuminate\Support\Str;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Models\Ticket;
+use Modules\Tickets\Support\Enums\TicketAction;
 
 class TicketService {
 
     public function __construct(
-       private readonly ITicketRepo $repo
+       private readonly ITicketRepo $repo,
+       private readonly TicketLogService $log_ticket_service,
     ) {
        
     }
@@ -23,7 +25,40 @@ class TicketService {
        $status = (int) $request?->ticket_status ?? 0;
        $ticket_id = (int) $request?->ticket_id ?? 0;
 
-       return $this->repo->updateStatus($status, $ticket_id);
+       $result = $this->repo->updateStatus($status, $ticket_id);
+
+       //Si se actualizo el estatus con éxito
+       if($result) {
+            $enum_action = null;
+
+            switch ($status) {
+                case 2:
+                    $enum_action = TicketAction::STATUS_IN_PROGRESS;
+                    break;
+                case 6:
+                    $enum_action = TicketAction::STATUS_CANCELLED;
+                    break;
+                
+                default:
+                    
+                    break;
+            }
+            
+
+            if ($enum_action !== null) {
+
+                $ticket = $this->getTicket($ticket_id);
+
+                //guardar logs
+                $this->log_ticket_service->logAction(
+                    $ticket,
+                    $enum_action,
+                    'update',
+                    'tickets/show'
+                );
+            }
+       }
+
     }
 
     public function getTicket($id, $relations = [])
@@ -187,15 +222,54 @@ class TicketService {
        //Si ya se subieron al servidor los archivos adjuntos
        if (!empty($records)) {
     
-        foreach ($records as $record) {
-            
-            $record['ticket_id'] = $ticket->id;
+            foreach ($records as $record) {
+                
+                $record['ticket_id'] = $ticket->id;
 
-            $this->repo->storeAttachment($record);
-        }
+                $this->repo->storeAttachment($record);
+            }
 
        }
 
+       //Si se creo la entidad, guardo su log
+       if ($ticket) {
+         $enum_action = TicketAction::CREATE_TICKET;
+
+         $this->log_ticket_service->logAction(
+            $ticket,
+            $enum_action,
+            'create',
+            'tickets/create'
+         );
+       }
+
+    }
+
+    public function getLogsTicketFormat($request = null, $param_ticket_id = null)
+    {
+        $logs = collect($request?->input('logs') ?? $request?->logs ?? []);
+        $raw_id = $param_ticket_id 
+            ?? $request?->param_ticket_id ?? 0;
+
+        $ticket_id = (int) $raw_id;
+
+        //Si no hay información cargada, la consulto con los parametros
+        if ($logs->isEmpty() && $ticket_id > 0) {
+
+            \Log::info('No se encontro información, consulto a la DB');
+            $logs = $this->repo->getLogsByTicketId(
+                $ticket_id
+            );
+
+            //Compruebo nuevamente si aun no arrojo resultados la query, entonces retorno asi la coleccion
+            if ($logs->isEmpty()) {
+                return $logs;
+            }
+        }
+        
+        $dto = TicketMapper::toCollectionTicketLogs($logs);
+
+        return $dto;
     }
 
     public function saveObservations($request)
@@ -214,29 +288,36 @@ class TicketService {
 
     public function assignUser($request)
     {
+        $selectedName = $request?->selectedName ?? '';
+        //Cortar parentesis y email del string
+        $selectedName = strstr($selectedName, '(', true); 
         $ticket_id = $request?->ticket_id;
         $ticket =  $this->getTicket($ticket_id);
         $users_ids = $request?->assignees ?? [];
+        $flag_exist_assigned = $request?->flag_exist_assigned ?? [];
+        $enum_action = TicketAction::ASSIGN_TICKET;
 
         if (!$ticket || $ticket === null) {
             throw new TicketException('No se encontro un ticket válido');
         }
 
+        //Ya tenia un usuario asignado previamente
+        if (!empty($flag_exist_assigned)) {
+            $enum_action = TicketAction::REASSIGN_TICKET;
+        }
+
         $this->repo->assignUser($ticket, $users_ids);
 
         // Registrar en los logs
-        // $this->logAction(
-        //     $ticket->id,
-        //     'assigned_user',
-        //     "Se asignó el ticket al usuario ID: {$userId}"
-        // );
-    }
+        $this->log_ticket_service->logAction(
+            $ticket,
+            $enum_action,
+            'update',
+            'tickets/show',
+            $selectedName
+        );
 
-
-
-    public function logAction()
-    {
-
+        return $ticket;
     }
     
 

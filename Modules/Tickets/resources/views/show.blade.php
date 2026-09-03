@@ -21,7 +21,7 @@
                         <div style="border: none;" class="card">
                             <div class="card-header" style="border: none;">
                                 <h3>
-                                    Ticket
+                                    {{$ticket?->uid ?? 'Folio no disponible'}}
                                 </h3>
 
                                 <div class="info-user-aut mt-2">
@@ -281,20 +281,31 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        @include(
-                                            'tickets::partials.show.view-user-permision-action',
-                                            [
-                                                'supportUsers' => $supportUsers,
-                                                'currentUserAssing' => $currentUserAssing
-                                            ]
-                                        )
+                                        @if ($ticket)
+                                            @if ($ticket->status_id === 5 || $ticket->status_id === 4)
+                                                @include('tickets::partials.show.view-user-default-assign',
+                                                    [
+                                                        'supportUsers' => $supportUsers,
+                                                        'currentUserAssing' => $currentUserAssing
+                                                    ]
+                                                )
+                                            @else
+                                                @include(
+                                                    'tickets::partials.show.view-user-permision-action',
+                                                        [
+                                                            'supportUsers' => $supportUsers,
+                                                            'currentUserAssing' => $currentUserAssing
+                                                        ]
+                                                    )
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                             <div  style="border: none;" class="card-footer text-body-secondary"></div>
                         </div>
 
-                        <div class="card" style="border: none;">
+                        <div class="card shadow current-rounded" style="border: none;">
                             <div style="border: none;" class="card-header">
                                 <h3>
                                     Acciones rápidas
@@ -325,6 +336,15 @@
                                  class="card-footer text-body-secondary"></div>
                         </div>
                         
+                        <div style="border: none;" class="card shadow current-rounded">
+                            <div style="border: none;" class="card-header">Detalle</div>
+                            <div class="card-body">
+                                <div data-logs='@json($ticket?->logs ?? collect())'
+                                     class="ticket-log-chanel-endpoint">
+                                </div>
+                            </div>
+                            <div style="border: none;" class="card-footer text-body-secondary"></div>
+                        </div>
                         
                     </div>
                 </div>

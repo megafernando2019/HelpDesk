@@ -7,6 +7,7 @@ use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Illuminate\Support\Facades\DB;
 use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Models\TicketAttachment;
+use Modules\Tickets\Models\TicketLog;
 use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
@@ -139,5 +140,20 @@ class TicketRepo implements ITicketRepo {
             'status_id' => $status,
             'updated_at' => now()
             ]);
+    }
+
+    public function saveLog($record)
+    {
+        TicketLog::create($record);
+    }
+
+    public function getAllTicketsActions()
+    {
+       return DB::table('tickets_actions')->get();
+    }
+
+    public function getLogsByTicketId($id)
+    {
+        return DB::table('ticket_logs')->where('ticket_id', $id)->get();
     }
 }

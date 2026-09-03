@@ -11,6 +11,7 @@ Route::middleware(['auto_login'])->group(function () {
     Route::get('/get_my_tickets', [TicketsController::class, 'getTicketsByUserStatus']);
     Route::post('/save_observation', [TicketsController::class, 'updateOrSaveObservations']);
     Route::post('/assing_ticket_user', [TicketsController::class, 'assingUserTicket']);    
-    Route::post('/updated_status', [TicketsController::class, 'updateStatus']);    
+    Route::post('/updated_status', [TicketsController::class, 'updateStatus']);
+    Route::post('/get_ticket_logs_by_id', [TicketsController::class, 'getLogsByTicketId']); 
     Route::resource('tickets', TicketsController::class)->names('tickets');
 });

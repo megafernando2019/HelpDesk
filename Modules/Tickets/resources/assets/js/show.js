@@ -28,6 +28,74 @@ $(document).ready(function () {
         });
     }
 
+    function getLogsByTicket(cache = false) {
+
+        const ticketId = $('.content-show').data('ticket-id');
+        const $container = $('.ticket-log-chanel-endpoint');
+        const logs = null;
+
+        if (cache) {
+            const logs = $container.data('logs');
+        }
+
+        $container.empty();
+
+        $container.html('<p class="text-muted mb-0">Cargando información...</p>');
+
+        axios.post('/get_ticket_logs_by_id', {
+                param_ticket_id: ticketId,
+                logs: logs
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => {
+
+            const logs = response?.data; 
+
+            $container.empty();
+
+            if (!logs || logs.length === 0) {
+                $container.html('<p class="text-muted mb-0">Aún no hay información por mostrar</p>');
+                return;
+            }
+
+            let html = '';
+            
+            Object.entries(logs).forEach(([key, arr]) => {
+                if (arr.length > 0) {
+                    arr.forEach(item => {
+                        html += `
+                            <div class="d-flex align-items-start timeline-item mb-1">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center p-2 me-3 ${item.bgColor}" style="width: 38px; height: 38px; flex-shrink: 0;">
+                                    <i class="${item.icon}"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 text-dark fw-semibold">${item.message}</p>
+                                    <small class="text-muted">el ${item.formatDate}</small>
+                                </div>
+                            </div>
+                        `;
+                    })
+                }
+                
+            });
+
+            $container.html(html);
+        })
+        .catch(error => {
+            $container.empty();
+            console.error('Error al obtener los logs de este tciket:', error);
+            $container.html('<p class="text-danger mb-0">Error al cargar el historial</p>');
+        })
+        .finally(() => {
+            
+        });
+    }
+
+    getLogsByTicket(true);
+
     initTagsSelect2();
 
     /**
@@ -94,6 +162,9 @@ $(document).ready(function () {
             ui.showToast('success','Observación y etiquetas guardadas correctamente');
 
             $('.observation_d').text(response?.data?.description_observation_record ?? '');
+
+            //Actualizar logs
+            getLogsByTicket();
         })
         .catch(error => {
             console.error('Error al guardar:', error.response ? error.response.data : error);
@@ -105,8 +176,7 @@ $(document).ready(function () {
         });
         
     });
-
-
+    
     $('.btn-assign-users').on('click', function (e) {
         e.preventDefault();
 
@@ -117,9 +187,6 @@ $(document).ready(function () {
         const selectedName = selectedData.length ? selectedData[0].text : '';
         let rawData = $btn.data('existUserAssing');
         let flagExistAssigned = (typeof rawData === 'string') ? JSON.parse(rawData) : rawData;
-        
-
-        console.log(selectedName);
 
         $btn.prop('disabled', true);
 

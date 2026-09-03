@@ -65,3 +65,31 @@
     background-color: #155EEF;
     color: #fff;
 }
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+/* Oculta la línea en el último elemento */
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+/* Dibuja la línea punteada vertical detrás de los íconos */
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 19px; /* Centra la línea respecto al ícono de 38px (38/2 = 19) */
+    bottom: 0;
+    width: 0;
+    border-left: 3px dotted #adb5bd; /* Puntos grises */
+    z-index: 1;
+}
+
+/* Ajustes div historial de logs */
+.ticket-log-chanel-endpoint {
+    height: 400px;
+    overflow-y: scroll;
+}

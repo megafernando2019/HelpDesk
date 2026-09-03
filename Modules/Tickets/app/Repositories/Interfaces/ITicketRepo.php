@@ -103,4 +103,23 @@ interface ITicketRepo {
      */
     public function updateStatus(int $status, int $ticket_id);
 
+    /**
+     *
+     * @param array $record
+     * @return void
+     */
+    public function saveLog($record);
+
+    /**
+     *
+     * @return void
+     */
+    public function getAllTicketsActions();
+
+    /**
+     * 
+     * @param  $id
+     */
+    public function getLogsByTicketId($id);
+
 }
