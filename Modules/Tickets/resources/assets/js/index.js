@@ -89,7 +89,26 @@ $(document).ready(function () {
             const colorsPriorityDefault = ["#ffe2e2", "#fff3dd", "#fffdca"];
             const textColorPriorityDefault = ["#ff5757","#fa995c","#eab308"];
 
-            // Limpiamos el contenedor antes de renderizar los nuevos elementos
+            
+            const priorityConfig = {
+                'baja': {
+                    text: '#eab308',
+                    bg: '#eab3081a'
+                },
+                'media': {
+                    text: '#fa995c',
+                    bg: '#fa995c1a'
+                },
+                'alta': {
+                    text: '#ff5757',
+                    bg: '#ff57571a'
+                },
+                'muy alta': {
+                    text: '#aa1515',
+                    bg: '#aa15151a'
+                }
+            };
+
             $container.empty();
 
             if (bgColor) {
@@ -108,6 +127,12 @@ $(document).ready(function () {
                 const currentColorPriority = colorsPriorityDefault[index % colorsPriorityDefault.length];
                 const textCurrentColorPriority = textColorPriorityDefault[index % textColorPriorityDefault.length];
 
+                const priorityKey = (ticket?.priorityName || '').toLowerCase().trim();
+                const priorityStyles = priorityConfig[priorityKey] || {
+                    text: '#6c757d',
+                    bg: '#6c757d1a'
+                };
+
                 let assigned_name = ticket?.assignedUserName ?? '';
 
                 let card = templateHtml
@@ -120,8 +145,8 @@ $(document).ready(function () {
                     .replace(/{created_at}/g, ticket?.createdAt || '')
                     .replace(/{assigned_name}/g, assigned_name || 'Dato no disponible')
                     .replace(/{current_color}/g, currentColor || '#eee')
-                    .replace(/{current_color_priority}/g, currentColorPriority || '#eee')
-                    .replace(/{txt_current_color_priority}/g, textCurrentColorPriority || '#eee');
+                    .replace(/{current_color_priority}/g, priorityStyles.bg || '#eee')
+                    .replace(/{txt_current_color_priority}/g, priorityStyles.text || '#eee');
 
                 $container.append(card);
             });
@@ -129,6 +154,7 @@ $(document).ready(function () {
         })
         .catch(function (error) {
             ui.showToast('error', 'Ocurrió un error durante la recuperación de los tickets, prueba más tarde.');
+            console.log(error)
         })
         .finally(function () {
             $container.removeClass('item-disabled');
