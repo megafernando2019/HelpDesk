@@ -6,7 +6,7 @@
                 <div>
                     <!-- Encabezado: Servicio y Prioridad -->
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="badge text-dark fw-normal px-2 py-1" style="border-radius: 6px; font-size: 11px; background-color: {current_color};">
+                        <span class="badge text-dark fw-normal px-2 py-1" style="text-wrap: auto;border-radius: 6px; font-size: 11px; background-color: {current_color};">
                             {service_name}
                         </span>
                         <span class="badge fw-normal px-2 py-1 d-flex align-items-center gap-1" style="border-radius: 12px; font-size: 11px; color: {txt_current_color_priority} !important; background-color: {current_color_priority};">
@@ -38,7 +38,15 @@
                             <a href="tickets/{id}" data-action="ticket-show" data-id="{id}" class="text-secondary" title="Ver">
                                 <i class="ti ti-eye fs-18"></i>
                             </a>
-                            <a href="javascript:void(0);" data-action="ticket-edit" data-id="{id}" class="text-secondary" title="Editar">
+                            <a 
+                                    href="javascript:void(0);" 
+                                    data-id="{id}" 
+                                    data-status-id="{status_id}"  
+                                    data-priority-id="{priority_id}"
+                                    data-user-id="{user_id}" 
+                                    data-observation="{observation}"
+                                    class="text-secondary ticket-add-observation" 
+                                    title="Editar">
                                 <i class="ti ti-edit-circle fs-18"></i>
                             </a>
                         </div>

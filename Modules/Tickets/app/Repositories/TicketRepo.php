@@ -60,11 +60,14 @@ class TicketRepo implements ITicketRepo {
                 't.description',
                 't.created_at',
                 't.status_id',
+                't.ticket_priority_id',
+                't.user_id',
                 'ts.name as service_name',
                 'tp.name as priority_name',
                 'u.id as assigned_id',
                 'u.first_name as assigned_first_name',
                 'u.last_name as assigned_last_name',
+                'tob.description as observation'
             ])
             ->where('t.user_id', $userId)
             ->where('t.status_id', $status)
@@ -87,6 +90,7 @@ class TicketRepo implements ITicketRepo {
                 )'));
             })
             ->leftJoin('users as u', 'u.id', '=', 'tua.user_id')
+            ->leftJoin('tickets_observations as tob', 'tob.ticket_id', '=', 't.id')
             ->orderByDesc('t.id')
             ->get();
     }

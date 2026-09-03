@@ -16,6 +16,9 @@ class TicketCardDto
         public readonly ?string $priorityTextColor,
         public readonly ?int $assignedId,
         public readonly ?string $assignedUserName,
+        public readonly ?int $priorityId,
+        public readonly ?int $userId,
+        public readonly ?string $observation,
         public readonly int $statusId
     ) {}
 

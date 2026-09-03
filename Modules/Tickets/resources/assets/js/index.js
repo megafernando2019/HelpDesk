@@ -1,11 +1,14 @@
 import axios from 'axios';
 import { ui } from '@/helpers/helper.js';
+import Swal from 'sweetalert2';
 
 'use strict';
 
 $(document).ready(function () {
 
     let dateRangePicker = null;
+    const modalObservation = $('#addObservationModal');
+    const observationDescription = $('#observationDescription');
 
     /**
      * data actions
@@ -24,6 +27,32 @@ $(document).ready(function () {
         getTicketsDataKanban(statusId, bgColor, priority);
     });
 
+    $(document).on('click', '.ticket-add-observation', function () {
+        const $this = $(this);
+        const ticketId = $this.data('id');
+        const priorityId = $this.data('priorityId');
+        const userId = $this.data('userId');
+        const statusId = $this.data('statusId');
+        const observation = $this.data('observation');
+
+        $('#modal_ticket_id').val(ticketId);
+        $('#modal_ob_priority_id').val(priorityId);
+        $('#modal_ob_status_id').val(statusId);
+        $('#modal_ob_user_id').val(userId);
+        observationDescription.val(observation);
+
+
+        if (!observation || observation === '' || observation === undefined) {
+            $('.save-modal-observation').prop('disabled', true);
+            
+        } else {
+            $('.save-modal-observation').prop('disabled', false);
+        }
+
+        modalObservation.modal('show');
+    });
+   
+
     $('body').on('change', '[data-action=filter-by-priority]', function (e) {
         const $item = $(e.currentTarget);
         const priority = $item.val();
@@ -32,8 +61,79 @@ $(document).ready(function () {
 
         getTicketsDataKanban(currentStatus, null, priority);
     });
+
+
+    $('#addObservationModal').on('hidden.bs.modal', function () {
+        $('#addObservationForm').trigger('reset');
+        $('#modal_ticket_id').val('');
+        observationDescription.text('');
+        $('#modal_ob_priority_id').val('');
+        $('#modal_ob_status_id').val('');
+        $('#modal_ob_user_id').val('');
+        observationDescription.removeClass('is-invalid');
+        $('.error-input-observation').text('');
+    });
+
+    $(document).on('input', '#observationDescription', function () {
+        const value = $(this).val();
+
+        if (!value || value === '' || value === undefined) {
+            $('.save-modal-observation').prop('disabled', true);
+            observationDescription.addClass('is-invalid');
+            $('.error-input-observation').text('Debes agregar una observación para continuar.');
+        } else {
+            $('.save-modal-observation').prop('disabled', false);
+            observationDescription.removeClass('is-invalid');
+            $('.error-input-observation').text('');
+        }
+
+    });
+
+    $('#addObservationForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const $btn = $('.save-modal-observation');
+        const ticketId = $('#modal_ticket_id').val();
+        const description = observationDescription.val();
+        const priorityId = $('#modal_ob_priority_id').val();
+        const statusId = $('#modal_ob_status_id').val();
+        const userId = $('#modal_ob_user_id').val();
+
+        $btn.prop('disabled', true);
+
+        axios.post('/save_observation', {
+            ticket_id: ticketId,
+            observation_d: description,
+            ticket_priority_id: priorityId,
+            status_id: statusId,
+            user_id: userId
+        })
+        .then(function (response) {
+            modalObservation.modal('hide');
+
+            setTimeout(() => {
+                Swal.fire({
+                    title: "Observación guardada correctamente",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500, 
+                    draggable: true
+                }).then(() => {
+                    
+                    getTicketsDataKanban(statusId);
+                });
+            }, 300);
+        })
+        .catch(function (error) {
+            ui.showToast('error', 'Error al guardar la observación');
+            console.log(error)
+        })
+        .finally(function() {
+            $btn.prop('disabled', false);
+        });
+    });
     
-    // Inicializar el filtro Kanban con Flatpickr en modo Rango
+
     if($('#flatpickr-range-tickets').length > 0 ){
         
         dateRangePicker = flatpickr("#flatpickr-range-tickets", {
@@ -77,9 +177,6 @@ $(document).ready(function () {
 
         axios.get(
             '/get_my_tickets?ticket_status='+status+'&priority='+priority+'&start_date='+startDate+'&end_date='+endDate, {
-            // params: {
-            //     start_date: fechaInicio,
-            // }
         })
         .then(function (response) {
     
@@ -139,7 +236,11 @@ $(document).ready(function () {
                     .replace(/{id}/g, ticket?.id || 0)
                     .replace(/{uid}/g, ticket?.uid || '')
                     .replace(/{title}/g, ticket?.title || 'Sin título')
+                    .replace(/{status_id}/g, ticket?.statusId || 0)
+                    .replace(/{priority_id}/g, ticket?.priorityId || 0)
+                    .replace(/{user_id}/g, ticket?.userId || 0)
                     .replace(/{description}/g, ticket?.description || 'Sin descripción')
+                    .replace(/{observation}/g, ticket?.observation || '')
                     .replace(/{priority_name}/g, ticket?.priorityName || 'N/A')
                     .replace(/{service_name}/g, ticket?.serviceName || 'General')
                     .replace(/{created_at}/g, ticket?.createdAt || '')

@@ -275,11 +275,12 @@ class TicketService {
     public function saveObservations($request)
     {
         $records = [
-            'ticket_id' => $request->ticket_id,
-            'status_id' => $request->status_id,
-            'user_id' => $request->user_id,
-            'ticket_priority_id' => $request->ticket_priority_id,
-            'description' => $request->observation_d
+            'ticket_id' => $request?->ticket_id,
+            'status_id' => $request?->status_id,
+            //Toma el id en sesión, ya que es la persona que realiza la observación
+            'user_id' => Auth::user()->id,
+            'ticket_priority_id' => $request?->ticket_priority_id,
+            'description' => $request?->observation_d
         ];
 
         return $this->repo->saveObservations($records);

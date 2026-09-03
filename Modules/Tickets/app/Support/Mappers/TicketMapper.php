@@ -28,7 +28,10 @@ final class TicketMapper {
             priorityTextColor: $ticket?->priority?->text_color ?? '#F1416C',
             assignedId: $ticket?->assigned_id ?? 0,
             assignedUserName: $assignedName,
-            statusId: (int) $ticket?->status_id
+            priorityId: $ticket?->ticket_priority_id ?? 0,
+            userId: $ticket?->user_id ?? 0,
+            observation: $ticket?->observation ?? '',
+            statusId: (int) $ticket?->status_id ?? 0
         );
     }
 
