@@ -31,6 +31,7 @@ final class TicketMapper {
             priorityId: $ticket?->ticket_priority_id ?? 0,
             userId: $ticket?->user_id ?? 0,
             observation: $ticket?->observation ?? '',
+            userAssingId: (int) $ticket?->user_assing_id ?? 0,
             statusId: (int) $ticket?->status_id ?? 0
         );
     }

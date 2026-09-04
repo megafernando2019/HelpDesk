@@ -19,6 +19,7 @@ class TicketCardDto
         public readonly ?int $priorityId,
         public readonly ?int $userId,
         public readonly ?string $observation,
+        public readonly ?int $userAssingId,
         public readonly int $statusId
     ) {}
 

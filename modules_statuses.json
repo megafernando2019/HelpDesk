@@ -3,5 +3,6 @@
     "Categories": true,
     "Departments": true,
     "Services": true,
-    "Tags": true
+    "Tags": true,
+    "User": true
 }

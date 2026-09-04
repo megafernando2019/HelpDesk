@@ -75,6 +75,7 @@
         <div id="tickets-container" data-current-status="1" style="background-color: rgb(250, 248, 255);border: 2px solid #e8e8e8;" class="current-rounded row mt-4 p-4 rounded"></div>
 
         @include('tickets::partials.kaban-index-template')
+        @include('tickets::partials.modal-assing-user-index')
         @include('tickets::partials.modal-add-observation')
 
     </div>

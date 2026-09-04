@@ -49,6 +49,14 @@
                                     title="Editar">
                                 <i class="ti ti-edit-circle fs-18"></i>
                             </a>
+                            <a 
+                                href="javascript:void(0);"
+                                data-id="{id}"
+                                data-user-assing-id="{userAssingId}"
+                                class="btn-assing-user"
+                                >
+                                <i class="ti ti-user-check fs-18"></i>
+                            </a>
                         </div>
                     </div>
 

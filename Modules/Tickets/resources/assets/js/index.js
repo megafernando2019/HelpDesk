@@ -8,7 +8,9 @@ $(document).ready(function () {
 
     let dateRangePicker = null;
     const modalObservation = $('#addObservationModal');
+    const modalAssingUser = $('#assingUserModal');
     const observationDescription = $('#observationDescription');
+    let supportUsersInMemory = [];
 
     /**
      * data actions
@@ -25,6 +27,16 @@ $(document).ready(function () {
         $card.addClass('shadow-lg');
 
         getTicketsDataKanban(statusId, bgColor, priority);
+    });
+
+    $(document).on('click', '.btn-assing-user', function () {
+        const userAssing = $(this).data('userAssingId');
+        console.log(userAssing)
+        $('.current-user-assing').val(userAssing);
+
+        fetchSupportUsers(parseInt(userAssing));
+
+        modalAssingUser.modal('show');
     });
 
     $(document).on('click', '.ticket-add-observation', function () {
@@ -72,6 +84,20 @@ $(document).ready(function () {
         $('#modal_ob_user_id').val('');
         observationDescription.removeClass('is-invalid');
         $('.error-input-observation').text('');
+    });
+
+    // Se ejecuta automáticamente cada vez que el modal se termina de cerrar
+    $('#assingUserModal').on('hidden.bs.modal', function () {
+        const $select = $('.select2-assignees');
+
+        // Destruir instancia de Select2 y vaciar opciones HTML
+        if ($select.data('select2')) {
+            $select.select2('destroy');
+        }
+        $select.empty();
+
+        // Limpiar campos de texto/inputs ocultos dentro del modal
+        $(this).find('input[type="text"], input[type="hidden"]').val('');
     });
 
     $(document).on('input', '#observationDescription', function () {
@@ -156,6 +182,141 @@ $(document).ready(function () {
         });
     }
 
+    async function fetchSupportUsers(assignedUserId = null) {
+        try {
+            const response = await axios.get('/users/get_by_department', {
+                params: {
+                    department_id: 2
+                }
+            });
+
+            supportUsersInMemory = response.data.data || [];
+            
+        
+            // Una vez recuperados los datos, poblamos e inicializamos Select2
+            initAssigneeSelect2(supportUsersInMemory, assignedUserId);
+
+        } catch (error) {
+            console.error('Error al cargar los usuarios de soporte:', error);
+            if (typeof ui !== 'undefined' && ui.showToast) {
+                ui.showToast('error', 'No se pudieron cargar los encargados de soporte');
+            }
+        }
+    }
+
+   
+    function initAssigneeSelect2(users = [], currentUserId = null) {
+        const $select = $('.select2-assignees');
+
+        if ($select.hasClass("select2-hidden-accessible")) {
+            $select.select2('destroy');
+        }
+
+        $select.empty();
+
+        // Convertir ID a String limpiando nulos para la comparación
+        const selectedId = currentUserId !== null && currentUserId !== undefined && currentUserId !== '' 
+            ? String(currentUserId) 
+            : null;
+
+        // 1. Opción por defecto ("Sin usuario asignado")
+        const isNoneSelected = !selectedId;
+        $select.append(new Option('Sin usuario asignado', '', isNoneSelected, isNoneSelected));
+
+        // 2. Insertar usuarios
+        users.forEach(user => {
+            const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+        
+            // Comparación estricta devolviendo BOOLEANO (true / false)
+            const isSelected = String(user.id) === selectedId;
+
+            // new Option(text, value, defaultSelected, selected)
+            const option = new Option(fullName, user.id, isSelected, isSelected);
+
+            $(option).attr('data-email', user.email || '');
+            $(option).attr('data-initials', user.initials || 'SU');
+            $(option).attr('data-name', fullName);
+
+            $select.append(option);
+        });
+
+        // 3. Plantillas de renderizado
+        function formatOption(state) {
+            if (!state.id) {
+                return $(`
+                    <div class="d-flex align-items-center gap-2 py-1">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px;">
+                            <i style="color: #6c757d !important;" class="ti ti-user text-muted fs-5"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark lh-1">Sin usuario asignado</div>
+                            <small class="text-muted" style="font-size: 11px;">Asignar</small>
+                        </div>
+                    </div>
+                `);
+            }
+
+            const $el = $(state.element);
+            const initials = $el.data('initials') || 'SU';
+            const name = $el.data('name') || state.text;
+            const email = $el.data('email') || '';
+
+            return $(`
+                <div class="d-flex align-items-center gap-2 py-1">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 32px; height: 32px; font-size: 12px; background-color: #ff9f43 !important;">
+                        ${initials}
+                    </div>
+                    <div class="overflow-hidden">
+                        <div class="fw-bold text-dark lh-1 text-truncate">${name}</div>
+                        <small class="text-muted text-truncate d-block" style="font-size: 11px;">${email}</small>
+                    </div>
+                </div>
+            `);
+        }
+
+        function formatSelection(state) {
+            if (!state.id) {
+                return $(`
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center flex-shrink-0" style="width: 26px; height: 26px;">
+                            <i style="color: #6c757d !important;" class="ti ti-user text-muted fs-6"></i>
+                        </div>
+                        <span class="fw-bold text-dark fs-14">Sin usuario asignado</span>
+                    </div>
+                `);
+            }
+
+            const $el = $(state.element);
+            const initials = $el.data('initials') || 'SU';
+            const name = $el.data('name') || state.text;
+
+            return $(`
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 28px; height: 28px; font-size: 11px; background-color: #ff9f43;">
+                        ${initials}
+                    </div>
+                    <span class="fw-bold text-dark fs-14">${name}</span>
+                </div>
+            `);
+        }
+
+        // 4. Inicializar Select2
+        $select.select2({
+            dropdownParent: $('#assingUserModal'),
+            width: '100%',
+            templateResult: formatOption,
+            templateSelection: formatSelection,
+            escapeMarkup: function(m) { return m; }
+        });
+
+        // 5. Asignar el valor explícitamente en el elemento HTML
+        if (selectedId) {
+            $select.val(selectedId).trigger('change.select2');
+        } else {
+            $select.val('').trigger('change.select2');
+        }
+    }
+
 
     function getTicketsDataKanban(
                                   status = null, 
@@ -217,7 +378,6 @@ $(document).ready(function () {
                 return;
             }
 
-            // Iterar y mapear los tickets a HTML
             tickets.forEach((ticket, index) => {
 
                 const currentColor = colorsDefault[index % colorsDefault.length];
@@ -247,6 +407,7 @@ $(document).ready(function () {
                     .replace(/{assigned_name}/g, assigned_name || 'Dato no disponible')
                     .replace(/{current_color}/g, currentColor || '#eee')
                     .replace(/{current_color_priority}/g, priorityStyles.bg || '#eee')
+                    .replace(/{userAssingId}/g, ticket?.userAssingId || '')
                     .replace(/{txt_current_color_priority}/g, priorityStyles.text || '#eee');
 
                 $container.append(card);

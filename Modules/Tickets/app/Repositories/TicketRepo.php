@@ -67,7 +67,8 @@ class TicketRepo implements ITicketRepo {
                 'u.id as assigned_id',
                 'u.first_name as assigned_first_name',
                 'u.last_name as assigned_last_name',
-                'tob.description as observation'
+                'tob.description as observation',
+                'tua.user_id as user_assing_id'
             ])
             ->where('t.user_id', $userId)
             ->where('t.status_id', $status)
