@@ -53,6 +53,7 @@
                                 href="javascript:void(0);"
                                 data-id="{id}"
                                 data-user-assing-id="{userAssingId}"
+                                data-status-id="{status_id}" 
                                 class="btn-assing-user"
                                 >
                                 <i class="ti ti-user-check fs-18"></i>

@@ -31,10 +31,23 @@ $(document).ready(function () {
 
     $(document).on('click', '.btn-assing-user', function () {
         const userAssing = $(this).data('userAssingId');
-        console.log(userAssing)
+        const ticketId = $(this).data('id');
+        const statusId = $(this).data('statusId');
+
         $('.current-user-assing').val(userAssing);
+        $('.ticket-id-modal-assign-user').val(ticketId);
+        $('.status-id-modal-assing-user').val(statusId);
 
         fetchSupportUsers(parseInt(userAssing));
+
+        if (userAssing === 0 || !userAssing || userAssing === undefined) {
+            $('.save-modal-user-assign').html(`<i class="ti ti-user-check fs-16"></i>
+            Asignar encargado`);
+        } else {
+            //Ya hay alguien asignado
+            $('.save-modal-user-assign').html(`<i class="ti ti-user-check fs-16"></i>
+            Reasignar encargado`);
+        }
 
         modalAssingUser.modal('show');
     });
@@ -86,19 +99,18 @@ $(document).ready(function () {
         $('.error-input-observation').text('');
     });
 
-    // Se ejecuta automáticamente cada vez que el modal se termina de cerrar
     $('#assingUserModal').on('hidden.bs.modal', function () {
         const $select = $('.select2-assignees');
 
-        // Destruir instancia de Select2 y vaciar opciones HTML
         if ($select.data('select2')) {
             $select.select2('destroy');
         }
+
         $select.empty();
 
-        // Limpiar campos de texto/inputs ocultos dentro del modal
         $(this).find('input[type="text"], input[type="hidden"]').val('');
     });
+
 
     $(document).on('input', '#observationDescription', function () {
         const value = $(this).val();
@@ -159,6 +171,51 @@ $(document).ready(function () {
         });
     });
     
+    $('#addAssignUserForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const $btn = $('.save-modal-user-assign');
+        const ticketId = $('.ticket-id-modal-assign-user').val();
+        const userId = $('.select2-assignees').val();
+        const statusId = $('.status-id-modal-assing-user').val();
+
+        if (!userId || userId === 'Cargando usuarios...') {
+            ui.showToast('error', 'Debes seleccionar un usuario almenos para continuar');
+            return;
+        }
+
+        $btn.prop('disabled', true);
+
+        axios.post('/assing_ticket_user', {
+            ticket_id: ticketId,
+            assignees: [userId]
+        })
+        .then(function (response) {
+            modalAssingUser.modal('hide');
+
+            setTimeout(() => {
+                Swal.fire({
+                    title: "Usuario asignado correctamente",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500, 
+                    draggable: true
+                }).then(() => {
+                    
+                    getTicketsDataKanban(statusId);
+                });
+            }, 300);
+        })
+        .catch(function (error) {
+            ui.showToast('error', 'Error al asignar al usuario');
+            console.log(error)
+        })
+        .finally(function() {
+            $btn.prop('disabled', false);
+        });
+    });
+
+
 
     if($('#flatpickr-range-tickets').length > 0 ){
         
@@ -183,6 +240,12 @@ $(document).ready(function () {
     }
 
     async function fetchSupportUsers(assignedUserId = null) {
+
+        const $select = $('.select2-assignees');
+        const optionDefault = '<option>Cargando usuarios...</option>';
+
+        $select.append(optionDefault);
+
         try {
             const response = await axios.get('/users/get_by_department', {
                 params: {
@@ -192,8 +255,6 @@ $(document).ready(function () {
 
             supportUsersInMemory = response.data.data || [];
             
-        
-            // Una vez recuperados los datos, poblamos e inicializamos Select2
             initAssigneeSelect2(supportUsersInMemory, assignedUserId);
 
         } catch (error) {
@@ -219,18 +280,13 @@ $(document).ready(function () {
             ? String(currentUserId) 
             : null;
 
-        // 1. Opción por defecto ("Sin usuario asignado")
         const isNoneSelected = !selectedId;
         $select.append(new Option('Sin usuario asignado', '', isNoneSelected, isNoneSelected));
 
-        // 2. Insertar usuarios
         users.forEach(user => {
             const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-        
-            // Comparación estricta devolviendo BOOLEANO (true / false)
             const isSelected = String(user.id) === selectedId;
 
-            // new Option(text, value, defaultSelected, selected)
             const option = new Option(fullName, user.id, isSelected, isSelected);
 
             $(option).attr('data-email', user.email || '');
@@ -240,13 +296,12 @@ $(document).ready(function () {
             $select.append(option);
         });
 
-        // 3. Plantillas de renderizado
         function formatOption(state) {
             if (!state.id) {
                 return $(`
                     <div class="d-flex align-items-center gap-2 py-1">
                         <div class="rounded-circle bg-light d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px;">
-                            <i style="color: #6c757d !important;" class="ti ti-user text-muted fs-5"></i>
+                            <i style="color: rgb(248, 249, 250) !important;" class="ti ti-user text-muted fs-5"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark lh-1">Sin usuario asignado</div>
@@ -279,7 +334,7 @@ $(document).ready(function () {
                 return $(`
                     <div class="d-flex align-items-center gap-2">
                         <div class="rounded-circle bg-light d-flex align-items-center justify-content-center flex-shrink-0" style="width: 26px; height: 26px;">
-                            <i style="color: #6c757d !important;" class="ti ti-user text-muted fs-6"></i>
+                            <i style="color: rgb(248, 249, 250) !important;" class="ti ti-user text-muted fs-6"></i>
                         </div>
                         <span class="fw-bold text-dark fs-14">Sin usuario asignado</span>
                     </div>
@@ -300,7 +355,6 @@ $(document).ready(function () {
             `);
         }
 
-        // 4. Inicializar Select2
         $select.select2({
             dropdownParent: $('#assingUserModal'),
             width: '100%',
@@ -309,7 +363,6 @@ $(document).ready(function () {
             escapeMarkup: function(m) { return m; }
         });
 
-        // 5. Asignar el valor explícitamente en el elemento HTML
         if (selectedId) {
             $select.val(selectedId).trigger('change.select2');
         } else {

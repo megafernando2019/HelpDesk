@@ -25,6 +25,8 @@
             <div class="modal-body py-3">
                 <form id="addAssignUserForm">
                     <input type="hidden" class="current-user-assing">
+                    <input type="hidden" class="status-id-modal-assing-user">
+                    <input type="hidden" class="ticket-id-modal-assign-user">
                     <div class="mb-3">
                         <select class="form-control select2-assignees"
                                 name="assign"
@@ -35,8 +37,6 @@
                     <!-- Footer -->
                     <div class="text-center mt-4 mb-2">
                         <button type="submit" class="btn btn-mega rounded-pill save-modal-user-assign">
-                            <i class="ti ti-user-check fs-16"></i>
-                            Asignar encargado
                         </button>
                     </div>
                 </form>
