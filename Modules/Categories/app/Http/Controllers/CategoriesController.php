@@ -15,11 +15,11 @@ class CategoriesController extends Controller
         
     }
 
-    public function getCategoriesByDepartment(Request $request)
+    public function getCategoriesByTeam(Request $request)
     {
         try {
 
-            $data = $this->service->getCategoriesByDepartment($request);
+            $data = $this->service->getCategoriesByTeam($request);
 
             return response()->json([
                'data' => $data

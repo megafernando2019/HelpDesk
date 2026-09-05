@@ -138,6 +138,7 @@ class TicketService {
     {
         return $this->repo->getTicketsTypes();
     }
+    
 
     public function getTicketPriorities()
     {

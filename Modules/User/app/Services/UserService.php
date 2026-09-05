@@ -37,4 +37,9 @@ class UserService
 
         return $users;
     }
+
+    public function getTeams()
+    {
+        return $this->repo->getTeams();
+    }
 }

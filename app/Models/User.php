@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Departments\Models\Department;
+use Modules\User\app\Models\Team;
 
 class User extends Authenticatable
 {
@@ -55,5 +56,11 @@ class User extends Authenticatable
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'team_user')
+                    ->withTimestamps();
     }
 }

@@ -11,6 +11,7 @@ use Modules\Tickets\Http\Requests\StoreTicketRequest;
 use Modules\Tickets\Services\TicketLogService;
 use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
+use Modules\User\app\Services\UserService;
 
 class TicketsController extends Controller
 {
@@ -20,7 +21,8 @@ class TicketsController extends Controller
 
     public function __construct(
         private readonly TicketService $service,
-        private readonly TicketLogService $ticketLogService
+        private readonly TicketLogService $ticketLogService,
+        private readonly UserService $userService
     )
     {
         
@@ -58,11 +60,11 @@ class TicketsController extends Controller
     {
         try {
 
-            $types = $this->service->getTicketsTypes();
             $priorities = $this->service->getAllPriorities();
+            $teams = $this->userService->getTeams();
 
             return response()->json([
-                'ticket_types' => $types,
+                'teams' => $teams,
                 'ticket_priorities' => $priorities
             ], 200);
 

@@ -6,9 +6,11 @@ import { ui } from '@/helpers/helper.js';
 $(document).ready(function () {
 
     let prioritiesData = [];
-    let typesData = [];
+    let teamsData = [];
+    const $prioritiesSelect = $('.ticket-priorities-s');
     const $categorySelect = $('.category-select');
     const $serviceSelect = $('.service-select');
+    const $typesSelect = $('.ticket-types-s');
     const $inputDrop = $('.drop-zone__input');
     const $dropZone = $('.drop-zone');
     const container = new DataTransfer();
@@ -22,22 +24,20 @@ $(document).ready(function () {
 
              prioritiesData = response?.data?.ticket_priorities;
 
-            typesData = response?.data?.ticket_types;
+             teamsData = response?.data?.teams;
 
-            initSelects(prioritiesData, typesData);
+            initSelects(prioritiesData, teamsData);
            
         } catch (error) {
             console.error('Error al obtener detalles:', error.response?.data || error.message);
         }
     }
 
-    async function getCategoriesByDepartment() {
+    async function getCategoriesByTeam(teamId) {
         
-        const departmentId = $('.current-info').data('departmentId');
-
         try {
             const response = await axios.get('/categories/by_department', {
-                params: { department_id: departmentId }
+                params: { team_id: teamId }
             });
 
             initCategoriesSelect(response?.data?.data ?? []);
@@ -63,10 +63,9 @@ $(document).ready(function () {
         }
     }
 
-    function initSelects(priorities, types)
+    function initSelects(priorities, teams)
     {
         if (priorities && priorities.length > 0) {
-            const $prioritiesSelect = $('.ticket-priorities-s');
         
             priorities.forEach(element => {
                 $prioritiesSelect.append(
@@ -75,14 +74,9 @@ $(document).ready(function () {
             });
         }
 
-        if (types && types.length > 0) {
-            const $typesSelect = $('.ticket-types-s');
-        
-            types.forEach(element => {
-                $typesSelect.append(
-                    `<option value="${element.id}">${element.name}</option>`
-                );
-            });
+        if (teams && teams.length > 0) {
+           
+            initTypeTeamSelect(teams);
         }
     }
 
@@ -96,6 +90,8 @@ $(document).ready(function () {
                     `<option value="${item.id}">${item.name}</option>`
                 );
             });
+        } else {
+            ui.showToast('info', 'No hay categorías disponibles para este equipo.')
         }
 
        
@@ -139,11 +135,38 @@ $(document).ready(function () {
 
     }
 
+
+     function initTypeTeamSelect(teams) {
+
+        if ($.fn.select2 && $typesSelect.hasClass('select2-hidden-accessible')) {
+            $typesSelect.select2('destroy');
+        }
+
+        $typesSelect.empty().append('<option value="">Selecciona una servicio</option>');
+
+        if (teams && teams.length > 0) {
+            teams.forEach(item => {
+               
+                $typesSelect.append(
+                    `<option value="${item?.id}">${item?.name}</option>`
+                );
+            });
+        }
+       
+        if ($.fn.select2) {
+
+            $typesSelect.select2({
+                placeholder: 'Selecciona un servicio',
+                width: '100%'
+            });
+        }
+
+    }
+
     //Mostrar alerta
     ui.showToast('info', 'Cargando información.');
 
     getCurrentDetails();
-    getCategoriesByDepartment();
 
 
     /**
@@ -167,6 +190,21 @@ $(document).ready(function () {
         }
     });
 
+    $typesSelect.on('change', async function () {
+        const teamId = $(this).val();
+
+        try {
+
+            const categories = await getCategoriesByTeam(teamId);
+
+        } catch (error) {
+            console.log('No se pudieron cargar las categorias', error);
+            ui.showToast('error','No se pudieron cargar las categorias');
+        }
+    });
+
+    $typesSelect
+
     $(document).on('submit', '.action-create', function (e) {
         e.preventDefault();
 
@@ -189,18 +227,32 @@ $(document).ready(function () {
             }
         })
         .then(response => {
-            ui.showToast('success', 'Ticket creado correctamente');
-        
+           
             form.reset();
             if (typeof container !== 'undefined') {
                 container.items.clear();
                 renderFileList();
             }
 
-            window.location.href = '/tickets';
+            getCurrentDetails();
+            $categorySelect.empty();
+            $serviceSelect.empty();
+
+            //Destruir instancias de select2
+            if ($categorySelect.hasClass('select2-hidden-accessible')) {
+                $categorySelect.select2('destroy');
+            }
+
+            if ($serviceSelect.hasClass('select2-hidden-accessible')) {
+                $serviceSelect.select2('destroy');
+            }
+
+            $prioritiesSelect.empty();
+
+            $('#modalSuccessCreate').modal('show');
+
         })
         .catch(error => {
-            $submitBtn.prop('disabled', false);
             $(`.message-feedback`).text('');
             $(`.error-attachments`).text('');
             $('.form-control').removeClass('is-invalid');
@@ -234,6 +286,8 @@ $(document).ready(function () {
             } else {
                 console.error('Error en el servidor:', error);
             }
+        }).finally(function() {
+             $submitBtn.prop('disabled', false);
         });
     });
 
@@ -269,7 +323,7 @@ $(document).ready(function () {
         }
     });
 
-    // 2. Disparar input al hacer clic (evitando el bucle infinito)
+    // Disparar input al hacer clic (evitando el bucle infinito)
     $dropZone.on('click', function (e) {
         if (!$(e.target).is($inputDrop)) {
             $inputDrop.trigger('click');
@@ -280,7 +334,7 @@ $(document).ready(function () {
         e.stopPropagation();
     });
 
-    // 3. Capturar archivos seleccionados via explorador
+    // Capturar archivos seleccionados via explorador
     $inputDrop.on('change', function () {
         if (this.files.length > 0) {
             addFiles(this.files);

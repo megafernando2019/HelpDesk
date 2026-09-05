@@ -10,9 +10,9 @@ class TicketCategoryService
         
     }
 
-    public function getCategoriesByDepartment($request)
+    public function getCategoriesByTeam($request)
     {
-        $department_id = (int) $request->department_id ?? 0;
-        return $this->repo->getCategoriesByDepartment($department_id);
+        $team_id = (int) $request->team_id ?? 0;
+        return $this->repo->getCategoriesByTeam($team_id);
     }
 }

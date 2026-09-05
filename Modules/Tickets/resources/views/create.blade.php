@@ -2,6 +2,9 @@
 
 @section('content')
         <div class="page-wrapper">
+
+            @include('tickets::partials.create.modal-confirm-create-ticket-success')
+
             <div class="content container-fluid">
             
                 <div class="page-header">
