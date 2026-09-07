@@ -162,6 +162,9 @@ $(document).ready(function () {
             ui.showToast('success','Observación y etiquetas guardadas correctamente');
 
             $('.observation_d').text(response?.data?.description_observation_record ?? '');
+            $('.message-obeservaton').text(response?.data?.description_observation_record ?? '');
+            $('.date-format-response').text(response?.data?.date ?? '');
+            $('.user-observation-response').text(response?.data?.user ?? '');
 
             //Actualizar logs
             getLogsByTicket();

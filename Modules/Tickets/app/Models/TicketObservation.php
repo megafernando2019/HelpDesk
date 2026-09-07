@@ -2,8 +2,11 @@
 
 namespace Modules\Tickets\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 // use Modules\Tickets\Database\Factories\TicketObservationFactory;
 
 class TicketObservation extends Model
@@ -21,4 +24,8 @@ class TicketObservation extends Model
         'ticket_priority_id',
         'description'
     ];
+
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

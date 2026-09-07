@@ -127,7 +127,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <p class="badge rounded float-left" style="background: #eee; color:#2b2b2b;">
-                                                    <i class="ti ti-loader"></i>
+                                                    <i class="ti ti-progress-check"></i>
                                                     {{$ticket?->status?->name}}
                                                 </p>
                                             </div>
@@ -241,6 +241,40 @@
                                                      id="" 
                                                      rows="3" 
                                                      placeholder="Agregar observación">{{$ticket?->observation?->description ?? ''}}</textarea>
+                                                </div>
+                                                <div class="col-md-12 mt-3">
+                                                      <div class="card">
+                                                        <div style="border: none;" class="card-header p-0">
+
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="d-flex gap-3 align-items-center">
+                                                                <button type="button" style="background: #0047fc2b;cursor-pointer:none;" class="btn">
+                                                                    <i class="ti ti-progress-check"></i>
+                                                                    {{$ticket?->status?->name ?? ''}}
+                                                                </button>
+                                                                <div class="card-text">
+                                                               
+                                                                    Oservación por:  
+                                                                    <b class="user-observation-response">
+                                                                        {{$ticket?->observation?->user?->first_name ?? ''}}   {{$ticket?->observation?->user?->last_name ?? ''}}
+                                                                    </b>
+                                                                    
+                                                                    <span class="date-format-response">
+                                                                        {{$fechaFormateada}}
+                                                                    </span>
+                                                            
+                                                                </div>
+                                                            </div>
+                                                            <div class="message-obeservaton mt-2">
+                                                                <p>
+                                                                    "{{$ticket?->observation?->description ?? ''}}"
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div style="border: none;" class="card-footer text-body-secondary p-0"></div>
+                                                      </div>
+                                                      
                                                 </div>
                                             </div>
                                             <input type="hidden" class="record-status_id" 

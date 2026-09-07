@@ -152,8 +152,10 @@ class TicketsController extends Controller
                       'url', 
                       'attachments',
                       'assignees',
-                      'logs'
+                      'logs',
+                      'observation.user'
                       ];
+
         $full_name =  sprintf(
              '%s %s',
               $user?->first_name,
@@ -190,6 +192,8 @@ class TicketsController extends Controller
             return $u;
         });
 
+         $fechaFormateada = 'el ' . $ticket?->observation?->updated_at->locale('es')->isoFormat('dddd DD [de] MMMM, YYYY [a las] hh:mm a');
+
         return view('tickets::show', compact(
         'user', 
         'initials', 
@@ -198,7 +202,8 @@ class TicketsController extends Controller
         'attachments',
         'supportUsers',
         'currentUserAssing',
-        'UserAssignEntity'
+        'UserAssignEntity',
+        'fechaFormateada'
         ));
     }
 
@@ -248,7 +253,12 @@ class TicketsController extends Controller
             $entity = $this->service->saveObservations($request);
             $enum_action = TicketAction::OBSERVE_TICKET;
 
-            $ticket = $this->service->getTicket($entity->ticket_id);
+             $relations = [
+              'observation.user'
+              ];
+
+
+            $ticket = $this->service->getTicket($entity->ticket_id, $relations);
 
             //guardar logs
             $this->ticketLogService->logAction(
@@ -259,7 +269,13 @@ class TicketsController extends Controller
             );
 
             return response()->json([
+                'date' =>  'el ' .$ticket?->observation?->updated_at->locale('es')->isoFormat('dddd DD [de] MMMM, YYYY [a las] hh:mm a'),
                 'description_observation_record' => $entity?->description ?? '',
+                'user' => sprintf(
+                    '%s %s',
+                $ticket?->observation?->user?->first_name ?? '',
+                $ticket?->observation?->user?->last_name ?? ''
+                )
             ], 200);
 
        } catch (\Throwable $th) {
