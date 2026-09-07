@@ -137,7 +137,12 @@ $(document).ready(function () {
            return;
         }
 
-        $btn.prop('disabled', true);
+        const originalBtnText = $btn.html();
+
+        $btn.prop('disabled', true).html(`
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            Guardando observación...
+        `);
 
         axios.post('/save_observation', {
             ticket_id: ticketId,
@@ -171,7 +176,7 @@ $(document).ready(function () {
             console.log(error)
         })
         .finally(function() {
-            $btn.prop('disabled', false);
+            $btn.prop('disabled', false).html(originalBtnText);
         });
     });
     
