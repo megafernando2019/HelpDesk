@@ -64,16 +64,7 @@ $(document).ready(function () {
         $('#modal_ob_priority_id').val(priorityId);
         $('#modal_ob_status_id').val(statusId);
         $('#modal_ob_user_id').val(userId);
-        observationDescription.val(observation);
-
-
-        if (!observation || observation === '' || observation === undefined) {
-            $('.save-modal-observation').prop('disabled', true);
-            
-        } else {
-            $('.save-modal-observation').prop('disabled', false);
-        }
-
+     
         modalObservation.modal('show');
     });
    
@@ -89,9 +80,8 @@ $(document).ready(function () {
 
 
     $('#addObservationModal').on('hidden.bs.modal', function () {
-        $('#addObservationForm').trigger('reset');
         $('#modal_ticket_id').val('');
-        observationDescription.text('');
+        // observationDescription.text('');
         $('#modal_ob_priority_id').val('');
         $('#modal_ob_status_id').val('');
         $('#modal_ob_user_id').val('');
@@ -116,11 +106,11 @@ $(document).ready(function () {
         const value = $(this).val();
 
         if (!value || value === '' || value === undefined) {
-            $('.save-modal-observation').prop('disabled', true);
+            
             observationDescription.addClass('is-invalid');
             $('.error-input-observation').text('Debes agregar una observación para continuar.');
         } else {
-            $('.save-modal-observation').prop('disabled', false);
+            
             observationDescription.removeClass('is-invalid');
             $('.error-input-observation').text('');
         }
@@ -137,6 +127,16 @@ $(document).ready(function () {
         const statusId = $('#modal_ob_status_id').val();
         const userId = $('#modal_ob_user_id').val();
 
+         observationDescription.removeClass('is-invalid');
+         $('.error-input-observation').text('');
+
+        if (!description || description === '') {
+
+           observationDescription.addClass('is-invalid');
+           $('.error-input-observation').text('Debes agregar una observación para continuar');
+           return;
+        }
+
         $btn.prop('disabled', true);
 
         axios.post('/save_observation', {
@@ -147,7 +147,11 @@ $(document).ready(function () {
             user_id: userId
         })
         .then(function (response) {
+            observationDescription.text('');
+            observationDescription.val('');
             modalObservation.modal('hide');
+            observationDescription.removeClass('is-invalid');
+            $('.error-input-observation').text('');
 
             setTimeout(() => {
                 Swal.fire({

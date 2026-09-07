@@ -63,7 +63,6 @@
                                                 <i class="ti ti-writing"></i> Título
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <strong class="text-mega float-left">{{$ticket?->uid ?? 'Dato no disponible'}}</strong>
                                                 <span class="text-mega">{{$ticket?->title ?? 'Dato no disponible'}}</span>
                                             </div>
                                             <div class="col-md-2 mb-2">
@@ -127,8 +126,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <p class="badge rounded float-left" style="background: #eee; color:#2b2b2b;">
-                                                    <i class="ti ti-progress-check"></i>
-                                                    {{$ticket?->status?->name}}
+                                                    <i class="{{$icon}}"></i>
+                                                    {{$status}}
                                                 </p>
                                             </div>
                                             <div class="col-md-12">
@@ -243,40 +242,45 @@
                                                      placeholder="Agregar observación"></textarea>
                                                     <div class="mb-3 text-danger error-invalid-observation"></div>
                                                 </div>
-                                                <div class="col-md-12 mt-3">
-                                                      <div class="card">
-                                                        <div style="border: none;" class="card-header p-0">
 
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <div class="d-flex gap-3 align-items-center">
-                                                                <button type="button" style="background: #0047fc2b;cursor-pointer:none;" class="btn">
-                                                                    <i class="ti ti-progress-check"></i>
-                                                                    {{$ticket?->status?->name ?? ''}}
-                                                                </button>
-                                                                <div class="card-text">
-                                                               
-                                                                    Oservación por:  
-                                                                    <b class="user-observation-response">
-                                                                        {{$ticket?->observation?->user?->first_name ?? ''}}   {{$ticket?->observation?->user?->last_name ?? ''}}
-                                                                    </b>
-                                                                    
-                                                                    <span class="date-format-response">
-                                                                        {{$fechaFormateada}}
-                                                                    </span>
-                                                            
+                                                <!-- ultima observacion registro -->
+                                                
+                                                <div class="col-md-12 mt-3 container-current-observation">
+                                                    @if ($observation)
+                                                        <div class="card">
+                                                            <div style="border: none;" class="card-header p-0">
+
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="d-flex gap-3 align-items-center">
+                                                                    <button type="button" style="background: #0047fc2b;cursor-pointer:none;" class="btn">
+                                                                        <i class="{{$icon}}"></i>
+                                                                        {{$status}}
+                                                                    </button>
+                                                                    <div class="card-text">
+                                                                
+                                                                        Oservación por:  
+                                                                        <b class="user-observation-response">
+                                                                            {{$ticket?->observation?->user?->first_name ?? ''}}   {{$ticket?->observation?->user?->last_name ?? ''}}
+                                                                        </b>
+                                                                        
+                                                                        <span class="date-format-response">
+                                                                            {{$fechaFormateada}}
+                                                                        </span>
+                                                                
+                                                                    </div>
+                                                                </div>
+                                                                <div class="message-obeservaton mt-2">
+                                                                    <p>
+                                                                        "{{$ticket?->observation?->description ?? ''}}"
+                                                                    </p>
                                                                 </div>
                                                             </div>
-                                                            <div class="message-obeservaton mt-2">
-                                                                <p>
-                                                                    "{{$ticket?->observation?->description ?? ''}}"
-                                                                </p>
-                                                            </div>
+                                                            <div style="border: none;" class="card-footer text-body-secondary p-0"></div>
                                                         </div>
-                                                        <div style="border: none;" class="card-footer text-body-secondary p-0"></div>
-                                                      </div>
-                                                      
+                                                    @endif
                                                 </div>
+                                                
                                             </div>
                                             <input type="hidden" class="record-status_id" 
                                                    name="status_id" value="{{$ticket?->status_id ?? 0}}">
@@ -348,23 +352,123 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex gap-2 icons-group-actions">
-                                    <button type="button" 
-                                            class="btn btn-status-action"
-                                            data-status="2"
-                                            data-name="En proceso">
-                                        <i class="ti ti-progress-check"></i>
-                                    </button>
-                                    <button type="button" 
-                                            class="btn btn-status-action"
-                                            data-status="6"
-                                            data-name="Cancelado">
-                                        <i class="ti ti-cancel"></i>
-                                    </button>
-                                    <button type="button" 
-                                            class="btn btn-status-observation"
-                                            >
-                                        <i class="ti ti-edit-circle"></i>
-                                    </button>
+                                    @switch($ticket?->status_id ?? 0)
+                                        @case(1)
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="2"
+                                                    data-name="En proceso">
+                                                <i class="ti ti-progress-check"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="6"
+                                                    data-name="Cancelado">
+                                                <i class="ti ti-cancel"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-observation"
+                                                    >
+                                                <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            @break
+                                        @case(2)
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="4"
+                                                    data-name="Solucionado">
+                                                <i class="ti ti-circle-check"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="6"
+                                                    data-name="Cancelado">
+                                                <i class="ti ti-cancel"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-observation"
+                                                    >
+                                                <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            @break
+                                        @case(3)
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="4"
+                                                    data-name="Solucionado">
+                                                <i class="ti ti-circle-check"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="6"
+                                                    data-name="Cancelado">
+                                                <i class="ti ti-cancel"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-observation"
+                                                    >
+                                                <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            @break
+                                        @case(4)
+                                             <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="5"
+                                                    data-name="Cerrado">
+                                                <i class="ti ti-lock-check"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="4"
+                                                    data-name="Solucionado">
+                                                <i class="ti ti-circle-check"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-observation"
+                                                    >
+                                                <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            @break
+                                        @case(5)
+                                            @break
+                                        @case(6)
+                                            <button type="button" 
+                                                    class="btn btn-status-observation"
+                                                    >
+                                                <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            @break
+                                        @default
+                                            
+                                    @endswitch
+                                   
+                                    {{-- @switch($ticket?->status_id ?? 0)
+                                        @case(1)
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="2"
+                                                    data-name="En proceso">
+                                                <i class="ti ti-progress-check"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="6"
+                                                    data-name="Cancelado">
+                                                <i class="ti ti-cancel"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-observation"
+                                                    >
+                                                <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            @break
+                                        @case(2)
+                                            
+                                            @break
+                                        @default
+                                            
+                                    @endswitch --}}
+                                    
                                 </div>
                             </div>
                             <div style="border: none;" 

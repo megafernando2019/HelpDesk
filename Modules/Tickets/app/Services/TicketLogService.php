@@ -29,7 +29,8 @@ class TicketLogService
                 Auth::user()->last_name
             ),
             'assigned_to' => $selectedName,
-            'ticket' => $ticket?->uid ?? ''
+            'ticket' => $ticket?->uid ?? '',
+            'observation' => $ticket?->observation?->description ?? ''
         ];
 
         $record = [

@@ -17,6 +17,11 @@ class TicketRepo implements ITicketRepo {
        return Ticket::with($relations)->find($id);
     }
 
+    public function getTicketByUid($uid, $relations = [])
+    {
+       return Ticket::with($relations)->where('uid',$uid)->first();
+    }
+
     public function getStatus()
     {
        return DB::table('status')->select('id', 'name')->get();

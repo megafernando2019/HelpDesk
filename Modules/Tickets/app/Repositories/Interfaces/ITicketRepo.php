@@ -16,6 +16,14 @@ interface ITicketRepo {
 
     /**
      *
+     * @param string $uid
+     * @param array $relations
+     * @return void
+     */
+    public function getTicketByUid($uid, $relations = []);
+
+    /**
+     *
      * @return void
      */
     public function getStatus();

@@ -6,6 +6,14 @@ $(document).ready(function () {
     let tagsInMemory = [];
     const bgColors = ['#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
     const inputObservation = $('.observation_d');
+    const currentTicketId =  $('.content-show').data('ticket-id');
+    const storageKey = 'draft_observation_ticket_' + currentTicketId; //se concatena para recuperar el de solo esa vista
+
+    // Cargar el borrador guardado al recargar o entrar a la página
+    const savedDraft = localStorage.getItem(storageKey);
+    if (savedDraft) {
+        inputObservation.val(savedDraft);
+    }
     
     function initTagsSelect2(dataArray) {
         const $select = $('#tags-select');
@@ -115,7 +123,7 @@ $(document).ready(function () {
     });
 
 
-     $('.observation_d').on('input', function () {
+    $('.observation_d').on('input', function () {
 
         const value = $(this).val();
 
@@ -123,10 +131,13 @@ $(document).ready(function () {
         $('.error-invalid-observation').text('');
         inputObservation.removeClass('is-invalid');
 
+        localStorage.setItem(storageKey, value);
+
         if(!value)
         {
             inputObservation.addClass('is-invalid');
             $('.error-invalid-observation').text('Debes agregar una observación');
+            localStorage.removeItem(storageKey);
         }
         
     });
@@ -165,16 +176,14 @@ $(document).ready(function () {
     $('.action-save-observation').on('submit', function (e) {
         e.preventDefault(); 
 
-        
-
         const formData = new FormData(this);
 
         const $btn = $('.action-save-observation button[type="submit"]').prop('disabled', true);
 
-       const value =inputObservation.val();
+        const value =inputObservation.val();
 
-       inputObservation.removeClass('is-invalid');
-       $('.error-invalid-observation').text('');
+        inputObservation.removeClass('is-invalid');
+        $('.error-invalid-observation').text('');
 
         if (!value || value === '') {
 
@@ -191,9 +200,47 @@ $(document).ready(function () {
         })
         .then(response => {
             ui.showToast('success','Observación guardada correctamente');
+            $('.container-current-observation').empty();
 
-           inputObservation.val('');
-            $('.message-obeservaton').text(response?.data?.description_observation_record ?? '');
+            inputObservation.val('');
+
+            // LIMPIAR EL BORRADOR DE ALMACENAMIENTO
+            localStorage.removeItem(storageKey);
+
+            $('.container-current-observation').html(
+                `<div class="card">
+                    <div style="border: none;" class="card-header p-0">
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex gap-3 align-items-center">
+                            <button type="button" style="background: #0047fc2b;cursor-pointer:none;" class="btn">
+                                <i class="${response?.data?.icon_status ?? ''}"></i>
+                                ${response?.data?.ticket_status ?? ''}
+                            </button>
+                            <div class="card-text">
+                                                                    
+                                Oservación por:  
+                                <b class="user-observation-response">
+                                    
+                                </b>
+                                                                            
+                                <span class="date-format-response">
+                                
+                                </span>
+                                                                    
+                            </div>
+                        </div>
+                        <div class="message-obeservaton mt-2">
+                            <p>
+                                
+                            </p>
+                        </div>
+                    </div>
+                    <div style="border: none;" class="card-footer text-body-secondary p-0"></div>
+            </div>`
+            );
+
+            $('.message-obeservaton').text('"' +(response?.data?.description_observation_record ?? '') + '"');
             $('.date-format-response').text(response?.data?.date ?? '');
             $('.user-observation-response').text(response?.data?.user ?? '');
 

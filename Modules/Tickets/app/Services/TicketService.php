@@ -61,9 +61,14 @@ class TicketService {
 
     }
 
-    public function getTicket($id, $relations = [])
+    public function getTicket($id, $uid, $relations = [])
     {
-       return $this->repo->getTicket($id, $relations);
+       if ($id) {
+         return $this->repo->getTicket($id, $relations);
+       }
+       
+       
+        return $this->repo->getTicketByUid($uid, $relations);
     }
 
     public function getAllStatus() 

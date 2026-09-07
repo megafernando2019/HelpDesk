@@ -26,6 +26,7 @@ enum TicketAction: string
     {
         $user = $data['user_name'] ?? 'Un usuario';
         $ticket = $data['ticket_code'] ?? '';
+        $observation = $data['observation'] ?? '';
 
         return match($this) {
             self::CREATE_TICKET     => "El usuario {$user} creó el ticket {$ticket}",
@@ -37,7 +38,7 @@ enum TicketAction: string
             self::STATUS_CLOSED     => "El ticket {$ticket} fue cerrado",
             self::STATUS_CANCELLED  => "El ticket {$ticket} fue cancelado",
             self::ADD_COMMENT       => "{$user} realizó una observación en el ticket {$ticket}",
-            self::OBSERVE_TICKET    => "{$user} observó el ticket {$ticket}",
+            self::OBSERVE_TICKET    => "El usuario {$user} ha agregado la siguiente observación: {$observation}",
             self::REMOVE_TICKET     => "{$user} retiró el ticket {$ticket}",
         };
     }
@@ -77,7 +78,7 @@ enum TicketAction: string
             self::STATUS_CLOSED     => 'ti ti-lock-check',
             self::STATUS_CANCELLED  => 'ti ti-circle-x',
             self::ADD_COMMENT       => 'ti ti-message-dots',
-            self::OBSERVE_TICKET    => 'ti ti-eye',
+            self::OBSERVE_TICKET    => 'ti ti-edit-circle',
             self::REMOVE_TICKET     => 'ti ti-user-minus',
         };
     }

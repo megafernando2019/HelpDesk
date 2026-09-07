@@ -11,6 +11,7 @@ use Modules\Tickets\Http\Requests\StoreTicketRequest;
 use Modules\Tickets\Services\TicketLogService;
 use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
+use Modules\Tickets\Support\Enums\TicketStatus;
 use Modules\User\app\Services\UserService;
 
 class TicketsController extends Controller
@@ -138,7 +139,7 @@ class TicketsController extends Controller
     /**
      * Show the specified resource.
      */
-    public function show($id)
+    public function show($uid)
     {
         if (!view()->exists('tickets::show')) {
             abort(404, 'La vista de este ticket aún no está disponible.');
@@ -162,7 +163,7 @@ class TicketsController extends Controller
               $user?->last_name
         );
 
-        $ticket = $this->service->getTicket($id, $relations);
+        $ticket = $this->service->getTicket(null, $uid, $relations);
 
         $initials = $this->getInitials($full_name);
         $attachments = $ticket?->attachments ?? collect();
@@ -194,6 +195,14 @@ class TicketsController extends Controller
 
          $fechaFormateada = 'el ' . $ticket?->observation?->updated_at->locale('es')->isoFormat('dddd DD [de] MMMM, YYYY [a las] hh:mm a');
 
+         $observation = $ticket?->observation ?? null;
+
+         $status = $ticket?->status?->name ?? '';
+
+         $icon = TicketStatus::getIcon($status);
+
+
+
         return view('tickets::show', compact(
         'user', 
         'initials', 
@@ -203,7 +212,10 @@ class TicketsController extends Controller
         'supportUsers',
         'currentUserAssing',
         'UserAssignEntity',
-        'fechaFormateada'
+        'fechaFormateada',
+        'observation',
+        'icon',
+        'status'
         ));
     }
 
@@ -271,6 +283,8 @@ class TicketsController extends Controller
             return response()->json([
                 'date' =>  'el ' .$ticket?->observation?->updated_at->locale('es')->isoFormat('dddd DD [de] MMMM, YYYY [a las] hh:mm a'),
                 'description_observation_record' => $entity?->description ?? '',
+                'ticket_status' => $ticket?->status?->name ?? '',
+                'icon_status' => TicketStatus::getIcon($ticket?->status?->name ?? ''),
                 'user' => sprintf(
                     '%s %s',
                 $ticket?->observation?->user?->first_name ?? '',
