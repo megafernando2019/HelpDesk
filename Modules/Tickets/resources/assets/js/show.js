@@ -5,6 +5,7 @@ $(document).ready(function () {
 
     let tagsInMemory = [];
     const bgColors = ['#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
+    const inputObservation = $('.observation_d');
     
     function initTagsSelect2(dataArray) {
         const $select = $('#tags-select');
@@ -102,6 +103,10 @@ $(document).ready(function () {
      * Events
      */
     $('.btn-status-observation').on('click', function () {
+        
+        $('.error-invalid-observation').text('');
+        inputObservation.removeClass('is-invalid');
+
         $('.observation_d').addClass('focus-input');
 
         $('html, body').animate({
@@ -111,7 +116,19 @@ $(document).ready(function () {
 
 
      $('.observation_d').on('input', function () {
+
+        const value = $(this).val();
+
         $(this).removeClass('focus-input');
+        $('.error-invalid-observation').text('');
+        inputObservation.removeClass('is-invalid');
+
+        if(!value)
+        {
+            inputObservation.addClass('is-invalid');
+            $('.error-invalid-observation').text('Debes agregar una observación');
+        }
+        
     });
 
 
@@ -148,9 +165,23 @@ $(document).ready(function () {
     $('.action-save-observation').on('submit', function (e) {
         e.preventDefault(); 
 
+        
+
         const formData = new FormData(this);
 
         const $btn = $('.action-save-observation button[type="submit"]').prop('disabled', true);
+
+       const value =inputObservation.val();
+
+       inputObservation.removeClass('is-invalid');
+       $('.error-invalid-observation').text('');
+
+        if (!value || value === '') {
+
+           inputObservation.addClass('is-invalid');
+           $('.error-invalid-observation').text('Debes agregar una observación para continuar');
+           return;
+        }
 
         axios.post('/save_observation', formData, {
             headers: {
@@ -159,9 +190,9 @@ $(document).ready(function () {
             }
         })
         .then(response => {
-            ui.showToast('success','Observación y etiquetas guardadas correctamente');
+            ui.showToast('success','Observación guardada correctamente');
 
-            $('.observation_d').text(response?.data?.description_observation_record ?? '');
+           inputObservation.val('');
             $('.message-obeservaton').text(response?.data?.description_observation_record ?? '');
             $('.date-format-response').text(response?.data?.date ?? '');
             $('.user-observation-response').text(response?.data?.user ?? '');

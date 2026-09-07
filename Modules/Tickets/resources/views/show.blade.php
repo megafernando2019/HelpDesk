@@ -229,7 +229,7 @@
                                                     Observaciones
                                                 </div>
                                                 <div class="col-md-9">
-                                                    <button class="action-save-observation btn btn-grey btn-sm float-right">
+                                                    <button class="action-save-observation btn btn-mega btn-sm float-right">
                                                          <i class="ti ti-edit"></i>
                                                         Guardar observación
                                                     </button>
@@ -240,7 +240,8 @@
                                                      name="observation_d" 
                                                      id="" 
                                                      rows="3" 
-                                                     placeholder="Agregar observación">{{$ticket?->observation?->description ?? ''}}</textarea>
+                                                     placeholder="Agregar observación"></textarea>
+                                                    <div class="mb-3 text-danger error-invalid-observation"></div>
                                                 </div>
                                                 <div class="col-md-12 mt-3">
                                                       <div class="card">
