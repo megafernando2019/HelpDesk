@@ -4,7 +4,7 @@ namespace Modules\Tickets\Support\Enums;
 
 enum TicketStatus : string
 {
-    case PENDIENTE    = 'Pendiente';
+    case EN_PROCESO    = 'En proceso';
     case POR_ASIGNAR = 'Por asignar';
     case EN_ESPERA   = 'En espera';
     case SOLUCIONADO = 'Solucionado';
@@ -17,13 +17,60 @@ enum TicketStatus : string
     public function icon(): string
     {
         return match($this) {
-            self::PENDIENTE     => 'ti ti-writing',
+            self::EN_PROCESO     => 'ti ti-writing',
             self::POR_ASIGNAR     => 'ti ti-progress-check',
             self::EN_ESPERA   => 'ti ti-clock',
             self::CANCELADO => 'ti ti-cancel',
             self::CERRADO => 'ti ti-lock-check',
             self::SOLUCIONADO => 'ti ti-circle-check',
         };
+    }
+
+
+    /**
+     * Retorna el color Hexadecimal de fondo según el estatus
+     */
+    public function bgColor(): string
+    {
+        return match($this) {
+            self::EN_PROCESO   => '#f3f6ff', // Corresponde a "En proceso"
+            self::POR_ASIGNAR => '#faf8ff',
+            self::EN_ESPERA   => '#fafbfb',
+            self::SOLUCIONADO => '#f2fdf5',
+            self::CERRADO     => '#fff9f1',
+            self::CANCELADO   => '#fffafa',
+        };
+    }
+
+    /**
+     * Retorna la clase badge de Bootstrap / Tabler para estilos
+     */
+    public function badgeClass(): string
+    {
+        return match($this) {
+            self::EN_PROCESO   => 'bg-primary-subtle text-primary',
+            self::POR_ASIGNAR => 'bg-purple-subtle text-purple',
+            self::EN_ESPERA   => 'bg-secondary-subtle text-secondary',
+            self::SOLUCIONADO => 'bg-success-subtle text-success',
+            self::CERRADO     => 'bg-warning-subtle text-warning',
+            self::CANCELADO   => 'bg-danger-subtle text-danger',
+        };
+    }
+
+    /**
+     * Obtiene el color Hexadecimal pasando una cadena o null
+     */
+    public static function getBgColor(?string $status): string
+    {
+        return self::tryFrom($status ?? '')?->bgColor() ?? '#ffffff';
+    }
+
+    /**
+     * Obtiene la clase de badge pasando una cadena o null
+     */
+    public static function getBadgeClass(?string $status): string
+    {
+        return self::tryFrom($status ?? '')?->badgeClass() ?? 'bg-light text-dark';
     }
 
     /**

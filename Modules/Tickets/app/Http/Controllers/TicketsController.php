@@ -201,6 +201,7 @@ class TicketsController extends Controller
 
          $icon = TicketStatus::getIcon($status);
 
+        $bgColor = TicketStatus::getBgColor($ticket?->status?->name);
 
 
         return view('tickets::show', compact(
@@ -215,7 +216,8 @@ class TicketsController extends Controller
         'fechaFormateada',
         'observation',
         'icon',
-        'status'
+        'status',
+        'bgColor'
         ));
     }
 

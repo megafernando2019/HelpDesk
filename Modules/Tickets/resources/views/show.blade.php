@@ -125,7 +125,7 @@
                                                 <i class="ti ti-calendar-plus"></i> Estatus
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <p class="badge rounded float-left" style="background: #eee; color:#2b2b2b;">
+                                                <p class="badge rounded float-left" style="background: {{$bgColor}}; color:#2b2b2b;">
                                                     <i class="{{$icon}}"></i>
                                                     {{$status}}
                                                 </p>
