@@ -23,8 +23,8 @@ class TicketService {
     public function updateStatus($request)
     {
        $status = (int) $request?->ticket_status ?? 0;
-       $ticket_id = (int) $request?->ticket_id ?? 0;
-
+       $ticket_id = $request?->ticket_id ?? null;
+       $ticket_uid = $request?->current_uid ?? null;
        $result = $this->repo->updateStatus($status, $ticket_id);
 
        //Si se actualizo el estatus con éxito
@@ -47,7 +47,10 @@ class TicketService {
 
             if ($enum_action !== null) {
 
-                $ticket = $this->getTicket($ticket_id);
+                $ticket = $this->getTicket(
+                    $ticket_id,
+                    $ticket_uid
+                    );
 
                 //guardar logs
                 $this->log_ticket_service->logAction(
@@ -298,8 +301,9 @@ class TicketService {
         $selectedName = $request?->selectedName ?? '';
         //Cortar parentesis y email del string
         $selectedName = strstr($selectedName, '(', true); 
-        $ticket_id = $request?->ticket_id;
-        $ticket =  $this->getTicket($ticket_id);
+        $ticket_id = $request?->ticket_id ?? null;
+        $ticket_uid = $request?->uid ?? null;
+        $ticket =  $this->getTicket($ticket_id, $ticket_uid);
         $users_ids = $request?->assignees ?? [];
         $flag_exist_assigned = $request?->flag_exist_assigned ?? [];
         $enum_action = TicketAction::ASSIGN_TICKET;

@@ -6,8 +6,9 @@ $(document).ready(function () {
     let tagsInMemory = [];
     const bgColors = ['#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
     const inputObservation = $('.observation_d');
-    const currentTicketId =  $('.content-show').data('ticket-id');
+    const currentTicketId =  $('.content-show').data('ticketId');
     const storageKey = 'draft_observation_ticket_' + currentTicketId; //se concatena para recuperar el de solo esa vista
+    const currentUid = $('.content-show').data('ticketUid');
 
     // Cargar el borrador guardado al recargar o entrar a la página
     const savedDraft = localStorage.getItem(storageKey);
@@ -147,13 +148,16 @@ $(document).ready(function () {
         const $btn = $(this);
         const ticketId = $('.content-show').data('ticket-id');
         const nameStatus = $btn.data('name');
+        
         const value = $btn.data('status');
        
         $btn.prop('disabled', true);
 
+        console.log(currentUid)
         axios.post('/updated_status', {
             ticket_id: ticketId,
-            ticket_status: value
+            ticket_status: value,
+            current_uid: currentUid
         }, {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -161,7 +165,7 @@ $(document).ready(function () {
         })
         .then(response => {
             ui.showToast('success', `Se ha actualizado a estatus (${nameStatus}).`);
-            window.location.href = '/tickets/'+ticketId
+            window.location.href = '/tickets/'+currentUid
         })
         .catch(error => {
             console.error(error);
@@ -262,7 +266,6 @@ $(document).ready(function () {
         e.preventDefault();
 
         const $btn = $(this);
-        const ticketId = $('.content-show').data('ticket-id');
         const selected = $('.select2-assignees').val() || 0;
         const selectedData = $('.select2-assignees').select2('data');
         const selectedName = selectedData.length ? selectedData[0].text : '';
@@ -272,7 +275,7 @@ $(document).ready(function () {
         $btn.prop('disabled', true);
 
         axios.post('/assing_ticket_user', {
-            ticket_id: ticketId,
+            ticket_id: currentTicketId,
             assignees: [selected],
             selectedName: selectedName,
             flag_exist_assigned: flagExistAssigned
@@ -283,7 +286,7 @@ $(document).ready(function () {
         })
         .then(response => {
             ui.showToast('success', response?.data?.message || 'Asignación actualizada correctamente');
-            window.location.href = '/tickets/'+ticketId
+            window.location.href = '/tickets/'+currentUid
         })
         .catch(error => {
             console.error('Error al asignar usuarios:', error);
