@@ -80,3 +80,12 @@
 .sidebar .sidebar-menu > ul > li > ul > li.submenu > a.subdrop .menu-arrow::before {
     border-color:  #0049fc !important;
 }
+
+.toggle-theme {
+    display: none !important;
+}
+
+.selected_menu {
+    background: #f3f6ff !important;
+    color: #212b36 !important;
+}

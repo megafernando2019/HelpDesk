@@ -9,16 +9,16 @@
         @endif
         <!-- Logo -->
         <div class="sidebar-logo">
-            <a href="{{route('index')}}" class="logo logo-normal">
+            <a href="{{route('tickets.index')}}" class="logo logo-normal">
                 <img src="{{URL::asset('build/img/logo.svg')}}" alt="Img">
             </a>
-            <a href="{{route('index')}}" class="logo logo-white">
+            <a href="{{route('tickets.index')}}" class="logo logo-white">
                 <img src="{{URL::asset('build/img/logo-white.svg')}}" alt="Img">
             </a>
-            <a href="{{route('index')}}" class="logo-small">
+            <a href="{{route('tickets.index')}}" class="logo-small">
                 <img src="{{URL::asset('build/img/logo-small.png')}}" alt="Img">
             </a>
-            <a href="{{route('index')}}" class="logo-small-white">
+            <a href="{{route('tickets.index')}}" class="logo-small-white">
                 <img src="{{URL::asset('build/img/logo-small-white.png')}}" alt="Img">
             </a>
             <a id="toggle_btn" class="bg-mega" href="javascript:void(0);">
@@ -33,7 +33,7 @@
                         class="img-fluid rounded-circle">
                 </div>
                 <h6 class="fs-14 fw-bold mb-1">Adrian Herman</h6>
-                <p class="fs-12 mb-0">System Admin</p>
+                {{-- <p class="fs-12 mb-0">System Admin</p> --}}
             </div>
             <div class="sidebar-nav mb-3">
                 <ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded nav-justified bg-transparent" role="tablist">
@@ -50,8 +50,8 @@
                         class="img-fluid rounded-circle">
                 </div>
                 <div class="text-start sidebar-profile-info ms-2">
-                    <h6 class="fs-14 fw-bold mb-1">Adrian Herman</h6>
-                    <p class="fs-12">System Admin</p>
+                    <h6 class="fs-14 fw-bold mb-1">{{Auth::user()->first_name ?? ''}}</h6>
+                    {{-- <p class="fs-12">System Admin</p> --}}
                 </div>
             </div>
             <div class="d-flex align-items-center justify-content-between menu-item mb-3">
@@ -98,8 +98,8 @@
                                         <span class="menu-arrow"></span>
                                 </a>
                                 <ul>
-                                   <li><a href="{{route('tickets.create')}}">Crear</a></li>
-                                   <li><a href="{{route('tickets.index')}}">Mis tickets</a></li>
+                                   <li><a href="{{route('tickets.create')}}" class="{{ Route::is('tickets.create') ? 'selected_menu' : '' }}">Crear</a></li>
+                                   <li><a href="{{route('tickets.index')}}" class="{{Route::is('tickets.index') ? 'selected_menu' : ''}}">Mis tickets</a></li>
                                    <li><a href="#">Asignar</a></li>
                                    <li><a href="#">Mi trabajo diario</a></li>
                                    <li><a href="#">Archivo</a></li>
@@ -113,14 +113,14 @@
                             <li
                                 class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
                                 <a 
-                                href="{{route('product-list')}}">
+                                href="{{route('tickets.index')}}">
                                 <i class="ti ti-chart-pie fs-16 me-2"></i>
                                 <span>Reportes</span></a>
                             </li>
                             <li
                                 class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
                                 <a 
-                                href="{{route('product-list')}}">
+                                href="{{route('tickets.index')}}">
                                 <i class="ti ti-users fs-16 me-2"></i>
                                 <span>Mi equipo</span>
                                 </a>
@@ -136,15 +136,15 @@
                                     <span>Catálogos</span>
                                     <span class="menu-arrow"></span></a>
                                 <ul>
-                                    <li><a href="{{route('online-orders')}}"
-                                            class="{{ Request::is('online-orders') ? 'active' : '' }}">Categorías</a>
+                                    <li><a href="{{route('tickets.index')}}"
+                                            class="">Categorías</a>
                                     </li>
                                     <li><a href="{{route('pos-orders')}}"
-                                            class="{{ Request::is('pos-orders') ? 'active' : '' }}">Etiquetas</a></li>
+                                            class="">Etiquetas</a></li>
                                     <li><a href="{{route('pos-orders')}}"
-                                            class="{{ Request::is('pos-orders') ? 'active' : '' }}">Servicios</a></li>
+                                            class="">Servicios</a></li>
                                     <li><a href="{{route('pos-orders')}}"
-                                            class="{{ Request::is('pos-orders') ? 'active' : '' }}">Operadores</a></li>
+                                            class="">Operadores</a></li>
                                 </ul>
                             </li>
                         </ul>

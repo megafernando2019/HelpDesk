@@ -83,7 +83,7 @@
             <!-- /Search -->
 
             <li class="nav-item link-nav">
-                <a href="javascript:void(0);" class="btn btn-mega btn-md d-inline-flex align-items-center rounded-pill">
+                <a href="{{route('tickets.create')}}" class="btn btn-mega btn-md d-inline-flex align-items-center rounded-pill">
                     <i class="ti ti-circle-plus me-1"></i>Crear ticket
                 </a>
             </li>

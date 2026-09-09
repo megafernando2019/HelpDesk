@@ -164,6 +164,9 @@ class TicketRepo implements ITicketRepo {
 
     public function getLogsByTicketId($id)
     {
-        return DB::table('ticket_logs')->where('ticket_id', $id)->get();
+        return DB::table('ticket_logs')
+        ->where('ticket_id', $id)
+        ->orderBy('id', 'desc')
+        ->get();
     }
 }

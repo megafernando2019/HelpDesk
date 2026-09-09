@@ -10,6 +10,14 @@ $(document).ready(function () {
     const storageKey = 'draft_observation_ticket_' + currentTicketId; //se concatena para recuperar el de solo esa vista
     const currentUid = $('.content-show').data('ticketUid');
 
+    function initTooltips() {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    }
+
+   
+    initTooltips();
+
     // Cargar el borrador guardado al recargar o entrar a la página
     const savedDraft = localStorage.getItem(storageKey);
     if (savedDraft) {
@@ -76,6 +84,10 @@ $(document).ready(function () {
             Object.entries(logs).forEach(([key, arr]) => {
                 if (arr.length > 0) {
                     arr.forEach(item => {
+                        const values = item?.values ?? {};
+                        const isObservation = item?.eventType === 'ACT08TLO';
+                      
+
                         html += `
                             <div class="d-flex align-items-start timeline-item mb-1">
                                 <div class="rounded-circle d-flex align-items-center justify-content-center p-2 me-3 ${item.bgColor}" style="width: 38px; height: 38px; flex-shrink: 0;">
@@ -83,6 +95,8 @@ $(document).ready(function () {
                                 </div>
                                 <div>
                                     <p class="mb-0 text-dark fw-semibold">${item.message}</p>
+                                    ${isObservation ? `<p class="mb-0 text-muted">Observación: ${values?.observation?.description ?? ''}</p>` : ``}
+                                    ${isObservation ? `<p class="mb-0 text-muted" >Estatus al momento de la acción ${item?.momentStatus}</p>` : ``}
                                     <small class="text-muted">el ${item.formatDate}</small>
                                 </div>
                             </div>

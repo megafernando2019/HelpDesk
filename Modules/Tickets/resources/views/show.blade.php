@@ -123,7 +123,7 @@
                                             <div class="col-md-4 mb-2">  
                                             </div>
                                             <div class="col-md-2 mb-2">
-                                                <i class="ti ti-calendar-plus"></i> Estatus
+                                                <i class="ti ti-loader"></i> Estatus
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <p class="badge rounded float-left" style="background: {{$bgColor}}; color:#2b2b2b;">
@@ -358,117 +358,137 @@
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="2"
-                                                    data-name="En proceso">
+                                                    data-name="En proceso"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Cambiar a En proceso">
                                                 <i class="ti ti-progress-check"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="6"
-                                                    data-name="Cancelado">
+                                                    data-name="Cancelado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Cancelar ticket">
                                                 <i class="ti ti-cancel"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-observation"
-                                                    >
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Agregar observación">
                                                 <i class="ti ti-edit-circle"></i>
                                             </button>
                                             @break
+
                                         @case(2)
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="4"
-                                                    data-name="Solucionado">
+                                                    data-name="Solucionado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Marcar como Solucionado">
                                                 <i class="ti ti-circle-check"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="6"
-                                                    data-name="Cancelado">
+                                                    data-name="Cancelado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Cancelar ticket">
                                                 <i class="ti ti-cancel"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-observation"
-                                                    >
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Agregar observación">
                                                 <i class="ti ti-edit-circle"></i>
                                             </button>
                                             @break
+
                                         @case(3)
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="4"
-                                                    data-name="Solucionado">
+                                                    data-name="Solucionado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Marcar como Solucionado">
                                                 <i class="ti ti-circle-check"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="6"
-                                                    data-name="Cancelado">
+                                                    data-name="Cancelado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Cancelar ticket">
                                                 <i class="ti ti-cancel"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-observation"
-                                                    >
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Agregar observación">
                                                 <i class="ti ti-edit-circle"></i>
                                             </button>
                                             @break
+
                                         @case(4)
-                                             <button type="button" 
+                                            <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="5"
-                                                    data-name="Cerrado">
+                                                    data-name="Cerrado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Cerrar ticket">
                                                 <i class="ti ti-lock-check"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="4"
-                                                    data-name="Solucionado">
+                                                    data-name="Solucionado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Marcar como Solucionado">
                                                 <i class="ti ti-circle-check"></i>
                                             </button>
+
                                             <button type="button" 
                                                     class="btn btn-status-observation"
-                                                    >
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Agregar observación">
                                                 <i class="ti ti-edit-circle"></i>
                                             </button>
                                             @break
+
                                         @case(5)
                                             @break
+
                                         @case(6)
                                             <button type="button" 
                                                     class="btn btn-status-observation"
-                                                    >
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Agregar observación">
                                                 <i class="ti ti-edit-circle"></i>
                                             </button>
                                             @break
+
                                         @default
-                                            
                                     @endswitch
-                                   
-                                    {{-- @switch($ticket?->status_id ?? 0)
-                                        @case(1)
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="2"
-                                                    data-name="En proceso">
-                                                <i class="ti ti-progress-check"></i>
-                                            </button>
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="6"
-                                                    data-name="Cancelado">
-                                                <i class="ti ti-cancel"></i>
-                                            </button>
-                                            <button type="button" 
-                                                    class="btn btn-status-observation"
-                                                    >
-                                                <i class="ti ti-edit-circle"></i>
-                                            </button>
-                                            @break
-                                        @case(2)
-                                            
-                                            @break
-                                        @default
-                                            
-                                    @endswitch --}}
                                     
                                 </div>
                             </div>

@@ -7,6 +7,7 @@ use Modules\Tickets\Models\TicketLog;
 use Modules\Tickets\Support\Dtos\TicketCardDto;
 use Modules\Tickets\Support\Dtos\TicketLogDetailsDto;
 use Modules\Tickets\Support\Enums\TicketAction;
+use Modules\Tickets\Support\Enums\TicketStatus;
 
 final class TicketMapper {
 
@@ -52,6 +53,11 @@ final class TicketMapper {
        $enum = TicketAction::tryFrom($entity->event_type);
        $bgColor = $enum->badgeClasses();
        $icon = $enum->icon();
+       $values = is_string($entity->values ?? null) 
+                 ? (json_decode($entity->values, true) ?? []) 
+                 : (array) ($entity->values ?? []);
+
+        $eventType = $entity->event_type ?? '';
 
        return new TicketLogDetailsDto(
            message: $entity->message ?? 'Dato no disponible',
@@ -61,13 +67,30 @@ final class TicketMapper {
              '%s a las %s',
               Carbon::parse($entity?->created_at)?->format('d/m/Y'),
               Carbon::parse($entity?->created_at)?->format('h:i a')
-           )
+           ),
+           values: $values,
+           momentStatus: $entity->momentStatus,
+           eventType: $eventType
        );
     }
 
     public static function toCollectionTicketLogs($args)
     {
-        return collect($args)->map(fn($log) => self::toDetailsLogsDto($log));
+        return collect($args)->map(
+            function ($log) {
+                $log->values = json_decode($log->values, true) ?? [];
+
+                // Extraer el id de estatus del snapshot JSON
+                $statusId = $log->values['status_id'] ?? null;
+
+                // Obtener el texto exacto usando el enum
+                $statusName = TicketStatus::getNameById($statusId);
+
+                $log->momentStatus = $statusName;
+               
+
+                return self::toDetailsLogsDto($log);
+            });
     }
     
 }

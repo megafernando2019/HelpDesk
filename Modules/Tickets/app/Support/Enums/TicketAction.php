@@ -38,7 +38,7 @@ enum TicketAction: string
             self::STATUS_CLOSED     => "El ticket {$ticket} fue cerrado",
             self::STATUS_CANCELLED  => "El ticket {$ticket} fue cancelado",
             self::ADD_COMMENT       => "{$user} realizó una observación en el ticket {$ticket}",
-            self::OBSERVE_TICKET    => "El usuario {$user} ha agregado la siguiente observación: {$observation}",
+            self::OBSERVE_TICKET    => "Observación agregada por {$user}",
             self::REMOVE_TICKET     => "{$user} retiró el ticket {$ticket}",
         };
     }

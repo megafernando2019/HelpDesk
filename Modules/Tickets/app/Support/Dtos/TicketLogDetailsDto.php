@@ -8,7 +8,10 @@ class TicketLogDetailsDto
         public readonly string $message,
         public readonly string $bgColor,
         public readonly string $icon,
-        public readonly string $formatDate
+        public readonly string $formatDate,
+        public readonly array $values,
+        public readonly string $momentStatus,
+        public readonly string $eventType,
     )
     {
         

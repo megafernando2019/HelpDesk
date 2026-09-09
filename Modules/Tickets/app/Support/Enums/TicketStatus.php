@@ -11,14 +11,43 @@ enum TicketStatus : string
     case CERRADO = 'Cerrado';
     case CANCELADO = 'Cancelado';
 
+
+    /**
+     * Retorna la etiqueta legible del estatus.
+     */
+    public function label(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * Traduce un status_id numérico de la base de datos al nombre legible del estatus.
+     *
+     * @param int|string|null $statusId
+     * @return string
+     */
+    public static function getNameById($statusId): string
+    {
+        \Log::info($statusId);
+        return match ((int) $statusId) {
+            1 => self::POR_ASIGNAR->value,
+            2 => self::EN_PROCESO->value, 
+            3 => self::EN_ESPERA->value,
+            4 => self::SOLUCIONADO->value,
+            5 => self::CERRADO->value,
+            6 => self::CANCELADO->value,
+            default => 'Desconocido',
+        };
+    }
+
     /**
     * Retorna el ícono según el estatus
     */
     public function icon(): string
     {
         return match($this) {
-            self::EN_PROCESO     => 'ti ti-writing',
-            self::POR_ASIGNAR     => 'ti ti-progress-check',
+            self::EN_PROCESO     => 'ti ti-progress-check',
+            self::POR_ASIGNAR     => 'ti ti-user',
             self::EN_ESPERA   => 'ti ti-clock',
             self::CANCELADO => 'ti ti-cancel',
             self::CERRADO => 'ti ti-lock-check',

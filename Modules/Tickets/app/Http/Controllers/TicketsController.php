@@ -193,13 +193,13 @@ class TicketsController extends Controller
             return $u;
         });
 
-         $fechaFormateada = 'el ' . $ticket?->observation?->updated_at->locale('es')->isoFormat('dddd DD [de] MMMM, YYYY [a las] hh:mm a');
+        $fechaFormateada = 'el ' . $ticket?->observation?->updated_at->locale('es')->isoFormat('dddd DD [de] MMMM, YYYY [a las] hh:mm a');
 
-         $observation = $ticket?->observation ?? null;
+        $observation = $ticket?->observation ?? null;
 
-         $status = $ticket?->status?->name ?? '';
+        $status = $ticket?->status?->name ?? '';
 
-         $icon = TicketStatus::getIcon($status);
+        $icon = TicketStatus::getIcon($status);
 
         $bgColor = TicketStatus::getBgColor($ticket?->status?->name);
 
