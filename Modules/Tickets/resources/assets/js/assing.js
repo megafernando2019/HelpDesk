@@ -13,6 +13,25 @@ $(document).ready(function () {
     const $selectUser = $('#select-responsible');
     
 
+    $('#sort-tickets-menu').on('click', '.sort-option', function (e) {
+        e.preventDefault();
+
+        const selectedText = $(this).text().trim();
+        const order = $(this).data('order');
+        const pageOrder = $('.indicador-page').data('currentPage');
+
+        
+        $('#btn-sort-label').text(selectedText);
+
+       
+        $('.sort-option').removeClass('active');
+        $(this).addClass('active');
+
+        currentSortOrder = order;
+        fetchAvailableTickets(pageOrder);
+    });
+
+
     /**
      * Carga y renderiza los tickets disponibles con paginación
      * @param {number} page - Número de página a consultar
@@ -46,6 +65,20 @@ $(document).ready(function () {
                     paginationContainer.innerHTML = '';
                     return;
                 }
+
+
+              
+                tickets.sort((a, b) => {
+                    // Si la respuesta incluye 'id' o 'created_at'
+                    const valA = a.id || a.uid;
+                    const valB = b.id || b.uid;
+
+                    if (currentSortOrder === 'asc') {
+                        return valA > valB ? 1 : -1;
+                    } else {
+                        return valA < valB ? 1 : -1;
+                    }
+                });
 
                 // Renderizado de Cards
                 container.innerHTML = tickets.map(ticket => {
@@ -135,7 +168,7 @@ $(document).ready(function () {
                         <i class="ti ti-chevron-left"></i> Anterior
                     </button>
 
-                    <span class="small text-muted fw-semibold">Página ${current_page}</span>
+                    <span data-current-page="${current_page}" class="small text-muted fw-semibold indicador-page">Página ${current_page}</span>
 
                     <button class="btn-paginate btn btn-sm btn-outline-secondary d-flex align-items-center gap-1" 
                             ${!next_page_url ? 'disabled' : ''} 
@@ -181,8 +214,11 @@ $(document).ready(function () {
                     text: `${user.first_name} ${user.last_name}`,
                     email: user.email,
                     tickets_count: user.active_tickets_count || 0,
-                    initials: user?.initials ?? null
+                    initials: user?.initials ?? null,
+                    tickets_count: user?.tickets_count || 0
                 }));
+
+                $selectUser.empty();
 
                 $selectUser.select2({
                     placeholder: 'Buscar y seleccionar un usuario responsable...',
@@ -256,8 +292,8 @@ $(document).ready(function () {
                             <small class="text-muted" style="font-size: 0.75rem;">${user.email || ''}</small>
                         </div>
                     </div>
-                    <span class="badge bg-light text-primary border border-primary-subtle" style="font-size: 0.7rem;">
-                        Carga actual: ${user.active_tickets_count || user.tickets_count || 0}/20 tickets
+                    <span class="badge badge-soft-info text-mega fw-semibold" style="box-shadow: none !important;font-size: 0.7rem;">
+                        Carga actual: ${selectedTickets.length || 0}/${user.tickets_count} tickets
                     </span>
                 </div>
             `);
@@ -267,6 +303,8 @@ $(document).ready(function () {
             return user.text || user.placeholder;
         }
 
+        
+
         $selectUser.on('change', function () {
             const selectedId = $(this).val();
         
@@ -274,10 +312,17 @@ $(document).ready(function () {
                 // Buscar la información completa desde nuestro arreglo en memoria
                 const data = departmentUsers.find(user => user.id == selectedId);
                 if (data) {
-                    $('#assigned-user-info').text(`${data.text} (Carga actual: ${data.tickets_count}/20)`);
+                    $('.display-name-user-asing-preview').text(`${data.text}`);
+                    $('#assigned-user-info').html(`Carga actual: <small class="event-reload-count">${selectedTickets.length}</small> /${data.tickets_count}`);
+                    
+                    console.log(data)
+                    
                 }
             } else {
+              
+                $('.display-name-user-asing-preview').text(``);
                 $('#assigned-user-info').text('');
+              
             }
 
             checkConfirmButton();
@@ -291,6 +336,7 @@ $(document).ready(function () {
         // ==========================================
         const $dropZone = $('#drop-zone');
         const $assignedContainer = $('#assigned-tickets-container');
+
 
         // Inicio del arrastre en las cards de la izquierda
         $('#tickets-container').on('dragstart', '.draggable-ticket', function (e) {
@@ -322,19 +368,25 @@ $(document).ready(function () {
 
         // Permitir Drop en la zona
         $dropZone.on('dragover', function (e) {
+            
             e.preventDefault();
 
             e.originalEvent.dataTransfer.dropEffect = 'move';
-            $(this).addClass('bg-primary-subtle border-primary');
+
+            $(this)
+            .removeClass('border-dashed')
+            .addClass('border-solid');
+           
         });
 
         $dropZone.on('dragleave', function () {
-            $(this).removeClass('bg-primary-subtle border-primary');
+             $(this)
+            .addClass('border-dashed')
+            .removeClass('border-solid');
         });
 
         $dropZone.on('drop', function (e) {
             e.preventDefault();
-            $(this).removeClass('bg-primary-subtle border-primary');
 
             const rawData = e.originalEvent.dataTransfer.getData('text/plain');
             if (!rawData) return;
@@ -392,6 +444,7 @@ $(document).ready(function () {
                 $selectUser.val(null).trigger('change');
 
 
+                loadDepartmentUsers();
                 fetchAvailableTickets(currentPage);
             })
             .catch(error => {
@@ -440,6 +493,8 @@ $(document).ready(function () {
                 `).join('');
 
                 $assignedContainer.html(html);
+
+                $('.event-reload-count').text(selectedTickets.length);
             }
 
             checkConfirmButton();

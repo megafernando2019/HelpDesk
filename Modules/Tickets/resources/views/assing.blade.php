@@ -33,8 +33,8 @@
                                             </label>
                                             <button type="button"
                                                     id="btn-sort-label"
-                                                    style="background: none; border: 1px solid #eee !important;" 
-                                                    class="btn rounded-pill dropdown-toggle" 
+                                                    style="color: #949494 !important;background: none; border: 1px solid #eee !important;" 
+                                                    class="btn rounded-pill dropdown-toggle sort-tickets-action" 
                                                     data-bs-toggle="dropdown" 
                                                     aria-haspopup="true" 
                                                     aria-expanded="false">
@@ -110,19 +110,23 @@
                                 </div>
 
                                 <!-- Dropzone / Zona de Arrastre -->
-                                <div class="mb-4">
+                                <div class="mb-4 d-flex" style="
+                                        flex-direction: column;
+                                    ">
                                     <label class="form-label fw-bold">Asignar ticket</label>
-                                    <div id="drop-zone" class="border border-2 border-dashed rounded-3 p-4 text-center bg-light transition-all" style="min-height: 120px; border-color: #0d6efd !important;">
-                                        <i class="ti ti-ticket text-secondary fs-1 mb-2 d-block"></i>
+                                    <div id="drop-zone"  class="badge badge-soft-info border border-2 border-dashed rounded-3 p-4 text-center bg-light transition-all" style="min-height: 120px; border-color: #0d6efd !important;">
+                                        <i class="ti ti-ticket text-secondary fs-1 mb-2 d-block ticket-section-icon"></i>
                                         <span class="text-mega fw-semibold">Arrastra ticket para asignar</span>
                                     </div>
                                 </div>
 
                                 <!-- Tickets Asignados Temporales -->
                                 <div>
-                                    <div class="d-flex align-items-center justify-content-between mb-2">
-                                        <h6 class="fw-bold mb-0">Tickets asignados</h6>
-                                        <small id="assigned-user-info" class="text-muted fw-semibold"></small>
+                                    <div class="mb-2">
+                                        <h6 class="fw-bold mb-1">Tickets asignados</h6>
+                                        <small class="text-muted display-name-user-asing-preview" style="margin-right: 5px;"></small>
+                                        <small id="assigned-user-info" style="box-shadow: none !important;" class="badge badge-soft-info text-mega fw-semibold">
+                                        </small>
                                     </div>
 
                                     <div id="assigned-tickets-container" class="d-flex flex-column gap-2" style="min-height: 100px;">

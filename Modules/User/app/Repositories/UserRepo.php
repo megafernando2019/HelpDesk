@@ -12,7 +12,14 @@ class UserRepo implements IUserRepo
     {
         return User::where('department_id', $department_id)
                     ->where('active', 1)
-                    ->select('id', 'first_name', 'last_name', 'email')
+                    ->select('id', 
+                             'first_name', 
+                             'last_name', 
+                             'email',
+                             )
+                    ->withCount(['tickets' => function ($query) {
+                        $query->whereNotIn('tickets.status_id', [4, 5, 6]);
+                    }])
                     ->get();
     }
 

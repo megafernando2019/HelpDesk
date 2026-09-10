@@ -32,6 +32,8 @@ class UserService
                     $u->last_name
                  ));
 
+                 $u->tickets_count_pending = $u?->tickets_count ?? 0;
+
                  return $u;
         });
 

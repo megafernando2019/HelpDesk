@@ -5,9 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Departments\Models\Department;
+use Modules\Tickets\Models\Ticket;
 use Modules\User\app\Models\Team;
 
 class User extends Authenticatable
@@ -61,6 +63,12 @@ class User extends Authenticatable
     public function teams()
     {
         return $this->belongsToMany(Team::class, 'team_user')
+                    ->withTimestamps();
+    }
+
+    public function tickets()
+    {
+        return $this->belongsToMany(Ticket::class, 'tickets_users_assignations')
                     ->withTimestamps();
     }
 }
