@@ -33,7 +33,8 @@ export default defineConfig({
             'resources/js/helpers/helper.js',
             'Modules/Tickets/resources/assets/js/index.js',
             'Modules/Tickets/resources/assets/js/create.js',
-            'Modules/Tickets/resources/assets/js/show.js'
+            'Modules/Tickets/resources/assets/js/show.js',
+            'Modules/Tickets/resources/assets/js/assing.js'
             ],
             refresh: true,
         }),

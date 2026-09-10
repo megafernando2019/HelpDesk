@@ -28,7 +28,6 @@ enum TicketStatus : string
      */
     public static function getNameById($statusId): string
     {
-        \Log::info($statusId);
         return match ((int) $statusId) {
             1 => self::POR_ASIGNAR->value,
             2 => self::EN_PROCESO->value, 

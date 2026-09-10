@@ -100,7 +100,12 @@
                                 <ul>
                                    <li><a href="{{route('tickets.create')}}" class="{{ Route::is('tickets.create') ? 'selected_menu' : '' }}">Crear</a></li>
                                    <li><a href="{{route('tickets.index')}}" class="{{Route::is('tickets.index') ? 'selected_menu' : ''}}">Mis tickets</a></li>
-                                   <li><a href="#">Asignar</a></li>
+                                   <li>
+                                        <a href="{{route('tickets.assing')}}" 
+                                          class="{{Route::is('tickets.assing') ? 'selected_menu' : ''}}">
+                                          Asignar
+                                        </a>
+                                    </li>
                                    <li><a href="#">Mi trabajo diario</a></li>
                                    <li><a href="#">Archivo</a></li>
                                 </ul>

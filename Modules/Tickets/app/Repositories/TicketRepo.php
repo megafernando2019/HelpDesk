@@ -10,7 +10,33 @@ use Modules\Tickets\Models\TicketAttachment;
 use Modules\Tickets\Models\TicketLog;
 use Modules\Tickets\Models\TicketObservation;
 
+
 class TicketRepo implements ITicketRepo {
+
+    public function getTicketsByStatusAssing()
+    {
+        return DB::table('tickets as t')
+        ->leftJoin('tickets_services as s', 't.ticket_service_id', '=', 's.id')
+        ->leftJoin('users as u', 't.user_id', '=', 'u.id')
+        ->leftJoin('tickets_priorities as p', 't.ticket_priority_id', '=', 'p.id')
+        // Unimos la tabla de asignaciones
+        ->leftJoin('tickets_users_assignations as tua', 't.id', '=', 'tua.ticket_id')
+        // Filtramos solo los que NO tienen registro en la tabla de asignaciones
+        ->whereNull('tua.ticket_id')
+        ->where('t.status_id', 1)
+        ->select(
+            't.uid',
+            't.title',
+            't.description',
+            'p.name as priority_name',
+            's.name as services_name',
+            't.created_at',
+            'u.first_name as user_ticket_first_name',
+            'u.last_name as user_ticket_last_name'
+        )
+        ->orderBy('t.id', 'desc')
+        ->simplePaginate(5);
+    }
 
     public function getTicket($id, $relations = [])
     {

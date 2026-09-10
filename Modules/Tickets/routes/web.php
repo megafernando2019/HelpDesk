@@ -13,5 +13,11 @@ Route::middleware(['auto_login'])->group(function () {
     Route::post('/assing_ticket_user', [TicketsController::class, 'assingUserTicket']);    
     Route::post('/updated_status', [TicketsController::class, 'updateStatus']);
     Route::post('/get_ticket_logs_by_id', [TicketsController::class, 'getLogsByTicketId']); 
+    //Asignar ticket
+    Route::get('/assing_tickets', [TicketsController::class, 'viewAssingTickets'])
+         ->name('tickets.assing');
+    Route::get('/tickets/get_tickets_status_assgin', [TicketsController::class, 'getTicketsPendingAssing']); 
+    // bulk assing tickets user
+    Route::post('/tickets/assign_bulk', [TicketsController::class, 'assignBulkTickets']);
     Route::resource('tickets', TicketsController::class)->names('tickets');
 });

@@ -2,7 +2,10 @@
 
 namespace Modules\Tickets\Services;
 
+use App\Traits\HelpDeskUtils;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Modules\Tickets\Support\Mappers\TicketMapper;
 use Modules\Tickets\Support\Mappers\ViewParamsIndexMapper;
@@ -10,14 +13,42 @@ use Illuminate\Support\Str;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Support\Enums\TicketAction;
+use Modules\Tickets\Support\Enums\TicketPriorityColor;
 
 class TicketService {
 
+    use HelpDeskUtils;
+  
     public function __construct(
        private readonly ITicketRepo $repo,
        private readonly TicketLogService $log_ticket_service,
     ) {
        
+    }
+
+    public function getTicketsStatusAssing(){
+        $tickets = $this->repo->getTicketsByStatusAssing();
+
+        return $tickets->through(function ($ticket) {
+            // Formato de fecha relativo para el diseño ("Hace 15 min")
+            $ticket->created_at_human = Carbon::parse($ticket->created_at)
+                ->locale('es')
+                ->diffForHumans();
+
+
+            $ticket->user_initial_ticket = $this->getInitials(
+                sprintf(
+                    '%s %s',
+                    $ticket->user_ticket_first_name ?? '',
+                    $ticket->user_ticket_last_name ?? ''
+                )
+            );
+
+            // Configuración de colores desde el Enum
+            $ticket->priority_colors = TicketPriorityColor::getColorConfig($ticket->priority_name);
+
+            return $ticket;
+        });
     }
 
     public function updateStatus($request)
@@ -293,6 +324,49 @@ class TicketService {
         ];
 
         return $this->repo->saveObservations($records);
+    }
+
+    public function assignBulkTicketsUser($request)
+    {
+        $userId = $request?->user_id;
+        $uids = $request?->uids ?? [];
+        $selectedName = $request?->selectedName ?? '';
+    
+        // Cortar paréntesis y email del string (ej. "Juan Pérez (juan@mail.com)" => "Juan Pérez ")
+        if (!empty($selectedName)) {
+            $selectedName = trim(strstr($selectedName, '(', true) ?: $selectedName);
+        }
+
+        if (empty($userId)) {
+            throw new TicketException('Debe seleccionar un usuario responsable válido.');
+        }
+
+        if (empty($uids) || !is_array($uids)) {
+            throw new TicketException('No se han seleccionado tickets para asignar.');
+        }
+
+        DB::transaction(function () use ($uids, $userId, $selectedName) {
+            foreach ($uids as $uid) {
+                // Buscamos el ticket por UID
+                $ticket = $this->getTicket(null, $uid);
+
+                if ($ticket) {
+                    // Asignar al usuario (se pasa en array [ $userId ])
+                    $this->repo->assignUser($ticket, [$userId]);
+
+                    // Registrar el log de asignación para cada ticket
+                    $this->log_ticket_service->logAction(
+                        $ticket,
+                        TicketAction::ASSIGN_TICKET,
+                        'update',
+                        'tickets/show',
+                        $selectedName
+                    );
+                }
+            }
+        });
+
+        return true;
     }
 
 

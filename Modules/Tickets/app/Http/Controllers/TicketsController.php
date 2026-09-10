@@ -29,6 +29,32 @@ class TicketsController extends Controller
         
     }
 
+    /**
+     * Tcikets pendientes por asignar
+     */
+    public function getTicketsPendingAssing()
+    {
+       try {
+
+        $tickets = $this->service->getTicketsStatusAssing();
+        
+        return response()->json($tickets);
+
+       } catch (\Throwable $th) {
+         
+        \Log::info($th);
+
+        return response()->json([
+            'message' => 'Ocurrió un error al cargar los tickets, pruebe más tarde.'
+        ], 500);
+       }
+    }
+
+    public function viewAssingTickets()
+    {
+        return view('tickets::assing');
+    }
+
     public function updateStatus(Request $request)
     {
         try {
@@ -219,6 +245,23 @@ class TicketsController extends Controller
         'status',
         'bgColor'
         ));
+    }
+
+    public function assignBulkTickets(Request $request)
+    {
+        try {
+            $this->service->assignBulkTicketsUser($request);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Tickets asignados correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ocurrió un error inesperado al asignar los tickets.'
+            ], 500);
+        }
     }
 
     public function assingUserTicket(Request $request)

@@ -8,6 +8,12 @@ interface ITicketRepo {
 
     /**
      *
+     * @return void
+     */
+    public function getTicketsByStatusAssing();
+
+    /**
+     *
      * @param int $id
      * @param array $relations
      * @return void
