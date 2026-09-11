@@ -106,6 +106,12 @@
                                           Asignar
                                         </a>
                                     </li>
+                                <li>
+                                    <a href="{{route('tickets.reassing')}}" 
+                                      class="{{Route::is('tickets.reassing') ? 'selected_menu' : ''}}">
+                                      Reasignar
+                                    </a>
+                                </li>
                                    <li><a href="#">Mi trabajo diario</a></li>
                                    <li><a href="#">Archivo</a></li>
                                 </ul>

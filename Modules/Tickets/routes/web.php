@@ -19,5 +19,9 @@ Route::middleware(['auto_login'])->group(function () {
     Route::get('/tickets/get_tickets_status_assgin', [TicketsController::class, 'getTicketsPendingAssing']); 
     // bulk assing tickets user
     Route::post('/tickets/assign_bulk', [TicketsController::class, 'assignBulkTickets']);
+    //Reasignar tickets
+    Route::get('/reassing_tickets', [TicketsController::class, 'viewReAssingTickets'])
+     ->name('tickets.reassing');
+    Route::get('/get_tickets_to_user_assing', [TicketsController::class, 'getTicketsAssignedToUser']);
     Route::resource('tickets', TicketsController::class)->names('tickets');
 });

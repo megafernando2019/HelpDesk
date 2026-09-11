@@ -26,11 +26,38 @@ class TicketService {
        
     }
 
+    public function getAssignedToUser($request)
+    {
+        $userId = $request->user_id ?? 0;
+        $tickets = $this->repo->getAssignedTicketsByUserId($userId);
+
+        return $tickets->map(function($ticket) {
+            // Formato de fecha relativo
+            $ticket->created_at_human = Carbon::parse($ticket->created_at)
+                ->locale('es')
+                ->diffForHumans();
+
+
+            $ticket->initials = $this->getInitials(
+                sprintf(
+                    '%s %s',
+                    $ticket->user_ticket_first_name ?? '',
+                    $ticket->user_ticket_last_name ?? ''
+                )
+            );
+
+            // Configuración de colores desde el Enum
+            $ticket->priority_colors = TicketPriorityColor::getColorConfig($ticket->priority_name);
+
+            return $ticket;
+        });
+    }
+
     public function getTicketsStatusAssing(){
         $tickets = $this->repo->getTicketsByStatusAssing();
 
         return $tickets->through(function ($ticket) {
-            // Formato de fecha relativo para el diseño ("Hace 15 min")
+            // Formato de fecha relativo
             $ticket->created_at_human = Carbon::parse($ticket->created_at)
                 ->locale('es')
                 ->diffForHumans();
@@ -332,7 +359,6 @@ class TicketService {
         $uids = $request?->uids ?? [];
         $selectedName = $request?->selectedName ?? '';
     
-        // Cortar paréntesis y email del string (ej. "Juan Pérez (juan@mail.com)" => "Juan Pérez ")
         if (!empty($selectedName)) {
             $selectedName = trim(strstr($selectedName, '(', true) ?: $selectedName);
         }
@@ -347,11 +373,11 @@ class TicketService {
 
         DB::transaction(function () use ($uids, $userId, $selectedName) {
             foreach ($uids as $uid) {
-                // Buscamos el ticket por UID
+                
                 $ticket = $this->getTicket(null, $uid);
 
                 if ($ticket) {
-                    // Asignar al usuario (se pasa en array [ $userId ])
+                    // Asignar al usuario
                     $this->repo->assignUser($ticket, [$userId]);
 
                     // Registrar el log de asignación para cada ticket

@@ -13,6 +13,29 @@ use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
 
+    public function getAssignedTicketsByUserId(int $userId)
+    {
+        return DB::table('tickets as t')
+            ->join('tickets_users_assignations as tua', 't.id', '=', 'tua.ticket_id')
+            ->leftJoin('tickets_priorities as p', 't.ticket_priority_id', '=', 'p.id')
+            ->leftJoin('tickets_services as s', 't.ticket_service_id', '=', 's.id')
+            ->leftJoin('users as u', 't.user_id', '=', 'u.id')
+            ->where('tua.user_id', $userId)
+            ->whereNotIn('t.status_id', [4, 5, 6]) // Excluyendo resueltos/cerrados/cancelados
+            ->select(
+                't.uid',
+                't.title',
+                't.description',
+                'p.name as priority_name',
+                's.name as services_name',
+                't.created_at',
+                'u.first_name as user_ticket_first_name',
+                'u.last_name as user_ticket_last_name',
+                'tua.user_id as user_id_current_asing'
+            )
+            ->get();
+    }
+
     public function getTicketsByStatusAssing()
     {
         return DB::table('tickets as t')

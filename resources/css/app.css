@@ -91,10 +91,6 @@
 }
 
 
-/* Override clase dreamPos */
-/* .dropdown-item .active{
-    color: #0049fc !important;
-} */
 
 .dropdown-item.active {
     color: #31343b;

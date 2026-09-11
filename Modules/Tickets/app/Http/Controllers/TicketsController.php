@@ -29,6 +29,22 @@ class TicketsController extends Controller
         
     }
 
+    public function getTicketsAssignedToUser(Request $request)
+    {
+        try {
+
+            $tickets = $this->service->getAssignedToUser($request);
+
+            return response()->json($tickets);
+
+        } catch (\Throwable $th) {
+            \Log::info($th);
+            return response()->json([
+                  'message' => 'Ocurrio un error al intentar recuperar los tickets de este usuario, pruebe más tarde.'
+            ], 500);
+        }
+    }
+
     /**
      * Tcikets pendientes por asignar
      */
@@ -48,6 +64,11 @@ class TicketsController extends Controller
             'message' => 'Ocurrió un error al cargar los tickets, pruebe más tarde.'
         ], 500);
        }
+    }
+
+    public function viewReAssingTickets()
+    {
+        return view('tickets::reasing');
     }
 
     public function viewAssingTickets()
