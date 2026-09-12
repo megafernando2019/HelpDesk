@@ -26,7 +26,7 @@ class TicketService {
        
     }
 
-    public function getTicketsToStatuses($request)
+    public function getToStatusesUserAssing($request)
     {
         $user_id = Auth::user()->id;
         $ticket_statuses_param = $request->ticket_status ?? [];
@@ -56,7 +56,7 @@ class TicketService {
             $endDate = null;
         }
 
-        $query = $this->repo->getTicketsByStatusesIds(
+        $query = $this->repo->findByStatusesIdsByIdUserAssing(
             $user_id, 
             $ticket_statuses,
             $priority,

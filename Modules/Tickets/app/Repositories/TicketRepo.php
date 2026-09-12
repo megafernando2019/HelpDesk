@@ -13,7 +13,7 @@ use Override;
 
 class TicketRepo implements ITicketRepo {
 
-    public function getTicketsByStatusesIds(
+    public function findByStatusesIdsByIdUserAssing(
         $userId,
         $ticket_statuses,
         $priority = 0,
@@ -43,7 +43,7 @@ class TicketRepo implements ITicketRepo {
             'uc.first_name as user_first_name_create',
             'uc.last_name as user_last_name_create',
         ])
-        ->where('t.user_id', $userId)
+        ->where('tua.user_id', 2361)
         ->whereIn('t.status_id', $ticket_statuses)
         ->when($priority, function ($q, $priority) {
             return $q->where('t.ticket_priority_id', $priority);

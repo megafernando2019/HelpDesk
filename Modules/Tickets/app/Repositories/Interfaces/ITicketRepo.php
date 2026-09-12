@@ -15,7 +15,7 @@ interface ITicketRepo {
      * @param string $endDate
      * @return void
      */
-    public function getTicketsByStatusesIds(
+    public function findByStatusesIdsByIdUserAssing(
         $userId,
         $ticket_statuses,
         $priority = 0,

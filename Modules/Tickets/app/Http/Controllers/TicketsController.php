@@ -33,16 +33,9 @@ class TicketsController extends Controller
     public function viewArchive()
     {
         $details = $this->service->getDetailsIndex();
-        $toCollect = collect($details->statuses);
-        $cancelTotal = $toCollect->where('id', 6)->first()->tickets_count ?? 0;
-        $successTotal = $toCollect->where('id', 4)->first()->tickets_count ?? 0;
-        $closeTotal = $toCollect->where('id', 5)->first()->tickets_count ?? 0;
-
+        
         return view('tickets::archive', compact(
-            'details',
-            'cancelTotal',
-            'closeTotal',
-            'successTotal'
+            'details'
             ));
     }
 
@@ -160,10 +153,10 @@ class TicketsController extends Controller
         }
     }
 
-    public function getTicketsByAnyStatuses(Request $request)
+    public function getAnyStatusesByUserAssing(Request $request)
     {
         try {
-            $data = $this->service->getTicketsToStatuses($request);
+            $data = $this->service->getToStatusesUserAssing($request);
 
             return response()->json([
                 'data' => $data
@@ -360,7 +353,7 @@ class TicketsController extends Controller
     }
 
     public function updateOrSaveObservations(Request $request)
-    {
+    { 
        try {
             
             $entity = $this->service->saveObservations($request);

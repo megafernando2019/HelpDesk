@@ -340,6 +340,15 @@ $(document).ready(function () {
 
         // Inicio del arrastre en las cards de la izquierda
         $('#tickets-container').on('dragstart', '.draggable-ticket', function (e) {
+
+            const selectedUserId = $selectUser.val();
+
+           
+            if (!selectedUserId) {
+                e.preventDefault();
+                ui.showToast('warning', 'Debes seleccionar un encargado antes de asignar tickets', 3000);
+                return false;
+            }
            
             const ticketData = {
                 uid: $(this).data('uid'),
@@ -469,28 +478,50 @@ $(document).ready(function () {
                 `);
             } else {
                
+                const html = selectedTickets.map(t => {
+                    // Usar el color de texto de la prioridad o un fallback por defecto
+                    const priorityBorderColor = t?.colorText || '#eab308';
 
-                const html = selectedTickets.map(t =>  `
-                    <div 
-                    class="card border border-primary-subtle shadow-sm
-                     p-2 d-flex flex-row align-items-center rounded-3 gap-2" style="border-left: 0.5em solid #fbca41 !important;">
-                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" style="width: 42px; height: 42px; font-size: 0.95rem;">
-                            ${t?.initials ?? 'U'}
-                        </div>
-                        <div>
+                    return `
+                        <div class="card border border-primary-subtle shadow-sm p-2 d-flex flex-row align-items-center justify-content-between rounded-3 gap-2 mb-2" 
+                             style="border-left: 0.5em solid ${priorityBorderColor} !important;">
+                            
                             <div class="d-flex align-items-center gap-2">
-                                <span class="text-mega">${t?.uid} - ${t?.title}</span>
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" 
+                                     style="width: 42px; height: 42px; font-size: 0.95rem;">
+                                    ${t?.initials ?? 'U'}
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="text-mega fw-bold">${t?.uid} - ${t?.title}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <small class="text-secondary">${t?.firstName} ${t?.lastName}</small>
+                                        
+                                        ${t?.service ? `
+                                            <span class="badge text-secondary border" style="background-color: #eff4ff; font-size: 0.725rem;">
+                                                ${t?.service}
+                                            </span>
+                                        ` : ''}
+
+                                        <span class="badge rounded-pill" 
+                                              style="background-color:${t?.colorBg || '#eab3081a'} !important; color: ${t?.colorText || '#eab308'} !important; font-size: 0.725rem;">
+                                            <i class="ti ti-pin"></i> Prioridad ${t?.priority}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span>${t?.firstName} ${t?.lastName}</span>
-                                <span class="badge bg-ocean rounded p-2">${t?.service}</span>
-                                <span class="badge rounded-pill p-2" style="background-color:${t?.colorBg} !important;color: ${t?.colorText} !important;">
-                                    <i class="ti ti-pin"></i> Prioridad ${t?.priority}
-                                </span>
-                            </div>
+
+                            <!-- Botón para retirar ticket -->
+                            <button type="button" 
+                                    class="btn btn-sm btn-ghost-danger btn-icon btn-remove-ticket flex-shrink-0 ms-2" 
+                                    data-uid="${t?.uid}" 
+                                    title="Retirar ticket">
+                                <i class="ti ti-x fs-14"></i>
+                            </button>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
 
                 $assignedContainer.html(html);
 
@@ -500,12 +531,13 @@ $(document).ready(function () {
             checkConfirmButton();
         }
 
-        // Remover ticket asignado y devolverlo a la lista
+
+        // Remover ticket asignado y devolverlo a la lista de disponibles
         $assignedContainer.on('click', '.btn-remove-ticket', function () {
             const uid = $(this).data('uid');
-            selectedTickets = selectedTickets.filter(id => id !== uid);
-
+            selectedTickets = selectedTickets.filter(ticket => ticket.uid !== uid);
             $(`.draggable-ticket[data-uid="${uid}"]`).slideDown();
+
             renderAssignedTickets();
         });
 

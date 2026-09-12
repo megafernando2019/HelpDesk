@@ -61,8 +61,8 @@
                     <i class="ti ti-circle-check icon-success text-success"></i>
                 </div>
                 <div class="info-alert-header">
-                    <h3>
-                        {{$successTotal}}
+                    <h3 class="count-completed">
+                       Cargando...
                     </h3>
                     <span>
                         Solucionados
@@ -74,8 +74,8 @@
                     <i class="ti ti-lock-check text-primary icon-ticket-close"></i>
                 </div>
                 <div class="info-alert-header">
-                    <h3>
-                         {{$closeTotal}}
+                    <h3 class="count-closed">
+                        Cargando...
                     </h3>
                     <span>
                         Cerrados
@@ -87,8 +87,8 @@
                     <i class="ti ti-cancel text-danger icon-ticket-cancel"></i>
                 </div>
                 <div class="info-alert-header">
-                    <h3>
-                         {{$cancelTotal}}
+                    <h3 class="count-cancel">
+                         Cargando...
                     </h3>
                     <span>
                         Cancelados
@@ -99,16 +99,16 @@
 
       
         <div class="row gap-1 mt-4" style="flex-wrap: nowrap !important;">
-            <div id="tickets-container-success"  style="background-color: #f5fff9; height: 600px;
+            <div id="tickets-container-success"  style="background-color: #f5fff9; height: 500px;
                 overflow-x: auto;"
                  class="col-md-4 border current-rounded p-3"></div>
 
-            <div id="tickets-container-close"  style="background-color: #fff9f1; height: 600px;
+            <div id="tickets-container-close"  style="background-color: #fff9f1; height: 500px;
             overflow-x: auto;" 
              class="col-md-4 current-rounded p-3 border"></div>
 
              <div id="tickets-container-cancel"
-                  style="background-color: #fffafa; height: 600px;
+                  style="background-color: #fffafa; height: 500px;
                 overflow-x: auto;" 
                   class="col-md-4 current-rounded p-3 border"
               ></div>
