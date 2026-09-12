@@ -13,6 +13,7 @@ use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
 use Modules\Tickets\Support\Enums\TicketStatus;
 use Modules\User\app\Services\UserService;
+use PhpParser\Node\Expr\FuncCall;
 
 class TicketsController extends Controller
 {
@@ -27,6 +28,22 @@ class TicketsController extends Controller
     )
     {
         
+    }
+
+    public function viewArchive()
+    {
+        $details = $this->service->getDetailsIndex();
+        $toCollect = collect($details->statuses);
+        $cancelTotal = $toCollect->where('id', 6)->first()->tickets_count ?? 0;
+        $successTotal = $toCollect->where('id', 4)->first()->tickets_count ?? 0;
+        $closeTotal = $toCollect->where('id', 5)->first()->tickets_count ?? 0;
+
+        return view('tickets::archive', compact(
+            'details',
+            'cancelTotal',
+            'closeTotal',
+            'successTotal'
+            ));
     }
 
     public function getTicketsAssignedToUser(Request $request)
@@ -129,6 +146,24 @@ class TicketsController extends Controller
     {
         try {
             $data = $this->service->getDataIndexCard($request);
+
+            return response()->json([
+                'data' => $data
+            ], 200);
+
+        } catch (\Throwable $th) {
+            \Log::info($th->getMessage());
+
+             return response()->json([
+                'message' => 'Ocurrio un error al recuperar los tickets'
+            ], 500);
+        }
+    }
+
+    public function getTicketsByAnyStatuses(Request $request)
+    {
+        try {
+            $data = $this->service->getTicketsToStatuses($request);
 
             return response()->json([
                 'data' => $data

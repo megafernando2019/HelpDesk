@@ -26,6 +26,63 @@ class TicketService {
        
     }
 
+    public function getTicketsToStatuses($request)
+    {
+        $user_id = Auth::user()->id;
+        $ticket_statuses_param = $request->ticket_status ?? [];
+        $priority = (int) ($request->priority ?? 0);
+        $startDate = $request->start_date ?? null;
+        $endDate = $request->end_date ?? null;
+        $ticket_statuses = [];
+
+        //Si viene como string
+        if (!is_array($ticket_statuses_param)) {
+           $ticket_statuses_param = explode(
+            ',', $ticket_statuses_param
+            );
+
+            if (!empty($ticket_statuses_param)) {
+                foreach ($ticket_statuses_param as $value) {
+                    $ticket_statuses[] = (int) trim($value);
+                }
+            }
+        }
+
+        if ($startDate === "null") {
+            $startDate = null;
+        }
+
+        if ($endDate === "null") {
+            $endDate = null;
+        }
+
+        $query = $this->repo->getTicketsByStatusesIds(
+            $user_id, 
+            $ticket_statuses,
+            $priority,
+            $startDate,
+            $endDate
+        );
+
+        $tickets = $query->map(function($q) {
+               
+                $q->initials_user_create = $this->getInitials(
+                        sprintf(
+                            '%s %s',
+                            ($q?->user_first_name_create ?? ''),
+                            ($q?->user_last_name_create ?? '')
+                        )
+                );
+
+                $q->priority =TicketPriorityColor::getColorConfig($q?->priority_name  ?? '');
+
+                return $q;
+        });
+
+        return $tickets;
+
+    }
+
     public function getAssignedToUser($request)
     {
         $userId = $request->user_id ?? 0;
@@ -183,7 +240,7 @@ class TicketService {
         }
 
         if ($endDate === "null") {
-            $endDate = "null";
+            $endDate = null;
         }
 
         $ctx = $this->repo->applyFilters(

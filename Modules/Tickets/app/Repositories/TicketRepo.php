@@ -9,9 +9,60 @@ use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Models\TicketAttachment;
 use Modules\Tickets\Models\TicketLog;
 use Modules\Tickets\Models\TicketObservation;
-
+use Override;
 
 class TicketRepo implements ITicketRepo {
+
+    public function getTicketsByStatusesIds(
+        $userId,
+        $ticket_statuses,
+        $priority = 0,
+        $startDate = null,
+        $endDate =null
+    )
+    {
+        
+        return DB::table('tickets as t')
+        ->select([
+            't.id',
+            't.uid',
+            't.title',
+            't.description',
+            't.created_at',
+            't.status_id',
+            't.ticket_priority_id',
+            't.user_id',
+            'ts.name as service_name',
+            'tp.name as priority_name',
+            'u.id as assigned_id',
+            'u.first_name as assigned_first_name',
+            'u.last_name as assigned_last_name',
+            'tob.description as observation',
+            'tua.user_id as user_assing_id',
+            'uc.id as user_id_create',
+            'uc.first_name as user_first_name_create',
+            'uc.last_name as user_last_name_create',
+        ])
+        ->where('t.user_id', $userId)
+        ->whereIn('t.status_id', $ticket_statuses)
+        ->when($priority, function ($q, $priority) {
+            return $q->where('t.ticket_priority_id', $priority);
+        })
+        ->when($startDate && $endDate, function ($q) use ($startDate, $endDate) {
+            return $q->whereBetween('t.created_at', [
+                $startDate . ' 00:00:00',
+                $endDate . ' 23:59:59'
+            ]);
+        })
+        ->leftJoin('tickets_services as ts', 'ts.id', '=', 't.ticket_service_id')
+        ->leftJoin('tickets_priorities as tp', 'tp.id', '=', 't.ticket_priority_id')
+        ->leftJoin('tickets_users_assignations as tua', 'tua.ticket_id', '=', 't.id')
+        ->leftJoin('users as u', 'u.id', '=', 'tua.user_id')
+        ->leftJoin('tickets_observations as tob', 'tob.ticket_id', '=', 't.id')
+        ->leftJoin('users as uc', 't.user_id', '=', 'uc.id')
+        ->orderByDesc('t.id')
+        ->get();
+    }
 
     public function getAssignedTicketsByUserId(int $userId)
     {

@@ -113,7 +113,7 @@
                                     </a>
                                 </li>
                                    <li><a href="#">Mi trabajo diario</a></li>
-                                   <li><a href="#">Archivo</a></li>
+                                   <li><a href="{{route('tickets.archive')}}" class="{{Route::is('tickets.archive') ? 'selected_menu' : ''}}">Archivo</a></li>
                                 </ul>
                             </li>
                             

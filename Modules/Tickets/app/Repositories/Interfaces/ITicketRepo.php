@@ -8,6 +8,23 @@ interface ITicketRepo {
 
     /**
      *
+     * @param int $userId
+     * @param array $ticket_statuses
+     * @param int $priority
+     * @param string $startDate
+     * @param string $endDate
+     * @return void
+     */
+    public function getTicketsByStatusesIds(
+        $userId,
+        $ticket_statuses,
+        $priority = 0,
+        $startDate = null,
+        $endDate =null
+    );
+
+    /**
+     *
      * @param integer $userId
      * @return void
      */

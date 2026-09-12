@@ -29,13 +29,15 @@ export default defineConfig({
             'resources/css/app.css',
             'Modules/Tickets/resources/assets/css/create.css',
             'Modules/Tickets/resources/assets/css/show.css',
+            'Modules/Tickets/resources/assets/css/archive.css',
             'resources/js/script.js',
             'resources/js/helpers/helper.js',
             'Modules/Tickets/resources/assets/js/index.js',
             'Modules/Tickets/resources/assets/js/create.js',
             'Modules/Tickets/resources/assets/js/show.js',
             'Modules/Tickets/resources/assets/js/assing.js',
-            'Modules/Tickets/resources/assets/js/reassing.js'
+            'Modules/Tickets/resources/assets/js/reassing.js',
+            'Modules/Tickets/resources/assets/js/archive.js'
             ],
             refresh: true,
         }),
