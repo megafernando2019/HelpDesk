@@ -3,6 +3,7 @@
 namespace Modules\User\app\Services;
 
 use App\Helpers\GetInitials;
+use Illuminate\Support\Facades\Auth;
 use Modules\User\app\Repositories\Interfaces\IUserRepo;
 
 class UserService
@@ -13,6 +14,35 @@ class UserService
     {
         
     }
+
+    public function getUsersByTeam($request)
+    {
+        $teamId = $request?->team_id ?? [];
+        
+
+        $rows = $this->repo->getUsersByTeamId($teamId);
+
+        if ($rows->isEmpty()) {
+            return collect();
+        }
+
+        $invoke = new GetInitials();
+
+        $users = $rows->map(function($u) use($invoke) {
+                 $u->initials = $invoke(sprintf(
+                    '%s %s',
+                    $u->first_name,
+                    $u->last_name
+                 ));
+
+                 $u->tickets_count_pending = $u?->tickets_count ?? 0;
+
+                 return $u;
+        });
+
+        return $users;
+    }
+
 
     public function getUsersByDepartmentId($request)
     {

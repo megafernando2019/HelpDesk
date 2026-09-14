@@ -32,9 +32,17 @@ interface ITicketRepo {
 
     /**
      *
+     * @param int $userId
      * @return void
      */
-    public function getTicketsByStatusAssing();
+    public function countTicketsByStatusAssingByTeam($userId);
+
+    /**
+     *
+     * @param int $userId
+     * @return void
+     */
+    public function getTicketsByStatusAssing($userId);
 
     /**
      *

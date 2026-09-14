@@ -30,6 +30,22 @@ class TicketsController extends Controller
         
     }
 
+    public function countTicketToTeamAssing()
+    {
+        try {
+
+            $total = $this->service->countTicketToTeamAssing();
+
+            return response()->json($total);
+
+        } catch (\Throwable $th) {
+            \Log::info($th);
+            return response()->json([
+                  'message' => 'Ocurrió un error al intentar recuperar el total de tickets para el equipo del usuario, pruebe más tarde.'
+            ], 500);
+        }
+    }
+
     public function viewArchive()
     {
         $details = $this->service->getDetailsIndex();
@@ -83,7 +99,9 @@ class TicketsController extends Controller
 
     public function viewAssingTickets()
     {
-        return view('tickets::assing');
+        $teamIds = Auth::user()->teams()->pluck('teams.id');
+        
+        return view('tickets::assing', compact('teamIds'));
     }
 
     public function updateStatus(Request $request)

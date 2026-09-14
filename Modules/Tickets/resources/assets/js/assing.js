@@ -10,6 +10,8 @@ $(document).ready(function () {
     let departmentUsers = [];
     let currentPage = 1;
     let currentSortOrder = 'desc';
+    let currentTotalTicketsByTeam = 0;
+    let currentTeamId = $('.metadata-page-asing').data('teamId');
     const $selectUser = $('#select-responsible');
     
 
@@ -188,6 +190,19 @@ $(document).ready(function () {
             });
     }
 
+    function fetchTotalsTicketsByTeams() {
+
+        axios.get(`\count_ticket_to_user_team`)
+            .then(response => {
+                currentTotalTicketsByTeam = response.data;
+               
+            })
+            .catch(error => {
+                console.error('Error al obtener total de tickets', error);
+               
+            });
+    }
+
     /**
      * Delegación de eventos para la paginación dinámica
      */
@@ -198,12 +213,13 @@ $(document).ready(function () {
         }
     });
 
+    fetchTotalsTicketsByTeams();
     fetchAvailableTickets(1);
 
 
         function loadDepartmentUsers() {
-            axios.get('/users/get_by_department', {
-                params: { department_id: 2 } 
+            axios.get('/users/get_by_team', {
+                params: { team_id: currentTeamId } 
             })
             .then(response => {
                 const usersData = response.data.data || [];
@@ -293,7 +309,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <span class="badge badge-soft-info text-mega fw-semibold" style="box-shadow: none !important;font-size: 0.7rem;">
-                        Carga actual: ${selectedTickets.length || 0}/${user.tickets_count} tickets
+                        Carga actual: ${currentTotalTicketsByTeam}/${user.tickets_count} tickets
                     </span>
                 </div>
             `);
@@ -313,7 +329,7 @@ $(document).ready(function () {
                 const data = departmentUsers.find(user => user.id == selectedId);
                 if (data) {
                     $('.display-name-user-asing-preview').text(`${data.text}`);
-                    $('#assigned-user-info').html(`Carga actual: <small class="event-reload-count">${selectedTickets.length}</small> /${data.tickets_count}`);
+                    $('#assigned-user-info').html(`Carga actual: <small class="event-reload-count">${currentTotalTicketsByTeam}</small> /${data.tickets_count}`);
                     
                     console.log(data)
                     
@@ -453,6 +469,7 @@ $(document).ready(function () {
                 $selectUser.val(null).trigger('change');
 
 
+                fetchTotalsTicketsByTeams();
                 loadDepartmentUsers();
                 fetchAvailableTickets(currentPage);
             })

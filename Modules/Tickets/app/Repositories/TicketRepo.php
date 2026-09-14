@@ -87,7 +87,21 @@ class TicketRepo implements ITicketRepo {
             ->get();
     }
 
-    public function getTicketsByStatusAssing()
+    public function countTicketsByStatusAssingByTeam($userId)
+    {
+        return DB::table('tickets as t')
+            ->leftJoin('tickets_users_assignations as tua', 't.id', '=', 'tua.ticket_id')
+            ->whereNull('tua.ticket_id')
+            ->whereIn('t.team_id', function ($q) use ($userId) {
+                $q->select('team_id')
+                  ->from('team_user')
+                  ->where('user_id', $userId);
+            })
+            ->whereIn('t.status_id', [1, 2, 3])
+            ->count();
+    }
+
+    public function getTicketsByStatusAssing($userId)
     {
         return DB::table('tickets as t')
         ->leftJoin('tickets_services as s', 't.ticket_service_id', '=', 's.id')
@@ -97,7 +111,12 @@ class TicketRepo implements ITicketRepo {
         ->leftJoin('tickets_users_assignations as tua', 't.id', '=', 'tua.ticket_id')
         // Filtramos solo los que NO tienen registro en la tabla de asignaciones
         ->whereNull('tua.ticket_id')
-        ->where('t.status_id', 1)
+        ->whereIn('t.team_id', function ($q) use ($userId) {
+            $q->select('team_id')
+                  ->from('team_user')
+                  ->where('user_id', $userId);
+        })
+        ->whereIn('t.status_id', [1,2,3])
         ->select(
             't.uid',
             't.title',

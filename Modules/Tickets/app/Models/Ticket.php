@@ -28,7 +28,8 @@ class Ticket extends Model
         'user_id',
         'status_id',
         'title',
-        'description'
+        'description',
+        'team_id'
     ];
 
     public function ticketService(): BelongsTo

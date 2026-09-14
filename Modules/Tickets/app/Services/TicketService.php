@@ -110,8 +110,14 @@ class TicketService {
         });
     }
 
+    public function countTicketToTeamAssing()
+    {
+        return $this->repo->countTicketsByStatusAssingByTeam(Auth::user()->id);
+    }
+
     public function getTicketsStatusAssing(){
-        $tickets = $this->repo->getTicketsByStatusAssing();
+
+        $tickets = $this->repo->getTicketsByStatusAssing(Auth::user()->id);
 
         return $tickets->through(function ($ticket) {
             // Formato de fecha relativo
@@ -330,6 +336,8 @@ class TicketService {
        $values['uid'] = $uid;
        $values['user_id'] = Auth::user()->id;
        $values['status_id'] = 1;
+       $values['team_id'] = $values['ticket_type_id'];
+
 
        $ticket = $this->repo->addTicket($values);
 

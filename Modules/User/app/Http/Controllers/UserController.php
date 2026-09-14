@@ -38,6 +38,28 @@ class UserController extends Controller
     }
 
     /**
+     * Obtener usuarios por el departamento id
+     */
+    public function getUsersByTeam(Request $request)
+    {
+        try {
+
+            $users = $this->service->getUsersByTeam($request);
+
+            return response()->json([
+                'data' => $users
+            ], 200);
+
+        } catch (\Throwable $th) {
+            \Log::info($th);
+
+            return response()->json([
+                'data' => 'Ocurrio un error al consultar los usuarios',
+            ], 500);
+        }
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()

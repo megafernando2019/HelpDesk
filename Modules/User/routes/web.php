@@ -5,5 +5,10 @@ use Modules\User\App\Http\Controllers\UserController;
 
 Route::middleware(['auto_login'])->group(function () {
     
+    //Obtiene usuarios por su departamento id
     Route::get('/users/get_by_department', [UserController::class, 'getUsersDepartment']);
+
+     //Obtiene usuarios por su team id
+    Route::get('/users/get_by_team', [UserController::class, 'getUsersByTeam']);
 });
+
