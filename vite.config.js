@@ -30,6 +30,7 @@ export default defineConfig({
             'Modules/Tickets/resources/assets/css/create.css',
             'Modules/Tickets/resources/assets/css/show.css',
             'Modules/Tickets/resources/assets/css/archive.css',
+            'Modules/Tickets/resources/assets/css/my_daily_job.css',
             'resources/js/script.js',
             'resources/js/helpers/helper.js',
             'Modules/Tickets/resources/assets/js/index.js',
@@ -37,7 +38,8 @@ export default defineConfig({
             'Modules/Tickets/resources/assets/js/show.js',
             'Modules/Tickets/resources/assets/js/assing.js',
             'Modules/Tickets/resources/assets/js/reassing.js',
-            'Modules/Tickets/resources/assets/js/archive.js'
+            'Modules/Tickets/resources/assets/js/archive.js',
+            'Modules/Tickets/resources/assets/js/my_daily_job.js'
             ],
             refresh: true,
         }),

@@ -45,7 +45,7 @@
 <!-- Meta Tags -->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title> {{ $title }} | HelpDesk</title>
+<title>@yield('title', 'home')</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Dreams Timer is a sleek time tracking admin dashboard for managing work hours, productivity, and teams.">
 <meta name="keywords" content="time tracking dashboard, admin template, workforce management, employee productivity, project time tracker, Dreams Timer admin panel, business dashboard UI">

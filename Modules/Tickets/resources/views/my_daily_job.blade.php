@@ -1,9 +1,9 @@
 @extends('layout.mainlayout')
 
-@section('title', 'HelpDesk | Archivo')
+@section('title', 'HelpDesk | Mi trabajo diario')
 
 @section('content')
-@vite('Modules/Tickets/resources/assets/css/archive.css')
+@vite('Modules/Tickets/resources/assets/css/my_daily_job.css')
 
 <div class="page-wrapper">
     <div class="content container-fluid">
@@ -12,8 +12,8 @@
             <div class="row w-100">
                 <div class="col-md-4 d-flex align-items-center">
                     <h3 class="page-title">
-                        <i class="ti ti-clipboard-check"></i>
-                        Archivo
+                        <i class="ti ti-clipboard-smile"></i>
+                        Mi trabajo diario
                     </h3>
                 </div>
                     
@@ -49,7 +49,7 @@
                             <input type="text" 
                                    class="form-control border-start-0  ps-1" 
                                    placeholder="Selecciona rango de fecha" 
-                                   id="flatpickr-range-tickets">
+                                   id="flatpickr-range-tickets-job-daily">
                         </div>
                     </div>
                 </div>
@@ -58,59 +58,58 @@
 
         <div class="row gap-1" style="flex-wrap: nowrap !important;">
             <!-- detalles -->
-            <div class="col-md-4 current-rounded p-2 border d-flex gap-2" style="background-color: #f5fff9;">
+            <div class="col-md-4 current-rounded p-2 border d-flex gap-2" style="background-color: #faf8ff;">
                 <div>
-                    <i class="ti ti-circle-check icon-success text-success"></i>
+                    <i class="ti ti-user icon-ticket-to-assing"></i>
                 </div>
                 <div class="info-alert-header">
-                    <h3 class="count-completed">
+                    <h3 class="count-to-assing">
                        Cargando...
                     </h3>
                     <span>
-                        Solucionados
+                        Por asignar
                     </span>
                 </div>
             </div>
-            <div class="col-md-4 current-rounded p-2 border d-flex gap-2" style="background-color: #fff9f1;">
+            <div class="col-md-4 current-rounded p-2 border d-flex gap-2" style="background-color: #f3f6ff;">
                 <div>
-                    <i class="ti ti-lock-check text-primary icon-ticket-close"></i>
+                    <i class="ti ti-progress-check icon-ticket-progress"></i>
                 </div>
                 <div class="info-alert-header">
-                    <h3 class="count-closed">
+                    <h3 class="count-progress">
                         Cargando...
                     </h3>
                     <span>
-                        Cerrados
+                        En proceso
                     </span>
                 </div>
             </div>
-            <div class="col-md-4 current-rounded p-2 border d-flex gap-2" style="background-color: #fffafa;">
+            <div class="col-md-4 current-rounded p-2 border d-flex gap-2" style="background-color: #fafbfb;">
                 <div>
-                    <i class="ti ti-cancel text-danger icon-ticket-cancel"></i>
+                    <i class="ti ti-clock icon-ticket-waiting"></i>
                 </div>
                 <div class="info-alert-header">
-                    <h3 class="count-cancel">
+                    <h3 class="count-waiting">
                          Cargando...
                     </h3>
                     <span>
-                        Cancelados
+                        En espera
                     </span>
                 </div>
             </div>
         </div>
-
       
         <div class="row gap-1 mt-4" style="flex-wrap: nowrap !important;">
-            <div id="tickets-container-success"  style="background-color: #f5fff9; height: 500px;
+            <div id="tickets-container-to-assing"  style="background-color: #faf8ff; height: 500px;
                 overflow-x: auto;"
                  class="col-md-4 border current-rounded p-3"></div>
 
-            <div id="tickets-container-close"  style="background-color: #fff9f1; height: 500px;
+            <div id="tickets-container-progress"  style="background-color: #f3f6ff; height: 500px;
             overflow-x: auto;" 
              class="col-md-4 current-rounded p-3 border"></div>
 
-             <div id="tickets-container-cancel"
-                  style="background-color: #fffafa; height: 500px;
+             <div id="tickets-container-waiting"
+                  style="background-color: #fafbfb; height: 500px;
                 overflow-x: auto;" 
                   class="col-md-4 current-rounded p-3 border"
               ></div>
@@ -121,6 +120,5 @@
     </div>
 </div>
 
-
-@vite('Modules/Tickets/resources/assets/js/archive.js')
+@vite('Modules/Tickets/resources/assets/js/my_daily_job.js')
 @endsection

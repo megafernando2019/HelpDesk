@@ -92,7 +92,14 @@
                             <li class="submenu">
                                 <a href="javascript:void(0);"
                                 class="
-                                {{ Request::is('index', '/','admin-dashboard','sales-dashboard') 
+                                {{ Route::is([
+                                'tickets.index', 
+                                'tickets.create', 
+                                'tickets.archive', 
+                                'tickets.assing', 
+                                'tickets.show',
+                                'tickets.my.daily.job',
+                                'tickets.reassing']) 
                                 ? 'active subdrop' : '' }}">
                                         <span><i class="ti ti-ticket mr-1"></i> Tickets</span>
                                         <span class="menu-arrow"></span>
@@ -112,7 +119,7 @@
                                       Reasignar
                                     </a>
                                 </li>
-                                   <li><a href="#">Mi trabajo diario</a></li>
+                                <li><a href="{{route('tickets.my.daily.job')}}" class="{{Route::is('tickets.my.daily.job') ? 'selected_menu' : ''}}">Mi trabajo diario</a></li>
                                    <li><a href="{{route('tickets.archive')}}" class="{{Route::is('tickets.archive') ? 'selected_menu' : ''}}">Archivo</a></li>
                                 </ul>
                             </li>

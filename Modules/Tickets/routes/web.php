@@ -27,5 +27,7 @@ Route::middleware(['auto_login'])->group(function () {
     // Archivo 
     Route::get('/tickets/archive', [TicketsController::class, 'viewArchive'])->name('tickets.archive');
     Route::get('/tickets/get_any_statuses', [TicketsController::class, 'getAnyStatusesByUserAssing'])->name('tickets.any.statuses');
+    //Mi trabajo diario
+    Route::get('/tickets/my_daily_job', [TicketsController::class, 'viewMyDailyJob'])->name('tickets.my.daily.job');
     Route::resource('tickets', TicketsController::class)->names('tickets');
 });

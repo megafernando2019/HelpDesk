@@ -307,7 +307,7 @@
     <script src="{{URL::asset('build/js/theme-colorpicker.js')}}"></script>
 @endif    
 
-@if(Route::is(['tickets.index']))     
+@if(Route::is(['tickets.index', 'tickets.my.daily.job']))     
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 @endif

@@ -46,6 +46,15 @@ class TicketsController extends Controller
         }
     }
 
+    public function viewMyDailyJob()
+    {
+         $details = $this->service->getDetailsIndex();
+         
+        return view('tickets::my_daily_job', compact(
+            'details'
+        ));
+    }
+
     public function viewArchive()
     {
         $details = $this->service->getDetailsIndex();

@@ -1,5 +1,7 @@
 @extends('layout.mainlayout')
 
+@section('title', 'HelpDesk - Mis tickets')
+
 @section('content')
 <div class="page-wrapper">
     <div class="content container-fluid">

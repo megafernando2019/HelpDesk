@@ -1,5 +1,7 @@
 @extends('layout.mainlayout')
 
+@section('title', 'HelpDesk - Crear ticket')
+
 @section('content')
         <div class="page-wrapper">
 
