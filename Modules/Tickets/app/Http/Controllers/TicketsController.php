@@ -13,7 +13,6 @@ use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
 use Modules\Tickets\Support\Enums\TicketStatus;
 use Modules\User\app\Services\UserService;
-use PhpParser\Node\Expr\FuncCall;
 
 class TicketsController extends Controller
 {
@@ -49,9 +48,11 @@ class TicketsController extends Controller
     public function viewMyDailyJob()
     {
          $details = $this->service->getDetailsIndex();
+         $teamIds = Auth::user()->teams()->pluck('teams.id');
          
         return view('tickets::my_daily_job', compact(
-            'details'
+            'details',
+            'teamIds'
         ));
     }
 

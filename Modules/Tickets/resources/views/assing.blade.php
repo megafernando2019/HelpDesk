@@ -7,7 +7,7 @@
 
             @include('tickets::partials.create.modal-confirm-create-ticket-success')
 
-            <div class="content container-fluid metadata-page-asing" data-team-id='@json($teamIds)''>
+            <div class="content container-fluid metadata-page-asing" data-team-id='@json($teamIds)'>
             
                 <div class="page-header">
                     <div class="row">

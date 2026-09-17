@@ -5,7 +5,7 @@
 @section('content')
 @vite('Modules/Tickets/resources/assets/css/my_daily_job.css')
 
-<div class="page-wrapper">
+<div class="page-wrapper metadata-page-asing"  data-team-id='@json($teamIds)'>
     <div class="content container-fluid">
             
         <div class="page-header">
@@ -99,7 +99,7 @@
             </div>
         </div>
       
-        <div class="row gap-1 mt-4" style="flex-wrap: nowrap !important;">
+        <div class="row gap-1 mt-4 container-load-tickets" style="flex-wrap: nowrap !important;">
             <div id="tickets-container-to-assing"  style="background-color: #faf8ff; height: 500px;
                 overflow-x: auto;"
                  class="col-md-4 border current-rounded p-3"></div>
@@ -116,6 +116,7 @@
         </div>
       
         @include('tickets::partials.modal-add-observation')
+        @include('tickets::partials.modal-assing-user-index')
 
     </div>
 </div>

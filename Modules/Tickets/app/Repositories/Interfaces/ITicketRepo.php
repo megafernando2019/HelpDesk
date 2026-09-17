@@ -8,15 +8,15 @@ interface ITicketRepo {
 
     /**
      *
-     * @param int $userId
+     * @param array $teamsIds
      * @param array $ticket_statuses
      * @param int $priority
      * @param string $startDate
      * @param string $endDate
      * @return void
      */
-    public function findByStatusesIdsByIdUserAssing(
-        $userId,
+    public function findByStatusesIdsByTeamId(
+        $teamsIds,
         $ticket_statuses,
         $priority = 0,
         $startDate = null,

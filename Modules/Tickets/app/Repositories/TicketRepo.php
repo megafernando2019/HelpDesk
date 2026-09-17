@@ -2,27 +2,24 @@
 
 namespace Modules\Tickets\Repositories;
 
-use Illuminate\Support\Facades\Auth;
 use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Illuminate\Support\Facades\DB;
 use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Models\TicketAttachment;
 use Modules\Tickets\Models\TicketLog;
 use Modules\Tickets\Models\TicketObservation;
-use Override;
 
 class TicketRepo implements ITicketRepo {
 
-    public function findByStatusesIdsByIdUserAssing(
-        $userId,
+    public function findByStatusesIdsByTeamId(
+        $teamsIds,
         $ticket_statuses,
         $priority = 0,
         $startDate = null,
         $endDate =null
     )
     {
-        
-        return DB::table('tickets as t')
+        $q = DB::table('tickets as t')
         ->select([
             't.id',
             't.uid',
@@ -32,6 +29,7 @@ class TicketRepo implements ITicketRepo {
             't.status_id',
             't.ticket_priority_id',
             't.user_id',
+            't.team_id',
             'ts.name as service_name',
             'tp.name as priority_name',
             'u.id as assigned_id',
@@ -43,7 +41,7 @@ class TicketRepo implements ITicketRepo {
             'uc.first_name as user_first_name_create',
             'uc.last_name as user_last_name_create',
         ])
-        ->where('tua.user_id', 2361)
+        ->whereIn('t.team_id', $teamsIds)
         ->whereIn('t.status_id', $ticket_statuses)
         ->when($priority, function ($q, $priority) {
             return $q->where('t.ticket_priority_id', $priority);
@@ -62,6 +60,9 @@ class TicketRepo implements ITicketRepo {
         ->leftJoin('users as uc', 't.user_id', '=', 'uc.id')
         ->orderByDesc('t.id')
         ->get();
+
+        return $q;
+        // dd($q);
     }
 
     public function getAssignedTicketsByUserId(int $userId)

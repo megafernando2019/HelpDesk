@@ -28,7 +28,10 @@ class TicketService {
 
     public function getToStatusesUserAssing($request)
     {
-        $user_id = Auth::user()->id;
+        $user = Auth::user();
+        $user->load('teams');
+        $teamsIds = $user?->teams?->pluck('id')->toArray() ?? [];
+       
         $ticket_statuses_param = $request->ticket_status ?? [];
         $priority = (int) ($request->priority ?? 0);
         $startDate = $request->start_date ?? null;
@@ -56,8 +59,8 @@ class TicketService {
             $endDate = null;
         }
 
-        $query = $this->repo->findByStatusesIdsByIdUserAssing(
-            $user_id, 
+        $query = $this->repo->findByStatusesIdsByTeamId(
+            $teamsIds, 
             $ticket_statuses,
             $priority,
             $startDate,

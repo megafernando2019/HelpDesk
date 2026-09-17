@@ -9,27 +9,17 @@ $(document).ready(function () {
     let dateRangePicker = null;
     const modalObservation = $('#addObservationModal');
     const observationDescription = $('#observationDescription');
+    const modalAssingUser = $('#assingUserModal');
+    const $selectUserAssing = $('.select2-assignees');
+    let currentTeamId = $('.metadata-page-asing').data('teamId');
     let countTicketsWaiting = 0;
     let countTicketsToAssing = 0;
     let countticketsProgress = 0;
+    let departmentUsers = [];
 
     /**
      * data actions
      */
-    $('body').on('click', '[data-action=filter-by-status]', function (e) {
-        const $card = $(e.currentTarget);
-        const statusId = $card.data('id');
-        const bgColor = $card.data('bgColor');
-        const $container = $('#tickets-container');
-        const priority = $('[data-action=filter-by-priority]').val() || 0;
-
-        $container.attr('data-current-status', statusId);
-        $('[data-action=filter-by-status]').removeClass('shadow shadow-lg');
-        $card.addClass('shadow-lg');
-
-        getTicketsDataKanban(statusId, bgColor, priority);
-    });
-
 
     $(document).on('click', '.ticket-add-observation', function () {
         const $this = $(this);
@@ -51,10 +41,8 @@ $(document).ready(function () {
     $('body').on('change', '[data-action=filter-by-priority]', function (e) {
         const $item = $(e.currentTarget);
         const priority = $item.val();
-        const $container = $('#tickets-container');
-        const currentStatus = $container.attr('data-current-status');
 
-        getTicketsDataKanban(currentStatus, null, priority);
+        getTicketsDataKanban(0, priority);
     });
 
 
@@ -84,6 +72,7 @@ $(document).ready(function () {
 
     });
 
+
     $('#addObservationForm').on('submit', function (e) {
         e.preventDefault();
 
@@ -93,7 +82,7 @@ $(document).ready(function () {
         const priorityId = $('#modal_ob_priority_id').val();
         const statusId = $('#modal_ob_status_id').val();
         const userId = $('#modal_ob_user_id').val();
-
+   
          observationDescription.removeClass('is-invalid');
          $('.error-input-observation').text('');
 
@@ -163,22 +152,34 @@ $(document).ready(function () {
                     const currentStatus = $container.attr('data-current-status') || null;
                     const priority = $('[data-action=filter-by-priority]').val() || 0;
                     
-                    getTicketsDataKanban(currentStatus, null, priority);
+                    getTicketsDataKanban(0, priority);
                 }
             },
             onClose: function(selectedDates, dateStr, instance) {
                
             }
         });
-    } else {
-        console.log('No esta el elemento flatpickr-range-tickets')
     }
 
-    function getTicketsDataKanban(
-                                  status = null, 
-                                  bgColor = null,
-                                  priority = 0
-    ) {
+    function loadingKanban(isLoading = true) {
+        const $containers = $('.container-load-tickets');
+
+        if (isLoading) {
+            $containers.css({
+                'opacity': '0.5',
+                'pointer-events': 'none'
+            });
+        } else {
+            $containers.css({
+                'opacity': '1',
+                'pointer-events': 'auto'
+            });
+        }
+    }
+
+    function getTicketsDataKanban(statusAction = 0,
+                                  priority=null) 
+    {
 
         const $containerToAssing = $('#tickets-container-to-assing');
         const $containerProgress = $('#tickets-container-progress');
@@ -187,7 +188,11 @@ $(document).ready(function () {
         let endDate = null;
         let statuses = [1,2,3];
 
-        ui.showToast('info', 'Consultando tickets...');
+        loadingKanban();
+
+        if (statusAction === 0) {
+             ui.showToast('info', 'Consultando tickets...');
+        }
         //$containerSucess.addClass('item-disabled');
 
         if (dateRangePicker && dateRangePicker.selectedDates.length === 2) {
@@ -223,23 +228,24 @@ $(document).ready(function () {
                 return ticket.status_id === 1;
             });
 
-             const ticketsWaiting = tickets.filter(ticket => {
-                
-                return ticket.status_id === 2;
-            });
-
-             const ticketsProgress = tickets.filter(ticket => {
+            const ticketsWaiting = tickets.filter(ticket => {
                 
                 return ticket.status_id === 3;
             });
 
+            const ticketsProgress = tickets.filter(ticket => {
+                
+                return ticket.status_id === 2;
+            });
+
+             countTicketsToAssing = ticketsToAssing.length;
+             countTicketsWaiting = ticketsWaiting.length;
+             countticketsProgress = ticketsProgress.length;
 
             if (ticketsToAssing.length === 0) {
                 $containerToAssing.html('<div class="col-12 text-center text-muted py-4">No se encontraron tickets</div>');
                 
             } else {
-                 countTicketsToAssing = ticketsToAssing.length;
-
 
                  ticketsToAssing.forEach((ticket, index) => {
 
@@ -272,7 +278,7 @@ $(document).ready(function () {
                                         </div>
                                         <div class="d-flex" style="flex-direction: column;">
                                             <!-- Título -->
-                                            <h6 class="text-mega fw-bold mb-0 text-truncate">
+                                            <h6 class="text-mega fw-bold mb-0 text-truncate" style="text-wrap: auto;">
                                                 ${ticket?.uid} - ${ticket?.title}
                                             </h6>
 
@@ -300,13 +306,44 @@ $(document).ready(function () {
                                             <a 
                                                     href="javascript:void(0);" 
                                                     data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="2"  
+                                                    data-user-id="${ticket?.user_id ?? 0}"
+                                                    data-uid="${ticket?.uid ?? ''}"
+                                                    class="text-secondary ticket-status-process" 
+                                                    title="En proceso">
+                                                    <i class="ti ti-progress-check fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="6"  
+                                                    data-user-id="${ticket?.user_id ?? 0}" 
+                                                     data-uid="${ticket?.uid ?? ''}"
+                                                    class="text-secondary ticket-status-cancel" 
+                                                    title="Cancelar">
+                                                    <i class="ti ti-cancel fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
                                                     data-status-id="${ticket?.status_id ?? 0}"  
                                                     data-priority-id="${ticket?.ticket_priority_id ?? 0}"
                                                     data-user-id="${ticket?.user_id ?? 0}" 
                                                     data-observation="${ticket?.observation ?? ''}"
                                                     class="text-secondary ticket-add-observation" 
-                                                    title="Editar">
+                                                    title="Agregar observación">
                                                 <i class="ti ti-edit-circle fs-18"></i>
+                                            </a>
+                                            <a 
+                                                href="javascript:void(0);"
+                                                data-id="${ticket?.id ?? 0}"
+                                                 data-user-assing-id="${ticket?.assigned_id}"
+                                                class="btn-assing-user"
+                                                >
+                                                ${ticket?.assigned_id 
+                                                    ? '<i class="ti ti-replace-user"></i>'
+                                                    : ' <i class="ti ti-user-check fs-18"></i>'
+                                                }
                                             </a>
                                         </div>
                                     </div>
@@ -334,8 +371,7 @@ $(document).ready(function () {
                 $containerProgress.html('<div class="col-12 text-center text-muted py-4">No se encontraron tickets</div>');
                 
             } else {
-                 countticketsProgress = ticketsProgress.length;
-
+                
                  ticketsProgress.forEach((ticket, index) => {
 
                     const currentColor = colorsDefault[index % colorsDefault.length];
@@ -367,7 +403,7 @@ $(document).ready(function () {
                                         </div>
                                         <div class="d-flex" style="flex-direction: column;">
                                             <!-- Título -->
-                                            <h6 class="text-mega fw-bold mb-0 text-truncate">
+                                            <h6 class="text-mega fw-bold mb-0 text-truncate" style="text-wrap: auto;">
                                                 ${ticket?.uid} - ${ticket?.title}
                                             </h6>
 
@@ -389,8 +425,41 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
+                                            <a href="/tickets/${ticket?.uid ?? ''}" 
+                                            data-action="ticket-show" data-id="${ticket?.id ?? 0}" 
+                                            class="text-secondary" 
+                                            title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="3"  
+                                                    data-user-id="${ticket?.user_id ?? 0}"
+                                                    data-uid="${ticket?.uid ?? ''}"
+                                                    class="text-secondary ticket-status-waiting" 
+                                                    title="En espera">
+                                                    <i class="ti ti-clock fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="4"  
+                                                    data-user-id="${ticket?.user_id ?? 0}"
+                                                    data-uid="${ticket?.uid ?? ''}"
+                                                    class="text-secondary ticket-status-completed" 
+                                                    title="Solucionado">
+                                                    <i class="ti ti-circle-check fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="6"  
+                                                    data-user-id="${ticket?.user_id ?? 0}" 
+                                                     data-uid="${ticket?.uid ?? ''}"
+                                                    class="text-secondary ticket-status-cancel" 
+                                                    title="Cancelar">
+                                                    <i class="ti ti-cancel fs-18"></i>
                                             </a>
                                             <a 
                                                     href="javascript:void(0);" 
@@ -400,7 +469,7 @@ $(document).ready(function () {
                                                     data-user-id="${ticket?.user_id ?? 0}" 
                                                     data-observation="${ticket?.observation ?? ''}"
                                                     class="text-secondary ticket-add-observation" 
-                                                    title="Editar">
+                                                    title="Agregar observación">
                                                 <i class="ti ti-edit-circle fs-18"></i>
                                             </a>
                                         </div>
@@ -429,7 +498,6 @@ $(document).ready(function () {
                 $containerWaiting.html('<div class="col-12 text-center text-muted py-4">No se encontraron tickets</div>');
 
             } else {
-                countTicketsWaiting = ticketsWaiting.length;
 
                 ticketsWaiting.forEach((ticket, index) => {
 
@@ -462,7 +530,7 @@ $(document).ready(function () {
                                         </div>
                                         <div class="d-flex" style="flex-direction: column;">
                                             <!-- Título -->
-                                            <h6 class="text-mega fw-bold mb-0 text-truncate">
+                                            <h6 class="text-mega fw-bold mb-0 text-truncate" style="text-wrap: auto;">
                                                 ${ticket?.uid} - ${ticket?.title}
                                             </h6>
 
@@ -486,6 +554,38 @@ $(document).ready(function () {
                                         <div class="d-flex gap-2">
                                             <a href="/tickets/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="${ticket?.status_id ?? 0}"  
+                                                    data-priority-id="${ticket?.ticket_priority_id ?? 0}"
+                                                    data-user-id="${ticket?.user_id ?? 0}" 
+                                                    data-observation="${ticket?.observation ?? ''}"
+                                                    class="text-secondary ticket-add-observation" 
+                                                    title="Agregar observación">
+                                                <i class="ti ti-edit-circle fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="6"  
+                                                    data-user-id="${ticket?.user_id ?? 0}" 
+                                                     data-uid="${ticket?.uid ?? ''}"
+                                                    class="text-secondary ticket-status-cancel" 
+                                                    title="Cancelar">
+                                                    <i class="ti ti-cancel fs-18"></i>
+                                            </a>
+                                            <a 
+                                                href="javascript:void(0);"
+                                                data-id="${ticket?.id ?? 0}"
+                                                data-user-assing-id="${ticket?.assigned_id}"
+                                                class="btn-assing-user"
+                                                >
+                                                ${ticket?.assigned_id 
+                                                    ? '<i class="ti ti-replace-user fs-18"></i>'
+                                                    : ' <i class="ti ti-user-check fs-18"></i>'
+                                                }
                                             </a>
                                         
                                         </div>
@@ -517,6 +617,7 @@ $(document).ready(function () {
         })
         .finally(function () {
           
+            console.log(countTicketsToAssing)
             $('.count-to-assing').text(countTicketsToAssing);
             $('.count-progress').text(countticketsProgress);
             $('.count-waiting').text(countTicketsWaiting);
@@ -524,8 +625,261 @@ $(document).ready(function () {
             $containerToAssing.removeClass('item-disabled');
             $containerProgress.removeClass('item-disabled');
             $containerWaiting.removeClass('item-disabled');
+
+            loadingKanban(false);
         });
     }
+
+
+    $(document).on('click', '.ticket-status-process, .ticket-status-cancel, .ticket-status-completed, .ticket-status-waiting', function (e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const ticketId = $btn.data('id');
+        const statusId = parseInt($btn.data('statusId'));
+        const ticketUid = $btn.data('uid');
+
+        // Confirmación opcional antes de realizar la acción
+        let actionText = '';
+
+        console.log(statusId)
+
+        switch (statusId) {
+            case 1:
+                actionText = "poner en por asignar";
+                break;
+            case 2:
+                actionText = "poner en proceso";
+                break;
+            case 3:
+                actionText = "poner en espera";
+                break;
+            case 4:
+                actionText = "solucionar";
+                break;
+            case 5:
+                actionText = "cerrar";
+                break;
+            case 6:
+                actionText = "cancelar";
+                
+                break;
+        
+            default:
+                break;
+        }
+
+        Swal.fire({
+          title: `¿Estás seguro de que deseas ${actionText} este ticket?`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#0049fc",
+          cancelButtonColor: "#d33",
+          cancelButtonText: "Regresar",
+          confirmButtonText: "Confirmar"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $btn.addClass('disabled');
+
+            axios.post('/updated_status', {
+                ticket_id: ticketId,
+                ticket_status: statusId,
+                current_uid: ticketUid
+            })
+            .then(function (response) {
+                getTicketsDataKanban(1);
+
+                ui.showToast('success', 'Estatus actualizado correctamente.');
+            })
+            .catch(function (error) {
+                console.error(error);
+                ui.showToast('error', 'Ocurrió un error al actualizar el estatus del ticket.');
+            })
+            .finally(function () {
+                $btn.removeClass('disabled');
+            });
+
+          }
+        });
+    });
+
+
+
+    async function loadTeamsUsers(userAssing = null) {
+        $selectUserAssing.prop('disabled', true);
+        $selectUserAssing.empty();
+        $selectUserAssing.html('<option>Cargando información...</option>');
+
+        axios.get('/users/get_by_team', {
+            params: { team_id: currentTeamId } 
+        })
+        .then(response => {
+            const usersData = response.data.data || [];
+
+            // Mapeo al formato esperado por Select2 y guardado en memoria
+            departmentUsers = usersData.map(user => ({
+                id: user.id,
+                text: `${user.first_name} ${user.last_name}`,
+                email: user.email,
+                tickets_count: user.active_tickets_count || 0,
+                initials: user?.initials ?? null,
+                tickets_count: user?.tickets_count || 0
+            }));
+
+
+            $selectUserAssing.empty();
+            $selectUserAssing.prop('disabled', false);
+
+            $selectUserAssing.select2({
+                dropdownParent: modalAssingUser,
+                placeholder: 'Buscar y seleccionar un usuario responsable...',
+                allowClear: true,
+                data: departmentUsers, 
+                matcher: customUserMatcher,
+                templateResult: formatUserOption,
+                templateSelection: formatUserSelection
+            });
+
+            const selectedVal = (userAssing && userAssing != 0 && userAssing !== 'null') ? userAssing : null;
+
+            $selectUserAssing.val(selectedVal).trigger('change');
+        })
+        .catch(error => {
+            console.error('Error al cargar los usuarios del departamento:', error);
+            ui.showToast('error', 'Error al cargar los usuarios del departamento:');
+        });
+    }
+
+
+    $(document).on('click', '.btn-assing-user', function () {
+       
+        const ticketId = $(this).data('id');
+        const statusId = $(this).data('statusId');
+        const userAssing = $(this).data('userAssingId');
+
+        $('.current-user-assing').val(userAssing);
+        $('.ticket-id-modal-assign-user').val(ticketId);
+        $('.status-id-modal-assing-user').val(statusId);
+
+        loadTeamsUsers(userAssing);
+
+        if (userAssing === 0 || !userAssing || userAssing === undefined) {
+            $('.save-modal-user-assign').html(`<i class="ti ti-user-check fs-16"></i>
+            Asignar encargado`);
+        } else {
+            //Ya hay alguien asignado
+            $('.save-modal-user-assign').html(`<i class="ti ti-user-check fs-16"></i>
+            Reasignar encargado`);
+        }
+
+        modalAssingUser.modal('show');
+    });
+
+
+     function customUserMatcher(params, data) {
+        // Si no hay término de búsqueda, mostrar todos los elementos
+        if ($.trim(params.term) === '') {
+            return data;
+        }
+
+        // Si no hay texto en la opción, ignorar
+        if (typeof data.text === 'undefined') {
+            return null;
+        }
+
+        const term = params.term.toLowerCase();
+        const text = data.text.toLowerCase();
+        const email = (data.email || '').toLowerCase();
+
+        // Buscar coincidencia en Nombre o Email
+        if (text.indexOf(term) > -1 || email.indexOf(term) > -1) {
+            return data;
+        }
+
+        return null;
+    }
+
+        
+    function formatUserOption(user) {
+        if (!user.id) return user.text;
+
+        const fullName = user.text || `${user.first_name} ${user.last_name}`;
+        const initials = user.initials || 'U';
+        const bgColors = [
+            "bg-primary",
+            "bg-secondary",
+            "bg-success",
+            "bg-warning",
+            "bg-danger",
+            "bg-info"
+        ];
+
+        const randomColor = bgColors[user.id % bgColors.length];
+            
+        return $(`
+            <div class="d-flex align-items-center justify-content-between py-1">
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Avatar con las iniciales del backend -->
+                    <div class="rounded-circle ${randomColor} text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-bold"
+                         style="width: 32px; height: 32px; font-size: 0.8rem;">
+                        ${initials}
+                    </div>
+                    <div>
+                        <strong class="d-block text-dark" style="font-size: 0.875rem;">${fullName}</strong>
+                        <small class="text-muted" style="font-size: 0.75rem;">${user.email || ''}</small>
+                    </div>
+                </div>
+            </div>
+        `);
+    }
+
+    function formatUserSelection(user) {
+        return user.text || user.placeholder;
+    }
+
+        
+    $('#addAssignUserForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const $btn = $('.save-modal-user-assign');
+        const ticketId = $('.ticket-id-modal-assign-user').val();
+        const userId = $('.select2-assignees').val();
+
+        if (!userId || userId === 'Cargando usuarios...') {
+            ui.showToast('error', 'Debes seleccionar un usuario almenos para continuar');
+            return;
+        }
+
+        $btn.prop('disabled', true);
+
+        axios.post('/assing_ticket_user', {
+            ticket_id: ticketId,
+            assignees: [userId]
+        })
+        .then(function (response) {
+            modalAssingUser.modal('hide');
+
+            setTimeout(() => {
+                Swal.fire({
+                    title: "Usuario asignado correctamente",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500, 
+                    draggable: true
+                }).then(() => {
+                    
+                    getTicketsDataKanban();
+                });
+            }, 300);
+        })
+        .catch(function (error) {
+            ui.showToast('error', 'Error al asignar al usuario');
+            console.log(error)
+        })
+        .finally(function() {
+            $btn.prop('disabled', false);
+        });
+    });
 
 
     getTicketsDataKanban();
