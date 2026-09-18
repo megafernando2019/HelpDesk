@@ -34,7 +34,7 @@ enum TicketAction: string
             self::REASSIGN_TICKET   => "El ticket {$ticket} fue reasignado a " . ($data['assigned_to'] ?? '') . " por {$user}",
             self::STATUS_IN_PROGRESS => "El ticket {$ticket} cambió de estatus a En proceso",
             self::STATUS_PENDING    => "El ticket {$ticket} cambió de estatus a En espera",
-            self::STATUS_SOLVED     => "El ticket {$ticket} fue solucionado",
+            self::STATUS_SOLVED     => "El ticket {$ticket} fue solucionado. Motivo: ". ($data['completed_reason'] ?? ''),
             self::STATUS_CLOSED     => "El ticket {$ticket} fue cerrado",
             self::STATUS_CANCELLED  => "El ticket {$ticket} fue cancelado. Motivo: ". ($data['cancel_reason'] ?? ''),
             self::ADD_COMMENT       => "{$user} realizó una observación en el ticket {$ticket}",

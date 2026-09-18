@@ -149,8 +149,10 @@ class TicketService {
        $status = (int) $request?->ticket_status ?? 0;
        $ticket_id = $request?->ticket_id ?? null;
        $ticket_uid = $request?->current_uid ?? null;
+       $cancel_reason = $request?->cancel_reason ?? null;
+       $completed_reason = $request?->completed_reason ?? null;
        $result = $this->repo->updateStatus($status, $ticket_id);
-       $cancel_reason = $request->cancel_reason ?? null;
+       
 
        //Si se actualizo el estatus con éxito
        if($result) {
@@ -163,9 +165,20 @@ class TicketService {
                 case 6:
                     $enum_action = TicketAction::STATUS_CANCELLED;
                     break;
+                case 4:
+                    $enum_action = TicketAction::STATUS_SOLVED;
+                    break;
+                case 1:
+                    $enum_action = TicketAction::ASSIGN_TICKET;
+                    break;
+                case 3: 
+                    $enum_action = TicketAction::STATUS_PENDING;
+                    break;
+                case 5:
+                    $enum_action = TicketAction::STATUS_CLOSED;
+                    break;
                 
                 default:
-                    
                     break;
             }
             
@@ -184,7 +197,8 @@ class TicketService {
                     'update',
                     'tickets/show',
                     null,
-                    $cancel_reason
+                    $cancel_reason,
+                    $completed_reason
                 );
             }
        }

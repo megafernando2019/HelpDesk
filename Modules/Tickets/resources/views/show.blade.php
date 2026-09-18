@@ -458,16 +458,6 @@
                                             </button>
 
                                             <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="4"
-                                                    data-name="Solucionado"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Marcar como Solucionado">
-                                                <i class="ti ti-circle-check"></i>
-                                            </button>
-
-                                            <button type="button" 
                                                     class="btn btn-status-observation"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="top"
@@ -514,4 +504,5 @@
             </div>
         </div>
 @include('tickets::partials.modal-add-reason-cancelled')
+@include('tickets::partials.modal-add-reason-completed')
 @endsection

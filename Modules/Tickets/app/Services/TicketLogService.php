@@ -21,6 +21,7 @@ class TicketLogService
         $section_name,
         $selectedName = null,
         $cancel_reason = null,
+        $completed_reason = null
     )
     {
         $data = [
@@ -32,7 +33,8 @@ class TicketLogService
             'assigned_to' => $selectedName,
             'ticket' => $ticket?->uid ?? '',
             'observation' => $ticket?->observation?->description ?? '',
-            'cancel_reason' => $cancel_reason
+            'cancel_reason' => $cancel_reason,
+            'completed_reason' => $completed_reason
         ];
 
         $record = [
