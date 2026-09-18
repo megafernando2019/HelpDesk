@@ -7,9 +7,9 @@ $(document).ready(function () {
 
     const $selectUserOld = $('.select2-users-old-assing');
     const $selectUserNewAssign = $('.select2-users-new-assing');
-    let selectedTickets = [];
     let ticketsDataUserOld = [];
     let ticketsDataUserNew = [];
+    let currentTeamId = $('.metadata-page-asing').data('teamId');
 
     function customUserMatcher(params, data) {
         // Si no hay término de búsqueda, mostrar todos los elementos
@@ -126,10 +126,11 @@ $(document).ready(function () {
         $selectUserNewAssign.val(null).trigger('change');
     }
 
+
     async function loadDepartmentUsers() {
-      return axios.get('/users/get_by_department', {
-            params: { department_id: 2 }
-        })
+      return axios.get('/users/get_by_team', {
+                params: { team_id: currentTeamId } 
+            })
             .then(response => {
                 const usersData = response.data.data || [];
                 let departmentUsers = [];
@@ -313,23 +314,18 @@ $(document).ready(function () {
     $('#btnSaveAssignments').on('click', async function () {
         
         const $btn = $(this);
-        const $selectNew = $('.select2-users-new-assing');
-        const newUserId = $selectNew.val();
-        const selectedUserData = $selectNew.select2('data')[0];
-        const selectedName = selectedUserData ? selectedUserData.text : '';
+        const $selectUserRight = $('.select2-users-new-assing');
+        const $selectUserLeft = $('.select2-users-old-assing');
+        const letfUserId = $selectUserLeft.val();
+        const rightUserId = $selectUserRight.val();
+        const selectedUserRigthData = $selectUserRight.select2('data')[0];
+        const selectedUserLeftData = $selectUserLeft.select2('data')[0];
+        const selectedNameUserRight = selectedUserRigthData ? selectedUserRigthData.text : '';
+        const selectedNameUserLeft = selectedUserLeftData ? selectedUserLeftData.text : '';
 
         // Extraer todos los UIDs que quedaron en la columna del usuario nuevo
-        const uidsToAssign = ticketsDataUserNew.map(ticket => ticket.uid);
-
-        if (!newUserId) {
-            ui.showToast('warning', 'Seleccione un usuario destino para asignar los tickets.');
-            return;
-        }
-
-        if (uidsToAssign.length === 0) {
-            ui.showToast('info', 'No hay tickets en la lista del nuevo usuario para reasignar.');
-            return;
-        }
+        const uidsToAssignRight = ticketsDataUserNew.map(ticket => ticket.uid);
+        const uidsToAssingLeft = ticketsDataUserOld.map(ticket => ticket.uid);
 
         try {
 
@@ -342,10 +338,13 @@ $(document).ready(function () {
 
             ui.showToast('info', 'Reasignando usuarios...');
 
-            const response = await axios.post('/tickets/assign_bulk', {
-                user_id: newUserId,
-                uids: uidsToAssign,
-                selectedName: selectedName
+            const response = await axios.post('/tickets/many_to_users/assign_bulk', {
+                user_left_id: letfUserId,
+                selectedNameUserLeft: selectedNameUserLeft,
+                uids_user_to_assing_left: uidsToAssingLeft,
+                user_right_id: rightUserId,
+                uids_user_to_assing_right: uidsToAssignRight,
+                selectedNameUserRight: selectedNameUserRight
             });
 
             
@@ -365,8 +364,15 @@ $(document).ready(function () {
             $btn.prop('disabled', false).html('Confirmar Asignación');
             
         } catch (error) {
-            console.error('Error al reasignar tickets:', error);
-            ui.showToast('error', 'Error al guardar la reasignación.');
+
+            if (error?.status === 422) {
+                console.error('Error al reasignar tickets:', error);
+                ui.showToast('warning', error?.response?.data?.message ?? 'No se pudo procesar su solicitud; intente más tarde.');
+            } else {
+                console.error('Error al reasignar tickets:', error);
+                ui.showToast('error', 'Error al guardar la reasignación.');
+            }
+
         } finally {
             $btn.prop('disabled', false).html(`<i class="ti ti-replace-user me-1"></i>
              Confirmar reasignación`);

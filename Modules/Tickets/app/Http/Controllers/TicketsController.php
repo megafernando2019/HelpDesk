@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
 use Modules\Tickets\Services\TicketLogService;
 use Modules\Tickets\Services\TicketService;
@@ -104,7 +105,8 @@ class TicketsController extends Controller
 
     public function viewReAssingTickets()
     {
-        return view('tickets::reasing');
+        $teamIds = Auth::user()->teams()->pluck('teams.id');
+        return view('tickets::reasing', compact('teamIds'));
     }
 
     public function viewAssingTickets()
@@ -325,6 +327,10 @@ class TicketsController extends Controller
         ));
     }
 
+    /**
+     * para la vista asignar
+     * @param Request $request
+     */
     public function assignBulkTickets(Request $request)
     {
         try {
@@ -333,8 +339,45 @@ class TicketsController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Tickets asignados correctamente.'
-            ]);
+            ], 200);
+        } catch (TicketException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 422);
+
         } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ocurrió un error inesperado al asignar los tickets.'
+            ], 500);
+        }
+    }
+
+    /**
+     * para la vista reasignar
+     * @param Request $request
+     */
+    public function reassignManyBulkTicketsUser(
+        Request $request
+    )
+    {
+        try {
+            $this->service->reassignManyBulkTicketsUser($request);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Tickets asignados correctamente.'
+            ], 200);
+
+        } catch (TicketException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 422);
+            
+        } catch (\Throwable $th) {
+            
             return response()->json([
                 'status' => 'error',
                 'message' => 'Ocurrió un error inesperado al asignar los tickets.'

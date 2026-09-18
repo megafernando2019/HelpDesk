@@ -440,6 +440,12 @@ class TicketService {
         return $this->repo->saveObservations($records);
     }
 
+    /**
+     * Método para solo Asignar al usuario
+     *
+     * @param Request $request
+     * @return void
+     */
     public function assignBulkTicketsUser($request)
     {
         $userId = $request?->user_id;
@@ -477,6 +483,86 @@ class TicketService {
                     );
                 }
             }
+        });
+
+        return true;
+    }
+
+     /**
+     * Método para reasignar a ambos usuarios muchos tickets
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function reassignManyBulkTicketsUser($request)
+    {
+        //Usuario del lado izquierdo
+        $userLeftId = $request?->user_left_id;
+        $uidsUserToAssingLeft = $request?->uids_user_to_assing_left ?? [];
+        $selectedNameUserLeft = $request?->selectedNameUserLeft ?? '';
+
+        //Usuario del lado derecho
+        $userRightId = $request?->user_right_id;
+        $uidsUserToAssingRight = $request?->uids_user_to_assing_right ?? [];
+        $selectedNameUserRight = $request?->selectedNameUserRight ?? '';
+    
+
+        if (empty($userLeftId) || empty($userRightId)) {
+            throw new TicketException('Debe seleccionar un usuario responsable válido.');
+        }
+
+        if ($userLeftId === $userRightId) {
+            throw new TicketException('No puedes reasignar los tickets al mismo usuario, selecciona otro.');
+        }
+
+        DB::transaction(function () use (
+                $uidsUserToAssingLeft, 
+                $uidsUserToAssingRight,
+                $selectedNameUserLeft,
+                $selectedNameUserRight,
+                $userRightId,
+                $userLeftId) {
+
+            // Asignar tickets al usuario de la izquierda
+            foreach ($uidsUserToAssingLeft as $uid) {
+                
+                $ticket = $this->getTicket(null, $uid);
+
+                if ($ticket) {
+
+                    $this->repo->assignUser($ticket, [$userLeftId]);
+
+                    $this->log_ticket_service->logAction(
+                        $ticket,
+                        TicketAction::REASSIGN_TICKET,
+                        'update',
+                        'tickets/reassing_tickets',
+                        $selectedNameUserLeft
+                    );
+
+                    $ticket->status_id;
+                }
+            }
+
+             // Asignar tickets al usuario de la derecha
+            foreach ($uidsUserToAssingRight as $uid) {
+                
+                $ticket = $this->getTicket(null, $uid);
+
+                if ($ticket) {
+
+                    $this->repo->assignUser($ticket, [$userRightId]);
+
+                    $this->log_ticket_service->logAction(
+                        $ticket,
+                        TicketAction::REASSIGN_TICKET,
+                        'update',
+                        'tickets/reassing_tickets',
+                        $selectedNameUserRight
+                    );
+                }
+            }
+
         });
 
         return true;

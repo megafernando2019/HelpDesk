@@ -24,6 +24,7 @@ Route::middleware(['auto_login'])->group(function () {
     Route::get('/reassing_tickets', [TicketsController::class, 'viewReAssingTickets'])
      ->name('tickets.reassing');
     Route::get('/get_tickets_to_user_assing', [TicketsController::class, 'getTicketsAssignedToUser']);
+    Route::post('/tickets/many_to_users/assign_bulk', [TicketsController::class, 'reassignManyBulkTicketsUser']);
     // Archivo 
     Route::get('/tickets/archive', [TicketsController::class, 'viewArchive'])->name('tickets.archive');
     Route::get('/tickets/get_any_statuses', [TicketsController::class, 'getAnyStatusesByUserAssing'])->name('tickets.any.statuses');

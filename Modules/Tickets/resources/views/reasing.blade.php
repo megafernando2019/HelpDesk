@@ -1,11 +1,10 @@
 @extends('layout.mainlayout')
 
-@section('title', 'HelpDesk | ReAsignar ticket')
+@section('title', 'HelpDesk | Reasignar ticket')
 
 @section('content')
         <div class="page-wrapper">
-
-            <div class="content container-fluid">
+            <div class="content container-fluid metadata-page-asing" data-team-id='@json($teamIds)'>
             
                 <div class="page-header">
                 </div>
