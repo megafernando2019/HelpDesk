@@ -203,7 +203,6 @@ $(document).ready(function () {
         }
     });
 
-    $typesSelect
 
     $(document).on('submit', '.action-create', function (e) {
         e.preventDefault();
