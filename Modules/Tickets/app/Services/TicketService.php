@@ -150,6 +150,7 @@ class TicketService {
        $ticket_id = $request?->ticket_id ?? null;
        $ticket_uid = $request?->current_uid ?? null;
        $result = $this->repo->updateStatus($status, $ticket_id);
+       $cancel_reason = $request->cancel_reason ?? null;
 
        //Si se actualizo el estatus con éxito
        if($result) {
@@ -181,7 +182,9 @@ class TicketService {
                     $ticket,
                     $enum_action,
                     'update',
-                    'tickets/show'
+                    'tickets/show',
+                    null,
+                    $cancel_reason
                 );
             }
        }

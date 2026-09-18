@@ -9,6 +9,7 @@ $(document).ready(function () {
     const currentTicketId =  $('.content-show').data('ticketId');
     const storageKey = 'draft_observation_ticket_' + currentTicketId; //se concatena para recuperar el de solo esa vista
     const currentUid = $('.content-show').data('ticketUid');
+    const reasonModal = $('#addReasonModal');
 
     function initTooltips() {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -86,6 +87,7 @@ $(document).ready(function () {
                     arr.forEach(item => {
                         const values = item?.values ?? {};
                         const isObservation = item?.eventType === 'ACT08TLO';
+                        const reason = item?.reason ?? '';
                       
 
                         html += `
@@ -95,6 +97,7 @@ $(document).ready(function () {
                                 </div>
                                 <div>
                                     <p class="mb-0 text-dark fw-semibold">${item.message}</p>
+                                    ${reason ? `<p class="mb-0 text-muted">${reason}</p>` : ``}
                                     ${isObservation ? `<p class="mb-0 text-muted">Observación: ${values?.observation?.description ?? ''}</p>` : ``}
                                     ${isObservation ? `<p class="mb-0 text-muted" >Estatus al momento de la acción ${item?.momentStatus}</p>` : ``}
                                     <small class="text-muted">el ${item.formatDate}</small>
@@ -164,10 +167,26 @@ $(document).ready(function () {
         const nameStatus = $btn.data('name');
         
         const value = $btn.data('status');
+
+        console.log(value, typeof(value))
+        if (value === 6) {
+
+            // Limpiar el textarea y errores anteriores
+            $('#ReasonCancelledDescription').val('');
+            $('.error-input-reason-cancelled').text('');
+            $('#ReasonCancelledDescription').removeClass('is-invalid');
+
+            // Cargar los campos hidden del modal
+            $('#modal_cancelled_reason_ticket_id').val(ticketId);
+            $('#modal_cancelled_reason_status_id').val(value);
+
+            // Mostrar el modal
+            reasonModal.modal('show');
+            return;
+        }
        
         $btn.prop('disabled', true);
 
-        console.log(currentUid)
         axios.post('/updated_status', {
             ticket_id: ticketId,
             ticket_status: value,
@@ -188,6 +207,53 @@ $(document).ready(function () {
         .finally(() => {
             $btn.prop('disabled', false);
         });
+    });
+
+
+    $('#addReasonCancelledForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const $submitBtn = $(this).find('.save-modal-reason-cancelled');
+        const ticketId = $('#modal_cancelled_reason_ticket_id').val();
+        const statusId = $('#modal_cancelled_reason_status_id').val();
+        const reason = $('#ReasonCancelledDescription').val().trim();
+        const $errorLabel = $('.error-input-reason-cancelled');
+
+        // Validación
+        if (!reason) {
+            $errorLabel.text('Por favor, ingresa el motivo de la cancelación.');
+            $('#ReasonCancelledDescription').addClass('is-invalid');
+            return;
+        }
+
+        $errorLabel.text('');
+        $submitBtn.prop('disabled', true);
+        $('#ReasonCancelledDescription').removeClass('is-invalid');
+
+        axios.post('/updated_status', {
+            ticket_id: ticketId,
+            ticket_status: statusId,
+            cancel_reason: reason, 
+            current_uid: currentUid,
+            name_status: 'Cancelado'
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => {
+            ui.showToast('success', `Se ha actualizado a estatus (Cancelado).`);
+            reasonModal.modal('hide');
+            window.location.href = '/tickets/'+currentUid
+        })
+        .catch(error => {
+            console.error(error);
+            ui.showToast('error', error.response?.data?.message || 'Ocurrió un error al actualizar el estatus.');
+        })
+        .finally(() => {
+            $submitBtn.prop('disabled', false);
+        });
+        
     });
 
 

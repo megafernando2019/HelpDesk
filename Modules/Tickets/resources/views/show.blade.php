@@ -513,4 +513,5 @@
 
             </div>
         </div>
+@include('tickets::partials.modal-add-reason-cancelled')
 @endsection

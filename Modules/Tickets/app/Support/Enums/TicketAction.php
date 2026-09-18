@@ -36,7 +36,7 @@ enum TicketAction: string
             self::STATUS_PENDING    => "El ticket {$ticket} cambió de estatus a En espera",
             self::STATUS_SOLVED     => "El ticket {$ticket} fue solucionado",
             self::STATUS_CLOSED     => "El ticket {$ticket} fue cerrado",
-            self::STATUS_CANCELLED  => "El ticket {$ticket} fue cancelado",
+            self::STATUS_CANCELLED  => "El ticket {$ticket} fue cancelado. Motivo: ". ($data['cancel_reason'] ?? ''),
             self::ADD_COMMENT       => "{$user} realizó una observación en el ticket {$ticket}",
             self::OBSERVE_TICKET    => "Observación agregada por {$user}",
             self::REMOVE_TICKET     => "{$user} retiró el ticket {$ticket}",

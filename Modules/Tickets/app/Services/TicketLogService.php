@@ -20,6 +20,7 @@ class TicketLogService
         $resource_name,
         $section_name,
         $selectedName = null,
+        $cancel_reason = null,
     )
     {
         $data = [
@@ -30,7 +31,8 @@ class TicketLogService
             ),
             'assigned_to' => $selectedName,
             'ticket' => $ticket?->uid ?? '',
-            'observation' => $ticket?->observation?->description ?? ''
+            'observation' => $ticket?->observation?->description ?? '',
+            'cancel_reason' => $cancel_reason
         ];
 
         $record = [

@@ -12,6 +12,7 @@ class TicketLogDetailsDto
         public readonly array $values,
         public readonly string $momentStatus,
         public readonly string $eventType,
+        public readonly ?string $reason = null
     )
     {
         

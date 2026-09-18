@@ -58,9 +58,23 @@ final class TicketMapper {
                  : (array) ($entity->values ?? []);
 
         $eventType = $entity->event_type ?? '';
+        $message = $entity->message ?? '';
+        $reason = null;
+       
+        if (($offset = strpos($message, 'Motivo')) !== false) {
+            
+            $extractedReason = substr($message, $offset);
+            $reason = $extractedReason;
+            
+            $message = str_replace(
+               $reason, 
+               '', 
+               $message
+            );
+        }
 
        return new TicketLogDetailsDto(
-           message: $entity->message ?? 'Dato no disponible',
+           message: $message,
            bgColor: $bgColor,
            icon: $icon,
            formatDate: sprintf(
@@ -70,7 +84,8 @@ final class TicketMapper {
            ),
            values: $values,
            momentStatus: $entity->momentStatus,
-           eventType: $eventType
+           eventType: $eventType,
+           reason: $reason
        );
     }
 
