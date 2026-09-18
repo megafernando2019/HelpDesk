@@ -6,6 +6,11 @@ import Swal from 'sweetalert2';
 
 $(document).ready(function () {
 
+    $('body').tooltip({
+        selector: '[data-bs-toggle="tooltip"]',
+        trigger: 'hover'
+    });
+
     let dateRangePicker = null;
     const modalObservation = $('#addObservationModal');
     const observationDescription = $('#observationDescription');
@@ -291,7 +296,11 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
+                                            <a href="/tickets/${ticket?.uid ?? ''}" 
+                                             data-action="ticket-show" data-id="${ticket?.id ?? 0}"
+                                              data-bs-toggle="tooltip"
+                                              class="text-secondary"
+                                              title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
                                             <a 
@@ -301,7 +310,8 @@ $(document).ready(function () {
                                                     data-priority-id="${ticket?.ticket_priority_id ?? 0}"
                                                     data-user-id="${ticket?.user_id ?? 0}" 
                                                     data-observation="${ticket?.observation ?? ''}"
-                                                    class="text-secondary ticket-add-observation" 
+                                                    class="text-secondary ticket-add-observation"
+                                                    data-bs-toggle="tooltip" 
                                                     title="Editar">
                                                 <i class="ti ti-edit-circle fs-18"></i>
                                             </a>
@@ -386,7 +396,12 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
+                                            <a href="/tickets/${ticket?.uid ?? ''}"
+                                               data-action="ticket-show" 
+                                               data-id="${ticket?.id ?? 0}"
+                                               class="text-secondary"
+                                               data-bs-toggle="tooltip" 
+                                               title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
                                             <a 
@@ -397,6 +412,7 @@ $(document).ready(function () {
                                                     data-user-id="${ticket?.user_id ?? 0}" 
                                                     data-observation="${ticket?.observation ?? ''}"
                                                     class="text-secondary ticket-add-observation" 
+                                                    data-bs-toggle="tooltip"
                                                     title="Editar">
                                                 <i class="ti ti-edit-circle fs-18"></i>
                                             </a>

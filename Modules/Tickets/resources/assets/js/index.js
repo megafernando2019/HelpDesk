@@ -15,6 +15,11 @@ $(document).ready(function () {
     /**
      * data actions
      */
+    $('body').tooltip({
+        selector: '[data-bs-toggle="tooltip"]',
+        trigger: 'hover'
+    });
+    
     $('body').on('click', '[data-action=filter-by-status]', function (e) {
         const $card = $(e.currentTarget);
         const statusId = $card.data('id');

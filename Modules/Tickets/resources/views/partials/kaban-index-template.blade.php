@@ -35,7 +35,12 @@
                     <div>
                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                         <div class="d-flex gap-2">
-                            <a href="tickets/{uid}" data-action="ticket-show" data-id="{id}" class="text-secondary" title="Ver">
+                            <a href="tickets/{uid}" 
+                               data-action="ticket-show" 
+                               data-id="{id}" 
+                               data-bs-toggle="tooltip" 
+                               class="text-secondary" 
+                               title="Ver">
                                 <i class="ti ti-eye fs-18"></i>
                             </a>
                             <a 
@@ -45,6 +50,7 @@
                                     data-priority-id="{priority_id}"
                                     data-user-id="{user_id}" 
                                     data-observation="{observation}"
+                                    data-bs-toggle="tooltip" 
                                     class="text-secondary ticket-add-observation" 
                                     title="Editar">
                                 <i class="ti ti-edit-circle fs-18"></i>
@@ -54,7 +60,9 @@
                                 data-id="{id}"
                                 data-user-assing-id="{userAssingId}"
                                 data-status-id="{status_id}" 
+                                data-bs-toggle="tooltip" 
                                 class="btn-assing-user"
+                                title="Asignar"
                                 >
                                 <i class="ti ti-user-check fs-18"></i>
                             </a>
