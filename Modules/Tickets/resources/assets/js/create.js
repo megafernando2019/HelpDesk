@@ -234,6 +234,8 @@ $(document).ready(function () {
                 renderFileList();
             }
 
+            $('.btn-show-ticket').attr('href', response?.data?.url_referrer ?? '');
+
             getCurrentDetails();
             $categorySelect.empty();
             $serviceSelect.empty();

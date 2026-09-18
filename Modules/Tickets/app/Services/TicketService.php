@@ -345,7 +345,7 @@ class TicketService {
      * Crea un nuevo ticket o actualiza* en proximos comits
      *
      * @param $args
-     * @return void
+     * @return Modules\Tickets\Models\Ticket
      */
     public function saveTicket($request)
     {
@@ -394,6 +394,8 @@ class TicketService {
             'tickets/create'
          );
        }
+
+       return $ticket;
 
     }
 

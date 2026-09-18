@@ -3,7 +3,6 @@
     class="modal fade"
     id="modalSuccessCreate"
     tabindex="-1"
-    {{-- data-bs-backdrop="static" --}}
     data-bs-keyboard="false"
     role="dialog"
     aria-labelledby="modalTitleId"
@@ -46,8 +45,19 @@
                     </h3>
                 </div>
             </div>
-            <div class="modal-footer d-flex justify-content-center" style="border: none;">
-                <a href="{{route('tickets.index')}}" class="btn btn-mega rounded-pill w-50">Ir a mis tickets</a>
+            <div class="modal-footer d-flex justify-content-center gap-3"
+                 style="border: none;">
+                <a href="#" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="btn btn-outline-info btn-show-ticket rounded-pill"
+                   >
+                   Ver ticket
+                </a>
+                <a href="{{route('tickets.index')}}"
+                   class="btn btn-mega rounded-pill">
+                   Ir a mis tickets
+                </a>
             </div>
         </div>
     </div>

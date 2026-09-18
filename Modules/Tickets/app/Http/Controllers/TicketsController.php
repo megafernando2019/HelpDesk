@@ -224,10 +224,11 @@ class TicketsController extends Controller
     public function store(StoreTicketRequest $request) {
         try {
             
-            $this->service->saveTicket($request);
+            $ticket = $this->service->saveTicket($request);
 
             return response()->json([
-                'message' => 'Se ha creado con éxito el ticket.'
+                'message' => 'Se ha creado con éxito el ticket.',
+                'url_referrer' => route('tickets.show', $ticket?->uid ?? '')
             ], 200);
 
         } catch (\Throwable $th) {
