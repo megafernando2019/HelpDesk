@@ -88,16 +88,12 @@ class TicketRepo implements ITicketRepo {
             ->get();
     }
 
-    public function countTicketsByStatusAssingByTeam($userId)
+    public function countTicketsByStatusAssingByTeam($teamsIds)
     {
         return DB::table('tickets as t')
             ->leftJoin('tickets_users_assignations as tua', 't.id', '=', 'tua.ticket_id')
             ->whereNull('tua.ticket_id')
-            ->whereIn('t.team_id', function ($q) use ($userId) {
-                $q->select('team_id')
-                  ->from('team_user')
-                  ->where('user_id', $userId);
-            })
+            ->whereIn('t.team_id', $teamsIds)
             ->whereIn('t.status_id', [1, 2, 3])
             ->count();
     }

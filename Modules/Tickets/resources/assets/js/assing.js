@@ -192,10 +192,14 @@ $(document).ready(function () {
 
     function fetchTotalsTicketsByTeams() {
 
-        axios.get(`\count_ticket_to_user_team`)
+            axios.get('/count_ticket_to_user_team', {
+                params: {
+                    team_id: currentTeamId
+                }
+            })
             .then(response => {
                 currentTotalTicketsByTeam = response.data;
-               
+                
             })
             .catch(error => {
                 console.error('Error al obtener total de tickets', error);
@@ -217,7 +221,7 @@ $(document).ready(function () {
     fetchAvailableTickets(1);
 
 
-        function loadDepartmentUsers() {
+    function loadDepartmentUsers() {
             axios.get('/users/get_by_team', {
                 params: { team_id: currentTeamId } 
             })
@@ -309,11 +313,12 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <span class="badge badge-soft-info text-mega fw-semibold" style="box-shadow: none !important;font-size: 0.7rem;">
-                        Carga actual: ${currentTotalTicketsByTeam}/${user.tickets_count} tickets
+                         Carga actual: ${user?.tickets_count ?? 0}/${currentTotalTicketsByTeam} tickets
                     </span>
                 </div>
             `);
         }
+
 
         function formatUserSelection(user) {
             return user.text || user.placeholder;
@@ -329,7 +334,7 @@ $(document).ready(function () {
                 const data = departmentUsers.find(user => user.id == selectedId);
                 if (data) {
                     $('.display-name-user-asing-preview').text(`${data.text}`);
-                    $('#assigned-user-info').html(`Carga actual: <small class="event-reload-count">${currentTotalTicketsByTeam}</small> /${data.tickets_count}`);
+                    $('#assigned-user-info').html(`Carga actual: <small class="event-reload-count">${data.tickets_count}</small> /${currentTotalTicketsByTeam}`);
                     
                     console.log(data)
                     

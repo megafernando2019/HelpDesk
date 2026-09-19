@@ -47,6 +47,7 @@ class UserRepo implements IUserRepo
             ->get();
     }
 
+
     public function getTeams(array $fields = ['*'])
     {
         return Team::select($fields)->get();

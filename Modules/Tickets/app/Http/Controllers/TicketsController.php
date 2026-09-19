@@ -30,11 +30,11 @@ class TicketsController extends Controller
         
     }
 
-    public function countTicketToTeamAssing()
+    public function countTicketToTeamAssing(Request $request)
     {
         try {
 
-            $total = $this->service->countTicketToTeamAssing();
+            $total = $this->service->countTicketToTeamAssing($request);
 
             return response()->json($total);
 
@@ -309,6 +309,7 @@ class TicketsController extends Controller
 
         $bgColor = TicketStatus::getBgColor($ticket?->status?->name);
 
+        $teamIds = $user->teams()->pluck('teams.id')->toArray();
 
         return view('tickets::show', compact(
         'user', 
@@ -323,7 +324,8 @@ class TicketsController extends Controller
         'observation',
         'icon',
         'status',
-        'bgColor'
+        'bgColor',
+        'teamIds'
         ));
     }
 

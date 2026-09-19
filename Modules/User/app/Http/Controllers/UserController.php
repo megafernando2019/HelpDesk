@@ -38,7 +38,7 @@ class UserController extends Controller
     }
 
     /**
-     * Obtener usuarios por el departamento id
+     * Obtener usuarios por el equipo id
      */
     public function getUsersByTeam(Request $request)
     {
@@ -58,6 +58,7 @@ class UserController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Display a listing of the resource.

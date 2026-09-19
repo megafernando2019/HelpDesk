@@ -55,7 +55,7 @@ enum TicketAction: string
             self::STATUS_IN_PROGRESS => 'bg-primary-subtle text-primary-emphasis',
             self::STATUS_PENDING    => 'bg-danger-subtle text-danger-emphasis',
             self::STATUS_SOLVED     => 'bg-success-subtle text-success-emphasis',
-            self::STATUS_CLOSED     => 'bg-light-subtle text-dark border',
+            self::STATUS_CLOSED     => 'bg-closed-status',
             self::STATUS_CANCELLED  => 'bg-danger-subtle text-danger',
             self::ADD_COMMENT,      
             self::OBSERVE_TICKET    => 'bg-info-subtle text-info',

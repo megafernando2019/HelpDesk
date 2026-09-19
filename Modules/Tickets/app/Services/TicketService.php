@@ -113,9 +113,10 @@ class TicketService {
         });
     }
 
-    public function countTicketToTeamAssing()
+    public function countTicketToTeamAssing($request)
     {
-        return $this->repo->countTicketsByStatusAssingByTeam(Auth::user()->id);
+        $teamsIds = $request->team_id ?? [];
+        return $this->repo->countTicketsByStatusAssingByTeam($teamsIds);
     }
 
     public function getTicketsStatusAssing(){
@@ -441,7 +442,7 @@ class TicketService {
     }
 
     /**
-     * Método para solo Asignar al usuario
+     * Método para solo asignar tickets a un solo usuario
      *
      * @param Request $request
      * @return void
@@ -473,7 +474,7 @@ class TicketService {
                     // Asignar al usuario
                     $this->repo->assignUser($ticket, [$userId]);
 
-                    // Registrar el log de asignación para cada ticket
+                     // Registrar el log de asignación para cada ticket
                     $this->log_ticket_service->logAction(
                         $ticket,
                         TicketAction::ASSIGN_TICKET,
@@ -481,6 +482,27 @@ class TicketService {
                         'tickets/show',
                         $selectedName
                     );
+
+                    //Si el ticket esta por asignar, lo paso en automatico a en proceso
+                    if ($ticket->status_id === 1) {
+                       
+                        $this->repo->updateStatus(2, $ticket->id);
+
+                        //Se instancia automaticamente a en progreso
+                        $enum_action = TicketAction::STATUS_IN_PROGRESS;
+
+                        //guardar logs sobre el paso de estatus 1 a 2
+                        $this->log_ticket_service->logAction(
+                            $ticket,
+                            $enum_action,
+                            'update',
+                            'tickets/assing_tickets',
+                            null,
+                            null,
+                            null
+                        );
+                    }
+
                 }
             }
         });
@@ -600,6 +622,26 @@ class TicketService {
             'tickets/show',
             $selectedName
         );
+
+        //Si el ticket esta por asignar, lo paso en automatico a en proceso
+        if ($ticket->status_id === 1) {
+                       
+            $this->repo->updateStatus(2, $ticket->id);
+
+            //Se instancia automaticamente a en progreso
+            $enum_action = TicketAction::STATUS_IN_PROGRESS;
+
+            //guardar logs sobre el paso de estatus 1 a 2
+            $this->log_ticket_service->logAction(
+                $ticket,
+                $enum_action,
+                'update',
+                'tickets/assing_tickets',
+                null,
+                null,
+                null
+            );
+        }
 
         return $ticket;
     }

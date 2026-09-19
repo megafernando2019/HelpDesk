@@ -4,6 +4,7 @@ import { ui } from '@/helpers/helper.js';
 $(document).ready(function () {
 
     let tagsInMemory = [];
+    const currentTeamId = $('.content-show').data('teamId');
     const bgColors = ['#f59e0b', '#3b82f6', '#10b981', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
     const inputObservation = $('.observation_d');
     const currentTicketId =  $('.content-show').data('ticketId');
@@ -13,6 +14,7 @@ $(document).ready(function () {
     const reasonModal = $('#addReasonModal');
     //modal razon solucionado
     const reasonCompletedModal = $('#addReasonCompletedModal');
+
 
     function initTooltips() {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

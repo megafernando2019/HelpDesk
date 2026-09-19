@@ -61,11 +61,11 @@ enum TicketStatus : string
     public function bgColor(): string
     {
         return match($this) {
-            self::EN_PROCESO   => '#f3f6ff', // Corresponde a "En proceso"
+            self::EN_PROCESO   => '#cfe2ff ', 
             self::POR_ASIGNAR => '#faf8ff',
             self::EN_ESPERA   => '#fafbfb',
-            self::SOLUCIONADO => '#f2fdf5',
-            self::CERRADO     => '#fff9f1',
+            self::SOLUCIONADO => '#d1e7dd',
+            self::CERRADO     => '#f3972c33',
             self::CANCELADO   => '#fffafa',
         };
     }

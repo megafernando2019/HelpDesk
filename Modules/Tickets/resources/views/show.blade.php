@@ -18,7 +18,8 @@
                 </div>
 
                 <div class="row current-info content-show" data-ticket-uid="{{$ticket?->uid ?? ''}}" 
-                                                           data-ticket-id="{{$ticket?->id ?? 0}}" >   
+                                                           data-ticket-id="{{$ticket?->id ?? 0}}" 
+                                                           >   
                     <!-- Detalles del ticket col-md-9 -->
                     <div class="col-md-8 bg-white shadow current-rounded">
                         <div style="border: none;" class="card">

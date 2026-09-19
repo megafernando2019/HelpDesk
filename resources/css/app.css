@@ -7,6 +7,12 @@
     background: #f3f6ff !important;
 }
 
+.bg-closed-status {
+    background-color: #f3972c33 !important;
+    border: 1px solid #f3972c33 !important;
+    color: #f3972c !important;
+}
+
 .btn-mega {
     background: #0049fc !important;
     border: 1px solid #0049fc !important;

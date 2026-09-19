@@ -32,10 +32,10 @@ interface ITicketRepo {
 
     /**
      *
-     * @param int $userId
+     * @param array $teamsIds
      * @return void
      */
-    public function countTicketsByStatusAssingByTeam($userId);
+    public function countTicketsByStatusAssingByTeam($teamsIds);
 
     /**
      *
