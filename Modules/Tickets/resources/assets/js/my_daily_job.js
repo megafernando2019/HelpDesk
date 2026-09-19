@@ -313,17 +313,7 @@ $(document).ready(function () {
                                             title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
-                                            <a 
-                                                    href="javascript:void(0);" 
-                                                    data-id="${ticket?.id ?? 0}" 
-                                                    data-status-id="2"  
-                                                    data-user-id="${ticket?.user_id ?? 0}"
-                                                    data-uid="${ticket?.uid ?? ''}"
-                                                    class="text-secondary ticket-status-process" 
-                                                    data-bs-toggle="tooltip"
-                                                    title="En proceso">
-                                                    <i class="ti ti-progress-check fs-18"></i>
-                                            </a>
+                                            
                                             <a 
                                                     href="javascript:void(0);" 
                                                     data-id="${ticket?.id ?? 0}" 
@@ -464,6 +454,23 @@ $(document).ready(function () {
                                                     <i class="ti ti-clock fs-18"></i>
                                             </a>
                                             <a 
+                                                href="javascript:void(0);"
+                                                data-id="${ticket?.id ?? 0}"
+                                                data-user-assing-id="${ticket?.assigned_id}"
+                                                class="btn-assing-user"
+                                                data-bs-toggle="tooltip"
+                                                title="
+                                                    ${ticket?.assigned_id 
+                                                        ? 'Reasignar'
+                                                        : 'Asignar'
+                                                    }"
+                                                >
+                                                ${ticket?.assigned_id 
+                                                    ? '<i class="ti ti-replace-user"></i>'
+                                                    : ' <i class="ti ti-user-check fs-18"></i>'
+                                                }
+                                            </a>
+                                            <a 
                                                     href="javascript:void(0);" 
                                                     data-id="${ticket?.id ?? 0}" 
                                                     data-status-id="4"  
@@ -597,6 +604,17 @@ $(document).ready(function () {
                                                     data-bs-toggle="tooltip"
                                                     title="Agregar observación">
                                                 <i class="ti ti-edit-circle fs-18"></i>
+                                            </a>
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="4"  
+                                                    data-user-id="${ticket?.user_id ?? 0}"
+                                                    data-uid="${ticket?.uid ?? ''}"
+                                                    class="text-secondary ticket-status-completed" 
+                                                    data-bs-toggle="tooltip"
+                                                    title="Solucionado">
+                                                    <i class="ti ti-circle-check fs-18"></i>
                                             </a>
                                             <a 
                                                     href="javascript:void(0);" 
