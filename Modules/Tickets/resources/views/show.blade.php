@@ -19,7 +19,7 @@
 
                 <div class="row current-info content-show" data-ticket-uid="{{$ticket?->uid ?? ''}}" 
                                                            data-ticket-id="{{$ticket?->id ?? 0}}" 
-                                                           >   
+                >   
                     <!-- Detalles del ticket col-md-9 -->
                     <div class="col-md-8 bg-white shadow current-rounded">
                         <div style="border: none;" class="card">
@@ -47,10 +47,10 @@
                                            
                                         </div>
                                         <div class="info-user-auth-heldesk">
-                                                <p class="p-0 m-0">
-                                                    {{$full_name}} <i class="ti ti-point"></i> {{$user?->department?->name ?? 'Departamento no disponible'}}
+                                                <p class="p-0 m-0 fw-bold text-dark lh-1 text-truncate">
+                                                    {{$full_name}} <i class="ti ti-point"></i> {{$user?->teams[0]?->name ?? 'Equipo no disponible'}}
                                                 </p>
-                                                <small class="text-muted">{{$user?->email}}</small>
+                                                <small style="font-size: 11px;" class="text-muted">{{$user?->email}}</small>
                                         </div>
                                     </div>
                                 </div>

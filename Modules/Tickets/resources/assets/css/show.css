@@ -93,3 +93,8 @@
     height: 400px;
     overflow-y: scroll;
 }
+
+.display-option-select-user {
+    flex-direction: column !important;
+    align-items: self-start !important;
+}

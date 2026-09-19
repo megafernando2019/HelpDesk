@@ -471,7 +471,7 @@ $(document).ready(function () {
                 <div class="avatar-circle" style="background-color: ${bgColor};">
                     ${initials}
                 </div>
-                <div class="user-info">
+                <div class="user-info display-option-select-user">
                     <p class="user-name">${state.text}</p>
                     <p class="user-email">${email}</p>
                 </div>
