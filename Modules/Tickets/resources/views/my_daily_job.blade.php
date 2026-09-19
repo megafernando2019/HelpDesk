@@ -98,21 +98,22 @@
                 </div>
             </div>
         </div>
-      
+
         <div class="row gap-1 mt-4 container-load-tickets" style="flex-wrap: nowrap !important;">
-            <div id="tickets-container-to-assing"  style="background-color: #faf8ff; height: 500px;
-                overflow-x: auto;"
-                 class="col-md-4 border current-rounded p-3"></div>
+            <div id="tickets-container-to-assing" 
+                 style="background-color: #faf8ff; height: calc(100vh - 220px); overflow-y: auto;"
+                 class="col-md-4 border current-rounded p-3">
+            </div>
 
-            <div id="tickets-container-progress"  style="background-color: #f3f6ff; height: 500px;
-            overflow-x: auto;" 
-             class="col-md-4 current-rounded p-3 border"></div>
+            <div id="tickets-container-progress" 
+                 style="background-color: #f3f6ff; height: calc(100vh - 220px); overflow-y: auto;" 
+                 class="col-md-4 current-rounded p-3 border">
+            </div>
 
-             <div id="tickets-container-waiting"
-                  style="background-color: #fafbfb; height: 500px;
-                overflow-x: auto;" 
-                  class="col-md-4 current-rounded p-3 border"
-              ></div>
+            <div id="tickets-container-waiting"
+                 style="background-color: #fafbfb; height: calc(100vh - 220px); overflow-y: auto;" 
+                 class="col-md-4 current-rounded p-3 border">
+            </div>
         </div>
       
         @include('tickets::partials.modal-add-observation')

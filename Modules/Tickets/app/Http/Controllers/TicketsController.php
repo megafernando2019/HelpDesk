@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
 use Modules\Tickets\Services\TicketLogService;
@@ -282,9 +283,22 @@ class TicketsController extends Controller
            $UserAssignEntity = $ticket?->assignees[0]?->toArray() ?? [];
         }
 
-        $supportUsers = User::where('department_id', self::SUPPORT_DEPARTMENT)
-        ->where('active', 1)
-        ->select('id', 'first_name', 'last_name', 'email')
+
+        $teamIds = $user->teams()->pluck('teams.id')->toArray();
+
+        //Traer integrantes del equipo del usuario en sesion
+        $supportUsers = 
+        DB::table('users as u')
+        ->join('team_user as tu', 'u.id', '=', 'tu.user_id')
+        ->where('tu.team_id', $teamIds)
+        ->where('u.active', 1)
+        ->select(
+            'u.id',
+            'u.first_name',
+            'u.last_name',
+            'u.email'
+        )
+        ->distinct()
         ->get();
 
         $supportUsers = $supportUsers->map(function($u) {
@@ -308,8 +322,6 @@ class TicketsController extends Controller
         $icon = TicketStatus::getIcon($status);
 
         $bgColor = TicketStatus::getBgColor($ticket?->status?->name);
-
-        $teamIds = $user->teams()->pluck('teams.id')->toArray();
 
         return view('tickets::show', compact(
         'user', 

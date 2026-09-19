@@ -62,7 +62,6 @@ class TicketRepo implements ITicketRepo {
         ->get();
 
         return $q;
-        // dd($q);
     }
 
     public function getAssignedTicketsByUserId(int $userId)
