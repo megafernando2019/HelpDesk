@@ -312,7 +312,7 @@ $(document).ready(function () {
                                                     data-observation="${ticket?.observation ?? ''}"
                                                     class="text-secondary ticket-add-observation"
                                                     data-bs-toggle="tooltip" 
-                                                    title="Editar">
+                                                    title="Agregar observación">
                                                 <i class="ti ti-edit-circle fs-18"></i>
                                             </a>
                                         </div>
@@ -413,7 +413,7 @@ $(document).ready(function () {
                                                     data-observation="${ticket?.observation ?? ''}"
                                                     class="text-secondary ticket-add-observation" 
                                                     data-bs-toggle="tooltip"
-                                                    title="Editar">
+                                                    title="Agregar observación">
                                                 <i class="ti ti-edit-circle fs-18"></i>
                                             </a>
                                         </div>
@@ -501,7 +501,18 @@ $(document).ready(function () {
                                             <a href="/tickets/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
-                                        
+                                            <a 
+                                                    href="javascript:void(0);" 
+                                                    data-id="${ticket?.id ?? 0}" 
+                                                    data-status-id="${ticket?.status_id ?? 0}"  
+                                                    data-priority-id="${ticket?.ticket_priority_id ?? 0}"
+                                                    data-user-id="${ticket?.user_id ?? 0}" 
+                                                    data-observation="${ticket?.observation ?? ''}"
+                                                    class="text-secondary ticket-add-observation"
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Agregar observación">
+                                                <i class="ti ti-edit-circle fs-18"></i>
+                                            </a>
                                         </div>
                                     </div>
 

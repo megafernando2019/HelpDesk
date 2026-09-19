@@ -116,6 +116,8 @@
             </div>
         </div>
       
+        @include('tickets::partials.modal-add-reason-cancelled')
+        @include('tickets::partials.modal-add-reason-completed')
         @include('tickets::partials.modal-add-observation')
         @include('tickets::partials.modal-assing-user-index')
 

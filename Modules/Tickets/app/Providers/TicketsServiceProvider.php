@@ -7,6 +7,7 @@ use Modules\Tickets\Repositories\TicketRepo;
 
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Modules\Tickets\Console\MigrateLegacyTicketLogs;
 use Modules\Tickets\Services\TicketService;
 
 class TicketsServiceProvider extends ModuleServiceProvider
@@ -37,6 +38,16 @@ class TicketsServiceProvider extends ModuleServiceProvider
         EventServiceProvider::class,
         RouteServiceProvider::class,
     ];
+
+    public function boot(): void
+    {
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MigrateLegacyTicketLogs::class,
+            ]);
+        }
+    }
 
     /**
      * Register the service provider.

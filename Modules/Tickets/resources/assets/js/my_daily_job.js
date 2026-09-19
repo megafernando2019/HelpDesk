@@ -16,6 +16,10 @@ $(document).ready(function () {
     const observationDescription = $('#observationDescription');
     const modalAssingUser = $('#assingUserModal');
     const $selectUserAssing = $('.select2-assignees');
+    //modal razon cancelacion
+    const reasonCancelledModal = $('#addReasonModal');
+    //modal razon solucionado
+    const reasonCompletedModal = $('#addReasonCompletedModal');
     let currentTeamId = $('.metadata-page-asing').data('teamId');
     let countTicketsWaiting = 0;
     let countTicketsToAssing = 0;
@@ -700,8 +704,6 @@ $(document).ready(function () {
         // Confirmación opcional antes de realizar la acción
         let actionText = '';
 
-        console.log(statusId)
-
         switch (statusId) {
             case 1:
                 actionText = "poner en por asignar";
@@ -725,6 +727,32 @@ $(document).ready(function () {
         
             default:
                 break;
+        }
+
+        //Si la accion es solucionado
+        if (statusId === 4) {
+
+            $('#ReasonCompletedDescription').val('');
+            $('.error-input-reason-completed').text('');
+            $('#ReasonCompletedDescription').removeClass('is-invalid');
+
+            $('#modal_completed_reason_ticket_id').val(ticketId);
+            $('#modal_completed_reason_status_id').val(statusId);
+
+            reasonCompletedModal.modal('show');
+            return;
+        }
+        // o cancelado
+        else if (statusId === 6) {
+            $('#ReasonCancelledDescription').val('');
+            $('.error-input-reason-cancelled').text('');
+            $('#ReasonCancelledDescription').removeClass('is-invalid');
+
+            $('#modal_cancelled_reason_ticket_id').val(ticketId);
+            $('#modal_cancelled_reason_status_id').val(statusId);
+
+            reasonCancelledModal.modal('show');
+            return;
         }
 
         Swal.fire({
@@ -759,6 +787,97 @@ $(document).ready(function () {
 
           }
         });
+    });
+
+
+     $('#addReasonCancelledForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const $submitBtn = $(this).find('.save-modal-reason-cancelled');
+        const ticketId = $('#modal_cancelled_reason_ticket_id').val();
+        const statusId = $('#modal_cancelled_reason_status_id').val();
+        const reason = $('#ReasonCancelledDescription').val().trim();
+        const $errorLabel = $('.error-input-reason-cancelled');
+
+        // Validación
+        if (!reason) {
+            $errorLabel.text('Por favor, ingresa el motivo de la cancelación.');
+            $('#ReasonCancelledDescription').addClass('is-invalid');
+            return;
+        }
+
+        $errorLabel.text('');
+        $submitBtn.prop('disabled', true);
+        $('#ReasonCancelledDescription').removeClass('is-invalid');
+
+        axios.post('/updated_status', {
+            ticket_id: ticketId,
+            ticket_status: statusId,
+            cancel_reason: reason, 
+            name_status: 'Cancelado'
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => {
+            ui.showToast('success', `Se ha actualizado a estatus (Cancelado).`);
+            reasonCancelledModal.modal('hide');
+            getTicketsDataKanban(1);
+        })
+        .catch(error => {
+            console.error(error);
+            ui.showToast('error', error.response?.data?.message || 'Ocurrió un error al actualizar el estatus.');
+        })
+        .finally(() => {
+            $submitBtn.prop('disabled', false);
+        });
+        
+    });
+
+    $('#addReasonCompletedModal').on('submit', function (e) {
+        e.preventDefault();
+
+        const $submitBtn = $(this).find('.save-modal-reason-completed');
+        const ticketId = $('#modal_completed_reason_ticket_id').val();
+        const statusId = $('#modal_completed_reason_status_id').val();
+        const reason = $('#ReasonCompletedDescription').val().trim();
+        const $errorLabel = $('.error-input-reason-completed');
+
+        // Validación
+        if (!reason) {
+            $errorLabel.text('Por favor, ingresa el motivo de la solución.');
+            $('#ReasonCompletedDescription').addClass('is-invalid');
+            return;
+        }
+
+        $errorLabel.text('');
+        $submitBtn.prop('disabled', true);
+        $('#ReasonCompletedDescription').removeClass('is-invalid');
+
+        axios.post('/updated_status', {
+            ticket_id: ticketId,
+            ticket_status: statusId,
+            completed_reason: reason, 
+            name_status: 'Solucionado'
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => {
+            ui.showToast('success', `Se ha actualizado a estatus (Solucionado).`);
+            reasonCompletedModal.modal('hide');
+            getTicketsDataKanban(1);
+        })
+        .catch(error => {
+            console.error(error);
+            ui.showToast('error', error.response?.data?.message || 'Ocurrió un error al actualizar el estatus.');
+        })
+        .finally(() => {
+            $submitBtn.prop('disabled', false);
+        });
+        
     });
 
 

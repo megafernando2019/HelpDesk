@@ -28,7 +28,7 @@ class UserRepo implements IUserRepo
     {
         return DB::table('users as u')
             ->join('team_user as tu', 'u.id', '=', 'tu.user_id')
-            ->where('tu.team_id', $teamId)
+            ->whereIn('tu.team_id', $teamId)
             ->where('u.active', 1)
             ->select(
                 'u.id',

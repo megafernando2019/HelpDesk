@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
+use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Services\TicketLogService;
 use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
@@ -208,8 +209,15 @@ class TicketsController extends Controller
     public function index()
     {
         $dto = $this->service->getDetailsIndex();
+        $user = Auth::user();
        
-        return view('tickets::index', compact('dto'));
+        if ($user) {
+            $user->load('teams');
+        }
+
+        $teamIds = $user?->teams?->pluck('id')->toArray();
+       
+        return view('tickets::index', compact('dto', 'teamIds'));
     }
 
     /**
@@ -284,13 +292,17 @@ class TicketsController extends Controller
         }
 
 
-        $teamIds = $user->teams()->pluck('teams.id')->toArray();
+        if ($user) {
+            $user->load('teams');
+        }
+
+        $teamIds = $user?->teams?->pluck('id')->toArray();
 
         //Traer integrantes del equipo del usuario en sesion
         $supportUsers = 
         DB::table('users as u')
         ->join('team_user as tu', 'u.id', '=', 'tu.user_id')
-        ->where('tu.team_id', $teamIds)
+        ->whereIn('tu.team_id', $teamIds)
         ->where('u.active', 1)
         ->select(
             'u.id',

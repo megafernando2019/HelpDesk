@@ -6,7 +6,7 @@
 <div class="page-wrapper">
     <div class="content container-fluid">
             
-        <div class="page-header">
+        <div class="page-header metadata-page-index" data-team-id='@json($teamIds)'>
             <div class="row">
                 <div class="col-md-12">
                     <h3 class="page-title">

@@ -288,9 +288,6 @@ $(document).ready(function () {
         $submitBtn.prop('disabled', true);
         $('#ReasonCompletedDescription').removeClass('is-invalid');
 
-        console.log(statusId)
-        debugger;
-
         axios.post('/updated_status', {
             ticket_id: ticketId,
             ticket_status: statusId,

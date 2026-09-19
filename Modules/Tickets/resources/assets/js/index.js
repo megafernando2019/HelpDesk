@@ -11,6 +11,7 @@ $(document).ready(function () {
     const modalAssingUser = $('#assingUserModal');
     const observationDescription = $('#observationDescription');
     let supportUsersInMemory = [];
+    let currentTeamId = $('.metadata-page-index').data('teamId');
 
     /**
      * data actions
@@ -261,14 +262,12 @@ $(document).ready(function () {
         $select.append(optionDefault);
 
         try {
-            const response = await axios.get('/users/get_by_department', {
-                params: {
-                    department_id: 2
-                }
+            const response = await axios.get('/users/get_by_team', {
+                params: { team_id: currentTeamId } 
             });
 
             supportUsersInMemory = response.data.data || [];
-            
+        
             initAssigneeSelect2(supportUsersInMemory, assignedUserId);
 
         } catch (error) {

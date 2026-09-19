@@ -15,7 +15,7 @@
                     data-initials="{{ $user?->initials }}"
                     data-name="{{ $user?->first_name ?? '' }}  {{ $user?->last_name ?? '' }}"
                     {{ $user?->id === $currentUserAssing ? 'selected' : '' }}>
-                    {{ $user?->first_name }} {{ $user?->last_name }}</p>
+                    {{ $user?->first_name }} {{ $user?->last_name }}
                     ({{ $user?->email }})
             </option>
         @endforeach

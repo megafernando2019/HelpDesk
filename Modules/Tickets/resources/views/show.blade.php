@@ -48,7 +48,8 @@
                                         </div>
                                         <div class="info-user-auth-heldesk">
                                                 <p class="p-0 m-0 fw-bold text-dark lh-1 text-truncate">
-                                                    {{$full_name}} <i class="ti ti-point"></i> {{$user?->teams[0]?->name ?? 'Equipo no disponible'}}
+                                                    {{$full_name}} <i class="ti ti-point"></i>
+                                                    {{ $user?->teams?->first()?->name ?? 'Equipo no disponible' }}
                                                 </p>
                                                 <small style="font-size: 11px;" class="text-muted">{{$user?->email}}</small>
                                         </div>

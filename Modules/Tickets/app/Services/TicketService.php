@@ -483,7 +483,7 @@ class TicketService {
                         $selectedName
                     );
 
-                    //Si el ticket esta por asignar, lo paso en automatico a en proceso
+                    // Si el ticket esta por asignar, lo paso en automatico a en proceso
                     if ($ticket->status_id === 1) {
                        
                         $this->repo->updateStatus(2, $ticket->id);
