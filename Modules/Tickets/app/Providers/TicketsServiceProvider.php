@@ -39,15 +39,6 @@ class TicketsServiceProvider extends ModuleServiceProvider
         RouteServiceProvider::class,
     ];
 
-    public function boot(): void
-    {
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                MigrateLegacyTicketLogs::class,
-            ]);
-        }
-    }
 
     /**
      * Register the service provider.
@@ -55,6 +46,12 @@ class TicketsServiceProvider extends ModuleServiceProvider
     public function register(): void
     {
         parent::register();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MigrateLegacyTicketLogs::class,
+            ]);
+        }
 
         $this->app->bind(
             ITicketRepo::class,
