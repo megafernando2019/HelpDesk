@@ -31,4 +31,6 @@ Route::middleware(['auto_login'])->group(function () {
     //Mi trabajo diario
     Route::get('/tickets/my_daily_job', [TicketsController::class, 'viewMyDailyJob'])->name('tickets.my.daily.job');
     Route::resource('tickets', TicketsController::class)->names('tickets');
+    //Mi equipo
+    Route::get('/tickets/job/my_team', [TicketsController::class, 'viewMyTeam'])->name('tickets.my.team');
 });

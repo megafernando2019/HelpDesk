@@ -411,7 +411,7 @@ class TicketService {
         //Si no hay información cargada, la consulto con los parametros
         if ($logs->isEmpty() && $ticket_id > 0) {
 
-            \Log::info('No se encontro información, consulto a la DB');
+            // \Log::info('No se encontro información, consulto a la DB');
             $logs = $this->repo->getLogsByTicketId(
                 $ticket_id
             );

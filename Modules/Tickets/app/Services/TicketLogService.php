@@ -21,7 +21,7 @@ class TicketLogService
         $section_name,
         $selectedName = null,
         $cancel_reason = null,
-        $completed_reason = null
+        $completed_reason = null,
     )
     {
         $data = [
@@ -31,7 +31,7 @@ class TicketLogService
                 Auth::user()->last_name
             ),
             'assigned_to' => $selectedName,
-            'ticket' => $ticket?->uid ?? '',
+            'ticket_code' => $ticket?->uid ?? '',
             'observation' => $ticket?->observation?->description ?? '',
             'cancel_reason' => $cancel_reason,
             'completed_reason' => $completed_reason

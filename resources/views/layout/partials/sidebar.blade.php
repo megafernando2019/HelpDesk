@@ -138,7 +138,7 @@
                             <li
                                 class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
                                 <a 
-                                href="{{route('tickets.index')}}">
+                                href="{{route('tickets.my.team')}}">
                                 <i class="ti ti-users fs-16 me-2"></i>
                                 <span>Mi equipo</span>
                                 </a>

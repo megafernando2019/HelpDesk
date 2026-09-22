@@ -319,6 +319,12 @@
 @if (Route::is('tickets.show'))
     @vite(['Modules/Tickets/resources/assets/js/show.js'])  
 @endif
+
+@if (Route::is('tickets.my.team'))
+    <!-- Chart Apex JS -->
+    <script src="{{URL::asset('build/plugins/apexchart/apexcharts.min.js')}}"></script>
+    <script src="{{URL::asset('build/plugins/apexchart/chart-data.js')}}"></script>
+@endif
     
     @vite('resources/js/helpers/helper.js')
 

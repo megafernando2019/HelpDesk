@@ -32,6 +32,17 @@ class TicketsController extends Controller
         
     }
 
+    public function viewMyTeam()
+    {
+         $details = $this->service->getDetailsIndex();
+         $teamIds = Auth::user()->teams()->pluck('teams.id');
+         
+        return view('tickets::my_team', compact(
+            'details',
+            'teamIds'
+        ));
+    }
+
     public function countTicketToTeamAssing(Request $request)
     {
         try {

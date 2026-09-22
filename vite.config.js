@@ -39,7 +39,8 @@ export default defineConfig({
             'Modules/Tickets/resources/assets/js/assing.js',
             'Modules/Tickets/resources/assets/js/reassing.js',
             'Modules/Tickets/resources/assets/js/archive.js',
-            'Modules/Tickets/resources/assets/js/my_daily_job.js'
+            'Modules/Tickets/resources/assets/js/my_daily_job.js',
+            'Modules/Tickets/resources/assets/js/my_team.js'
             ],
             refresh: true,
         }),
