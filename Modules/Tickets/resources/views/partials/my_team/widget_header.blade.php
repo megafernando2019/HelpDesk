@@ -31,7 +31,7 @@
                         {{-- <i class="ti ti-progress-check"></i> --}}
                     </div>
                     <div>
-                        <h3 class="fw-bold mb-0 text-dark lh-1">2</h3>
+                        <h3 class="fw-bold mb-0 text-dark lh-1 title-count-proccess">2</h3>
                         <span class="text-muted fs-11">Tickets en proceso</span>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         <i class="ti ti-lock-check fs-2" style="color: #ff9f43 !important;"></i>
                     </div>
                     <div>
-                        <h3 class="fw-bold mb-0 text-dark lh-1">25</h3>
+                        <h3 class="fw-bold mb-0 text-dark lh-1 title-count-closed">25</h3>
                         <span class="text-muted fs-11">Tickets cerrados</span>
                     </div>
                 </div>

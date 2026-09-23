@@ -11,6 +11,65 @@ use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
 
+    public function avgTimeByStatus(
+        $memberId
+    ) 
+    {
+        return DB::table('tickets')
+        ->join('status', 'tickets.status_id', '=', 'status.id')
+        ->when($memberId > 0, function($q) use ($memberId) {
+            $q->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
+              ->where('tickets_users_assignations.user_id', $memberId);
+        })
+        ->where('tickets.status_id', '!=', 6)
+        ->select(
+            'status.name as status_name',
+            DB::raw('COALESCE(ROUND(AVG(DATEDIFF(tickets.updated_at, tickets.created_at)), 1), 0) as avg_days')
+        )
+        ->groupBy('status.id', 'status.name')
+        ->pluck('avg_days', 'status_name');
+    }
+
+    public function getClosureRateByMember(
+        $memberId
+    )
+    {
+        $query = DB::table('tickets')
+            ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id');
+
+        if ($memberId > 0) {
+            $query->where('tickets_users_assignations.user_id', $memberId);
+        }
+
+        $data = $query->select(
+            DB::raw('COUNT(tickets.id) as total_assigned'),
+            // Conteo de tickets cerrados
+            DB::raw("COUNT(CASE WHEN tickets.status_id = (SELECT id FROM status WHERE name = 'Cerrado' LIMIT 1) THEN 1 END) as total_closed"),
+            // Promedio de días entre creación y actualización/cierre
+            DB::raw("COALESCE(ROUND(AVG(DATEDIFF(tickets.updated_at, tickets.created_at)), 1), 0) as avg_resolution_days")
+        )->first();
+
+        return $data;
+    }
+
+   public function getTicketsByStatusDistribution(
+     $memberId
+   ) 
+   {
+        return DB::table('tickets')
+        ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
+        ->join('status', 'tickets.status_id', '=', 'status.id') 
+        ->where('tickets_users_assignations.user_id', $memberId)
+        ->select(
+            'status.id as status_id',
+            'status.name as status_name',
+            DB::raw('COUNT(tickets.id) as total')
+        )
+        // Agrupo por el estatus para obtener el conteo de cada uno
+        ->groupBy('status.id', 'status.name')
+        ->get();
+   }
+
     public function findByStatusesIdsByTeamId(
         $teamsIds,
         $ticket_statuses,

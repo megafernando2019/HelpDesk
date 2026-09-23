@@ -33,4 +33,6 @@ Route::middleware(['auto_login'])->group(function () {
     Route::resource('tickets', TicketsController::class)->names('tickets');
     //Mi equipo
     Route::get('/tickets/job/my_team', [TicketsController::class, 'viewMyTeam'])->name('tickets.my.team');
+    Route::get('/tickets/my_team/apply_filters_charts', [TicketsController::class, 'getDataChartsMyTeam']);
+    
 });

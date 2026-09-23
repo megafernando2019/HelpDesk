@@ -9,10 +9,29 @@ use Modules\User\app\Services\UserService;
 class UserController extends Controller
 {
     public function __construct(
-        private readonly UserService $service
+        private readonly UserService $service,
     )
     {
         
+    }
+
+    public function getMembers()
+    {
+        try {
+            $membersCtx = $this->service->getCurrentMembers();
+
+            $members = $this->service->getCollectionMembersDto(
+                $membersCtx
+                );
+
+            return response($members);
+
+        } catch (\Throwable $th) {
+            
+            return response([
+                'message' => 'Ocurrio un error al obtener a los miembros del equipo, intente más tarde.'
+            ], 500);
+        }
     }
 
     /**

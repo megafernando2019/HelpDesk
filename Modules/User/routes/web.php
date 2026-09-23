@@ -10,5 +10,7 @@ Route::middleware(['auto_login'])->group(function () {
 
      //Obtiene usuarios por su team id
     Route::get('/users/get_by_team', [UserController::class, 'getUsersByTeam']);
+
+    Route::get('/users/get_current_members', [UserController::class, 'getMembers']);
 });
 

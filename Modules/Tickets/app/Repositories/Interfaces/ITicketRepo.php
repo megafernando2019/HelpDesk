@@ -8,6 +8,30 @@ interface ITicketRepo {
 
     /**
      *
+     * @param int $memberId
+     * @return void
+     */
+    public function avgTimeByStatus($memberId);
+
+    /**
+     *
+     * @param int $memberId
+     * @return void
+     */
+    public function getClosureRateByMember($memberId);
+
+    /**
+     * Método para la información distribución de las gráficas en mi equipo
+     *
+     * @param  int $memberId
+     * @return void
+     */
+    public function getTicketsByStatusDistribution(
+         $memberId
+    ); 
+
+    /**
+     *
      * @param array $teamsIds
      * @param array $ticket_statuses
      * @param int $priority

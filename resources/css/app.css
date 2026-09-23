@@ -68,11 +68,6 @@
     box-shadow: 0.0 0.15px 9px 1px #155EEF !important;
 }
 
-/* Override Select2 */
-.select2-container--default .select2-results__option--highlighted {
-    background: #eee !important;
-}
-
 /* Override BS */
 .shadow {
     box-shadow: 0 0.5rem 0.7rem rgba(0, 0, 0, 0.15) !important;

@@ -31,6 +31,7 @@ export default defineConfig({
             'Modules/Tickets/resources/assets/css/show.css',
             'Modules/Tickets/resources/assets/css/archive.css',
             'Modules/Tickets/resources/assets/css/my_daily_job.css',
+            'Modules/Tickets/resources/assets/css/my_team.css',
             'resources/js/script.js',
             'resources/js/helpers/helper.js',
             'Modules/Tickets/resources/assets/js/index.js',

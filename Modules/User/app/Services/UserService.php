@@ -5,16 +5,49 @@ namespace Modules\User\app\Services;
 use App\Helpers\GetInitials;
 use Illuminate\Support\Facades\Auth;
 use Modules\User\app\Repositories\Interfaces\IUserRepo;
+use Modules\User\app\Support\Mappers\MembersMapper;
 
 class UserService
 {
     public function __construct(
-         private readonly IUserRepo $repo
+         private readonly IUserRepo $repo,
+         private readonly MembersMapper $membersMap
     )
     {
         
     }
+
+    /**
+     * Regresa una coleccion de los miembros con su equipo instanciados a una clase DTO
+     *
+     * @param $membersCtx
+     * @param MembersMaModules\User\app\Support\Mappers\MembersMapper $mapper
+     * @return void
+     */
+    public function getCollectionMembersDto(
+        $members
+    )
+    {
+        if ($members->isEmpty()) {
+            return collect();
+        }
+
+        return $this->membersMap->toDtoCollection($members);  
+    }
     
+    /**
+     * Obtiene a el equipo y sus miebros por medio del team Id en la sesion
+     */
+    public function getCurrentMembers()
+    {
+        $user = Auth::user();
+       
+        if ($user) {
+            $user->load('teams.members');
+        }
+
+        return $user?->teams ?? collect();
+    }
 
     public function getUsersByTeam($request)
     {

@@ -1,0 +1,46 @@
+.all-tugui-option-wave {
+    background-image: url(http://127.0.0.1:8000/build/img/icons/wave_tugui.svg);
+    background-repeat: no-repeat;
+    background-position: bottom;
+    cursor: pointer;
+}
+
+.title-all {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.hide-word {
+    color: #212b3600 !important;
+    opacity: 0 !important;
+}
+
+.aletory-wave-2 {
+    background-repeat: no-repeat;
+    background-position: bottom;
+    cursor: pointer;
+    background-image: url(http://127.0.0.1:8000/build/img/icons/wave_2.svg);
+}
+
+.aletory-wave-3 {
+    background-repeat: no-repeat;
+    background-position: bottom;
+    cursor: pointer;
+    background-image: url(http://127.0.0.1:8000/build/img/icons/wave_3.svg);
+}
+
+.aletory-wave-4 {
+    background-repeat: no-repeat;
+    background-position: bottom;
+    cursor: pointer;
+    background-image: url(http://127.0.0.1:8000/build/img/icons/wave_4.svg);
+}
+
+.aletory-wave-5 {
+    background-repeat: no-repeat;
+    background-position: bottom;
+    cursor: pointer;
+    background-image: url(http://127.0.0.1:8000/build/img/icons/wave_5.svg);
+}

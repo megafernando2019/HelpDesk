@@ -3,19 +3,18 @@
 namespace Modules\Tickets\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
-use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Services\TicketLogService;
 use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
 use Modules\Tickets\Support\Enums\TicketStatus;
 use Modules\User\app\Services\UserService;
+
 
 class TicketsController extends Controller
 {
@@ -32,14 +31,29 @@ class TicketsController extends Controller
         
     }
 
+    public function getDataChartsMyTeam(Request $request)
+    {
+        try {
+
+            $result = $this->service->getDashboardKpis($request);
+
+            return response()->json($result);
+
+        } catch (\Throwable $th) {
+            \Log::info($th);
+
+            return response()->json([
+                  'message' => 'Ocurrió un error al actualizar las estadisticas, pruebe más tarde.'
+            ], 500);
+        }
+    }
+
     public function viewMyTeam()
     {
-         $details = $this->service->getDetailsIndex();
-         $teamIds = Auth::user()->teams()->pluck('teams.id');
+        $details = $this->service->getDetailsIndex();
          
         return view('tickets::my_team', compact(
-            'details',
-            'teamIds'
+            'details'
         ));
     }
 

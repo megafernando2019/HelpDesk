@@ -19,19 +19,22 @@
             </div>
             <div class="card-body px-4 pb-4">
                 <div id="close-rate-assignment-chart" style="min-height: 220px;"></div>
-            
+        
                 <div class="row align-items-center text-center mt-3 pt-2 border-top">
                     <div class="col-4">
-                        <h3 class="fw-bold mb-0 text-dark">25</h3>
-                        <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1 rounded-pill fs-8">Asignados</span>
+                        <!-- Agregada clase: title-count-assigned -->
+                        <h3 class="fw-bold mb-0 text-dark title-count-assigned">0</h3>
+                        <span class="badge fw-semibold px-2 py-1 rounded-pill fs-8" style="background-color: #f3eeff; color:blueviolet;">Asignados</span>
                     </div>
                     <div class="col-4">
-                        <h3 class="fw-bold mb-0 text-dark">15</h3>
+                        <!-- Agregada clase: title-count-closed-rate -->
+                        <h3 class="fw-bold mb-0 text-dark title-count-closed-rate">0</h3>
                         <span class="badge bg-warning-subtle text-warning fw-semibold px-2 py-1 rounded-pill fs-8">Cerrados</span>
                     </div>
                     <div class="col-4 border-start">
-                        <h3 class="fw-bold mb-0 text-dark">2 <small class="fs-6 fw-normal text-muted">días</small></h3>
-                        <span class="badge bg-success-subtle text-success fw-semibold px-2 py-1 rounded-pill fs-8">Tiempo promedio de solución</span>
+                        <!-- Agregada clase: title-avg-days -->
+                        <h3 class="fw-bold mb-0 text-dark title-avg-days">0 <small class="fs-6 fw-normal text-muted">días</small></h3>
+                        <span class="badge text-success fw-semibold px-2 py-1 rounded-pill fs-8" style="background-color: #e4f8ed; text-wrap: wrap;">Tiempo promedio de solución</span>
                     </div>
                 </div>
             </div>

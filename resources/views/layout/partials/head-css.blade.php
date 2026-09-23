@@ -223,7 +223,7 @@
     <link rel="stylesheet" href="{{URL::asset('build/plugins/@simonwep/pickr/themes/nano.min.css')}}">
 @endif
 
-@if (Route::is(['tickets.index', 'tickets.my.daily.job']))
+@if (Route::is(['tickets.index', 'tickets.my.daily.job', 'tickets.my.team']))
     <!-- flatpickr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endif

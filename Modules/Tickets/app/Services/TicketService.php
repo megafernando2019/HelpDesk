@@ -26,6 +26,73 @@ class TicketService {
        
     }
 
+    public function getDashboardKpis($request)
+    {
+        $memberId = $request?->member_id ?? 0; 
+        $dataByStatusDistribution = [];
+        $namesCategories = ["Cerrado", "Solucionado", "En espera", "En proceso"];
+        $countSeriesDistibution = [];
+        $tasaCierre = [];
+        $countAvgTime = [];
+
+        $byStatusDistributionCtx = $this->repo->getTicketsByStatusDistribution($memberId);
+
+
+        foreach ($byStatusDistributionCtx as $value) {
+
+            if ($value->status_name === 'Cancelado') {
+                continue;
+            }
+
+            $countSeriesDistibution[] = (int) ($value->total ?? 0);
+        }
+
+        $dataByStatusDistribution = [
+            'mode' => 'single',
+            'categories' => $namesCategories,
+            'series' => [
+                [
+                    'name' => 'Tickets',
+                    'data' =>  $countSeriesDistibution
+                ]
+            ]
+        ];
+
+        // Obtener métricas de tasa de cierre
+        $closureData = $this->repo->getClosureRateByMember($memberId);
+
+        $totalAssigned = (int) ($closureData->total_assigned ?? 0);
+        $totalClosed = (int) ($closureData->total_closed ?? 0);
+        $avgDays = (float) ($closureData->avg_resolution_days ?? 0);
+
+        $percentage = $totalAssigned > 0 ? round(($totalClosed / $totalAssigned) * 100) : 0;
+
+        $tasaCierre = [
+            'percentage' => $percentage,     
+            'assigned'   => $totalAssigned,  // 25
+            'closed'     => $totalClosed,    // 15
+            'avg_days'   => $avgDays         // 2
+        ];
+
+        $avgTimeByStatus = $this->repo->avgTimeByStatus($memberId);
+
+        foreach ($avgTimeByStatus as $value) {
+            $countAvgTime[] = round((float) $value, 1);
+        }
+
+        $avgTimeData = [
+                "categories" => $namesCategories,
+                "series" => [
+                    [
+                        "name"=> "Días Promedio",
+                        "data"=> $countAvgTime
+                    ]
+                ]
+        ];
+
+        return compact('dataByStatusDistribution', 'tasaCierre', 'avgTimeData');
+    }
+
     public function getToStatusesUserAssing($request)
     {
         $user = Auth::user();
