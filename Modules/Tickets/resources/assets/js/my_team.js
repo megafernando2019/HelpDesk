@@ -14,6 +14,7 @@ $(document).ready(function () {
     };
     let dateRangePicker = null;
     let selectedUserId = null;
+    let membersIdsParams = [];
 
 
     /**
@@ -71,7 +72,8 @@ $(document).ready(function () {
 
         // HTML de la opción fija "Todos" (Tugui)
         let htmlContent = `
-            <div data-bs-toggle="tooltip" title="Ver todo" class="card border shadow-sm rounded-4 team-card active-team-card overflow-hidden all-tugui-option-wave">
+            <div data-bs-toggle="tooltip" title="Ver todo" class="card border shadow-sm rounded-4 team-card active-team-card overflow-hidden all-tugui-option-wave"  
+                 data-member-id="all">
                 <div class="card-body p-2 d-flex align-items-center gap-3">
                     <img 
                        src="/build/img/icons/tugui_en_computadora.png" alt="Tugui" 
@@ -213,12 +215,12 @@ $(document).ready(function () {
     var optionsCloseRadial = {
         series: [67],
         chart: {
-            type: 'radialBar',
+            type: 'donut',
             width: 130,
             height: 130,
             sparkline: { enabled: true }
         },
-        colors: ['#F59E0B'],
+        colors: ['#f3972c', '#28c76f'],
         plotOptions: {
             radialBar: {
                 hollow: { size: '60%' },
@@ -228,19 +230,20 @@ $(document).ready(function () {
         }
     };
 
-    new ApexCharts(document.querySelector("#close-rate-radial-chart"), optionsCloseRadial).render();
+    let closeRateRadialChart = new ApexCharts(document.querySelector("#close-rate-radial-chart"), optionsCloseRadial);
+    closeRateRadialChart.render();
 
 
     //Tasa de cancelacion
     var optionsCancelRadial = {
         series: [2],
         chart: {
-            type: 'radialBar',
+            type: 'donut',
             width: 130,
             height: 130,
             sparkline: { enabled: true }
         },
-        colors: ['#EF4444'], 
+        colors: ['#ff5757', '#0cc0df'],
         plotOptions: {
             radialBar: {
                 hollow: { size: '60%' },
@@ -331,7 +334,8 @@ $(document).ready(function () {
 
     // Delegación de evento de click sobre cualquier .team-card dentro de su contenedor
     $(document).on('click', '.team-card', function () {
-        const $card =$(this);
+        membersIdsParams = [];
+        const $card = $(this);
 
         // Manejo visual de la clase 'active-team-card'
         $('.team-card').removeClass('active-team-card');$card.addClass('active-team-card');
@@ -341,110 +345,329 @@ $(document).ready(function () {
 
         selectedUserId = memberId;
 
-        if (!selectedUserId) {
-            console.log('Filtro activado: Vista Global (Todos)');
-        } else {
-            console.log(`Filtro activado: Usuario ID ${selectedUserId}`);
+        if (selectedUserId === 'all') {
+            // Recorrer las tarjetas hermanas para extraer sus IDs
+            $('.team-card').not($card).each(function () {
+                const id = $(this).data('member-id');
+                if (id && id !== 'all') {
+                    membersIdsParams.push(id);
+                }
+            });
+           
+        } 
+
+        if (Array.isArray(membersIdsParams) && membersIdsParams.length === 0) {
+            membersIdsParams = [selectedUserId];
         }
 
         // Disparar la actualización de métricas
-        loadDashboardMetrics(selectedUserId);
+        loadDashboardMetrics(membersIdsParams);
+
     });
 
+    
     /**
      * Función encargada de pedir al backend los datos con el filtro aplicado
      */
-    async function loadDashboardMetrics(userId = null) {
-        const params = {
-            member_id: userId // Enviamos member_id como espera tu backend
-        };
+    async function loadDashboardMetrics(membersIdsParams = null) {
 
-        console.log('Enviando parámetros a las métricas:', params);
+        const params = {
+            members_id: membersIdsParams
+        };
 
         try {
             const response = await axios.get('/tickets/my_team/apply_filters_charts', { params });
             const dataByStatusDistribution = response.data.dataByStatusDistribution ?? {};
-            const dynamicColors = dataByStatusDistribution.categories.map(cat => STATUS_COLORS[cat] || '#7367f0');
+            let dynamicColors;
             const seriesData = dataByStatusDistribution.series?.[0]?.data || [];
+            const isStacked = dataByStatusDistribution.mode === 'stacked';
+
+            const statusColorsMap = {
+                'En proceso': '#0052CC', // Azul
+                'En espera': '#9FA6B2',  // Gris
+                'Solucionado': '#00D084', // Verde
+                'Cerrado': '#FF9F43'     // Naranja
+            };
 
             const getCount = (statusName) => {
-                const index = dataByStatusDistribution.categories.indexOf(statusName);
+                const categories = dataByStatusDistribution.categories || [];
+                const index = categories.indexOf(statusName);
                 return index !== -1 ? (seriesData[index] ?? 0) : 0;
             };
 
-            $('.title-count-proccess').text(getCount('En proceso'));
-            $('.title-count-closed').text(getCount('Cerrado'));
+            $('.compare-process').text(getCount('En proceso'));
+            $('.title-count-proccess').text(getCount('En proceso'));$('.title-count-closed').text(getCount('Cerrado'));
 
-            chart.updateOptions({
-                xaxis: {
-                    categories: dataByStatusDistribution.categories
-                },
-                colors: dynamicColors,
-                plotOptions: {
-                    bar: {
-                        horizontal: true,
-                        distributed: true,
-                        borderRadius: 6,
-                        borderRadiusApplication: 'end'
+            // TU IF/ELSE ORIGINAL CON LA INSTANCIA `chart.updateOptions`
+            if (isStacked) {
+                // Mapeamos el color de cada SERIE según su nombre de estatus ("En proceso", etc.)
+                dynamicColors = (dataByStatusDistribution.series || []).map(s => statusColorsMap[s.name] || '#7367f0');
+            
+                chart.updateOptions({
+                    chart: {
+                        stacked: true,
+                        stackType: 'normal',
+                        animations: { enabled: false } // <--- DESACTIVA ANIMACIÓN PARA EVITAR TRONAR EL SVG
+                    },
+                    xaxis: {
+                        categories: dataByStatusDistribution.categories || []
+                    },
+                    colors: dynamicColors,
+                    plotOptions: {
+                        bar: {
+                            horizontal: true,
+                            distributed: false,
+                            borderRadius: 4,
+                            borderRadiusApplication: 'end'
+                        }
+                    },
+                    legend: {
+                        show: true, // Muestra la leyenda de estatus en modo "Todos"
+                        position: 'top',
+                        horizontalAlign: 'left'
                     }
-                }
-            });
+                }, false, true);
+           
+            } else {
+                dynamicColors = (dataByStatusDistribution.categories || []).map(cat => STATUS_COLORS[cat] || statusColorsMap[cat] || '#7367f0');
 
-            chart.updateSeries(dataByStatusDistribution.series);
+                chart.updateOptions({
+                    chart: {
+                        stacked: false,
+                        animations: { enabled: false } // <--- DESACTIVA ANIMACIÓN PARA EVITAR TRONAR EL SVG
+                    },
+                    xaxis: {
+                        categories: dataByStatusDistribution.categories || []
+                    },
+                    colors: dynamicColors,
+                    plotOptions: {
+                        bar: {
+                            horizontal: true,
+                            distributed: true,
+                            borderRadius: 6,
+                            borderRadiusApplication: 'end'
+                        }
+                    },
+                    legend: {
+                        show: false
+                    }
+                }, false, true);
+            }
 
-            //Para la tasa de cierre
+            // Actualización de series sobre tu objeto `chart` original
+            chart.updateSeries(dataByStatusDistribution.series || []);
+
+            // --- Para la tasa de cierre ---
             const tasaCierre = response.data.tasaCierre ?? {};
 
-            $('.title-count-assigned').text(tasaCierre.assigned);         
-            $('.title-count-closed-rate').text(tasaCierre.closed);
-            $('.title-avg-days').
-            html(
+            $('.title-count-assigned').text(tasaCierre.assigned ?? 0);         
+            $('.title-count-closed-rate').text(tasaCierre.closed ?? 0);
+            $('.title-avg-days').html(
                 `<h3 class="fw-bold mb-0 text-dark title-avg-days">
                     ${tasaCierre?.avg_days ?? 0}
                 <small class="fs-6 fw-normal text-muted">días</small></h3>`
             );
 
-            const cerrados = tasaCierre.closed;
-            const pendientes = tasaCierre.assigned - tasaCierre.closed;
+            const cerrados = tasaCierre.closed ?? 0;
+            const asignados = tasaCierre.assigned ?? 0;
+            const pendientes = asignados - cerrados;
 
-            closeRateAssigment.updateSeries([pendientes, cerrados]);
+            if (typeof closeRateAssigment !== 'undefined' && closeRateAssigment) {
+                closeRateAssigment.updateSeries([pendientes < 0 ? 0 : pendientes, cerrados]);
+            }
 
+            // --- Actualizar la gráfica de tiempo promedio ---
             const avgTimeData = response.data.avgTimeData ?? {};
             const categories = avgTimeData.categories || [];
             const rawSeries = avgTimeData.series?.[0]?.data || [];
-
-
             const numericSeriesData = rawSeries.map(val => parseFloat(val) || 0);
 
-            // Actualizar la gráfica de tiempo promedio
-            avgTimeChart.updateOptions({
-                xaxis: {
-                    categories: categories,
-                    labels: {
-                        formatter: function (val) {
-                            // Forzar a mostrar solo la parte entera
-                            return Math.round(val);
-                        },
-                        style: { colors: '#6c757d', fontSize: '13px' }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function (val) {
-                            return typeof val === 'number' ? val.toFixed(0) : val;
-                        }
-                    }
-                },
-                colors: dynamicColors
-            });
+            $('.count-title-tickets-assing').text(asignados);$('.compare-assign').text(asignados);
 
-            avgTimeChart.updateSeries([{
-                name: 'Días Promedio',
-                data: numericSeriesData
-            }]);
+            if (typeof avgTimeChart !== 'undefined' && avgTimeChart) {
+                avgTimeChart.updateOptions({
+                    xaxis: {
+                        categories: categories,
+                        labels: {
+                            formatter: function (val) {
+                                if (val === undefined || val === null) return '';
+                                return Math.round(Number(val) || 0);
+                            },
+                            style: { colors: '#6c757d', fontSize: '13px' }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function (val) {
+                                if (val === undefined || val === null) return '';
+                                return typeof val === 'number' ? val.toFixed(0) : String(val);
+                            }
+                        }
+                    },
+                    colors: dynamicColors
+                }, false, true);
+
+                avgTimeChart.updateSeries([{
+                    name: 'Días Promedio',
+                    data: numericSeriesData
+                }]);
+            }
+
+            // --- Tarjetas Radial / Donut de Tasas ---
+            if (response.data.cardMetricsClousure && typeof closeRateRadialChart !== 'undefined') {
+                $('.percentage-tasa-closed').text(`${response.data.cardMetricsClousure.percentage ?? 0}%`);
+
+                let diff = response.data.cardMetricsClousure.diff ?? 0;
+                $('.periodo-tasa-closed').html(`
+                    <i class="bi bi-arrow-down"></i> ${diff}% <span class="text-muted fw-normal">vs periodo anterior</span>
+                `);
+
+                closeRateRadialChart.updateSeries(response.data.cardMetricsClousure.series || []);
+            }
+
+            if (response.data.cardMetricsCancellation && typeof cancellationRadialChart !== 'undefined') {
+                $('.percentage-tasa-cancelation').text(`${response.data.cardMetricsCancellation.percentage ?? 0}%`);
+
+                let diffCancellation = response.data.cardMetricsCancellation.diff ?? 0;
+                $('.periodo-tasa-cancelation').html(`
+                    <i class="bi bi-arrow-down"></i> ${diffCancellation}% <span class="text-muted fw-normal">vs periodo anterior</span>
+                `);
+
+                cancellationRadialChart.updateSeries(response.data.cardMetricsCancellation.series || []);
+            }
 
         } catch (error) {
             console.error('Error al cargar métricas:', error);
         }
     }
+
+    // 1. Inicializar Flatpickr en el input de rango de fechas
+    const fpInstance = $("#flatpickr-range").flatpickr({
+        mode: "range",
+        dateFormat: "Y-m-d",
+        onChange: function (selectedDates) {
+            // Ejecuta la consulta únicamente cuando se seleccionan ambas fechas del rango
+            if (selectedDates.length === 2) {
+                fetchDashboardMetrics();
+            }
+        }
+    });
+
+    // 2. Escuchar cambios en los selectores Select2 (.select2-filter)
+    $('.select2-filter').on('change', function () {
+        fetchDashboardMetrics();
+    });
+
+    // 3. Extraer los filtros del DOM
+    function getSelectedFilters() {
+        const categoryVal = $('#filter_category').val();
+        const serviceVal = $('#filter_service').val();
+
+        return {
+            date_range: $('#flatpickr-range').val() || null,
+            categories: categoryVal ? [categoryVal] : [],
+            services: serviceVal ? [serviceVal] : [],
+            members: typeof getSelectedMemberIds === 'function' ? getSelectedMemberIds() : []
+        };
+    }
+
+    // 4. Petición HTTP mediante Axios
+    async function fetchDashboardMetrics() {
+        const filtersPayload = getSelectedFilters();
+
+        try {
+            const response = await axios.get('/tickets/my_team/apply_filters_charts', {
+                params: filtersPayload
+            });
+
+            // Actualizar interfaz con los datos devueltos
+            updateDashboardUI(response.data);
+        } catch (error) {
+            console.error("Error al obtener las métricas del dashboard con Axios:", error);
+        }
+    }
+
+    // 5. Función para actualizar los gráficos de ApexCharts
+    function updateDashboardUI(data) {
+        // --- A) Gráfica de Distribución por Estatus ---
+        if (window.chartStatusDistribution) {
+            window.chartStatusDistribution.destroy();
+        }
+
+        const optionsDistribution = {
+            chart: {
+                type: 'bar',
+                height: 320,
+                stacked: data.dataByStatusDistribution.mode === 'stacked',
+                toolbar: { show: false }
+            },
+            series: data.dataByStatusDistribution.series,
+            xaxis: {
+                categories: data.dataByStatusDistribution.categories
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '45%',
+                    borderRadius: 4
+                }
+            },
+            dataLabels: { enabled: false }
+        };
+
+        window.chartStatusDistribution = new ApexCharts(
+            $('#chart-status-distribution')[0], 
+            optionsDistribution
+        );
+        window.chartStatusDistribution.render();
+
+
+        // --- B) Tarjeta Donut Tasa de Cierre ---
+        if (window.chartClosureRate) {
+            window.chartClosureRate.destroy();
+        }
+
+        const optionsClosure = {
+            chart: {
+                type: 'donut',
+                height: 200
+            },
+            series: data.cardMetricsClousure.series,
+            labels: data.cardMetricsClousure.labels,
+            legend: { show: false }
+        };
+
+        $('#closure-percentage-text').text(`${data.cardMetricsClousure.percentage}%`);
+
+        window.chartClosureRate = new ApexCharts(
+            $('#chart-closure-rate')[0], 
+            optionsClosure
+        );
+        window.chartClosureRate.render();
+
+
+        // --- C) Tarjeta Donut Tasa de Cancelación ---
+        if (window.chartCancellationRate) {
+            window.chartCancellationRate.destroy();
+        }
+
+        const optionsCancellation = {
+            chart: {
+                type: 'donut',
+                height: 200
+            },
+            series: data.cardMetricsCancellation.series,
+            labels: data.cardMetricsCancellation.labels,
+            legend: { show: false }
+        };
+
+        $('#cancellation-percentage-text').text(`${data.cardMetricsCancellation.percentage}%`);
+
+        window.chartCancellationRate = new ApexCharts(
+            $('#chart-cancellation-rate')[0], 
+            optionsCancellation
+        );
+        window.chartCancellationRate.render();
+    }
+
 });

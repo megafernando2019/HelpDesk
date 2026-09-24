@@ -8,13 +8,13 @@
                         <i class="ti ti-user fs-2 text-primary" style="color: #7367f0 !important;"></i>
                     </div>
                     <div>
-                        <h3 class="fw-bold mb-0 text-dark lh-1">20</h3>
+                        <h3 class="fw-bold mb-0 text-dark lh-1 count-title-tickets-assing">0</h3>
                         <span class="text-muted fs-11">Tickets asignados</span>
                     </div>
                 </div>
                 <div class="mt-2 pt-1">
                     <small class="text-success fw-semibold fs-8">
-                        <i class="ti ti-arrow-up"></i> 15% <span class="text-muted fw-normal fs-11">vs periodo anterior</span>
+                        {{-- <i class="ti ti-arrow-up"></i> 15% <span class="text-muted fw-normal fs-11">vs periodo anterior</span> --}}
                     </small>
                 </div>
             </div>
@@ -31,13 +31,13 @@
                         {{-- <i class="ti ti-progress-check"></i> --}}
                     </div>
                     <div>
-                        <h3 class="fw-bold mb-0 text-dark lh-1 title-count-proccess">2</h3>
+                        <h3 class="fw-bold mb-0 text-dark lh-1 title-count-proccess">0</h3>
                         <span class="text-muted fs-11">Tickets en proceso</span>
                     </div>
                 </div>
                 <div class="mt-2 pt-1">
                     <small class="text-danger fw-semibold">
-                        <i class="ti ti-arrow-down"></i> 2% <span class="text-muted fw-normal fs-11">vs periodo anterior</span>
+                        {{-- <i class="ti ti-arrow-down"></i> 2% <span class="text-muted fw-normal fs-11">vs periodo anterior</span> --}}
                     </small>
                 </div>
             </div>
@@ -53,13 +53,13 @@
                         <i class="ti ti-lock-check fs-2" style="color: #ff9f43 !important;"></i>
                     </div>
                     <div>
-                        <h3 class="fw-bold mb-0 text-dark lh-1 title-count-closed">25</h3>
+                        <h3 class="fw-bold mb-0 text-dark lh-1 title-count-closed">0</h3>
                         <span class="text-muted fs-11">Tickets cerrados</span>
                     </div>
                 </div>
                 <div class="mt-2 pt-1">
                     <small class="text-success fw-semibold fs-11">
-                        <i class="ti ti-arrow-up"></i> 8% <span class="text-muted fw-normal">vs periodo anterior</span>
+                        {{-- <i class="ti ti-arrow-up"></i> 8% <span class="text-muted fw-normal">vs periodo anterior</span> --}}
                     </small>
                 </div>
             </div>
@@ -75,13 +75,15 @@
                         <i class="ti ti-ticket fs-2" style="color: #12939a !important;"></i>
                     </div>
                     <div>
-                        <h3 class="fw-bold mb-0 text-dark lh-1">2 / 20</h3>
+                        <h3 class="fw-bold mb-0 text-dark lh-1">
+                            <span class="compare-process">0</span>/<span class="compare-assign">0</span>
+                        </h3>
                         <span class="text-muted fs-11">Carga actual</span>
                     </div>
                 </div>
                 <div class="mt-2 pt-1">
                     <small class="text-danger fw-semibold fs-11">
-                        <i class="ti ti-arrow-down"></i> 4% <span class="text-muted fw-normal">vs periodo anterior</span>
+                        {{-- <i class="ti ti-arrow-down"></i> 4% <span class="text-muted fw-normal">vs periodo anterior</span> --}}
                     </small>
                 </div>
             </div>

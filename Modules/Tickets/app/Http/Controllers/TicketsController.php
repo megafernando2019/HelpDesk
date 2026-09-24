@@ -34,7 +34,6 @@ class TicketsController extends Controller
     public function getDataChartsMyTeam(Request $request)
     {
         try {
-
             $result = $this->service->getDashboardKpis($request);
 
             return response()->json($result);

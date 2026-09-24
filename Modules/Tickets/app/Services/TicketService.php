@@ -26,25 +26,230 @@ class TicketService {
        
     }
 
-    public function getDashboardKpis($request)
+    /**
+     * Formatea y consolida los datos de métricas y gráficas aplicando filtros.
+     *
+     * @param array $args Array de IDs de miembros
+     * @param array $filters Array con date_from, date_to, category_ids, service_ids
+     * @return array
+     */
+    public function formatDataChartMembersAll( $args = [], $filters = []): array
     {
-        $memberId = $request?->member_id ?? 0; 
+        $namesCategories = ["Cerrado", "Solucionado", "En espera", "En proceso"];
+
+        $dateFrom = null;
+        $dateTo = null;
+
+        if (!empty($filters['date_range'])) {
+            $dates = explode(' to ', $filters['date_range']);
+            $dateFrom = trim($dates[0]) ?? null;
+        
+            if (isset($dates[1])) {
+                $dateTo = trim($dates[1]) . ' 23:59:59';
+            } elseif ($dateFrom) {
+                $dateTo = $dateFrom . ' 23:59:59';
+            }
+        }
+
+        // Estructuramos los filtros limpios para el Repositorio
+        $parsedFilters = [
+            'date_from'    => $dateFrom,
+            'date_to'      => $dateTo,
+            'category_ids' => $filters['category_ids'] ?? [],
+            'service_ids'  => $filters['service_ids'] ?? [],
+        ];
+    
+        // Obtener la distribución filtrada desde el repositorio
+        $byStatusDistributionCtx = $this->repo->getTicketsByStatusDistribution($args, $parsedFilters);
+    
+        $groupedByUser = $byStatusDistributionCtx->groupBy('user_name');
+        $displayNamesUsers = $groupedByUser->keys()->toArray();
+    
+        $seriesDistribution = [];
+        $completedRate = 0;
+        $closedRate = 0;
+        $cancelledRate = 0;
+        $totalTickets = 0;
+
+
+
+        // CONSTRUCCIÓN DE LA GRÁFICA STACKED
+        foreach ($namesCategories as $value) {
+            $userData = [];
+
+            foreach ($groupedByUser as $userTickets) {
+                $record = $userTickets->firstWhere('status_name', $value);
+                $count = $record ? (int) $record->total : 0;
+                $userData[] = $count;
+
+                if ($value === 'Cerrado') {
+                    $closedRate += $count;
+                } elseif ($value === 'Solucionado') {
+                    $completedRate += $count;
+                }
+            }
+
+            $seriesDistribution[] = [
+                'name' => $value,
+                'data' => $userData,
+            ];
+        }
+
+        // CÁLCULO DE CANCELADOS Y TOTAL
+        foreach ($byStatusDistributionCtx as $item) {
+            $totalTickets += (int) $item->total;
+            if ($item->status_name === 'Cancelado') {
+                $cancelledRate += (int) $item->total;
+            }
+        }
+
+        $dataByStatusDistribution = [
+            'mode'       => 'stacked',
+            'categories' => $displayNamesUsers,
+            'series'     => $seriesDistribution,
+        ];
+
+        // MÉTRICAS DE TASA DE CIERRE
+        $closureData = $this->repo->getClosureRateByMember($args, $filters);
+
+        $totalAssigned = (int) ($closureData->total_assigned ?? 0);
+        $totalClosed   = (int) ($closureData->total_closed ?? 0);
+        $avgDays       = (float) ($closureData->avg_resolution_days ?? 0);
+
+        $percentage = $totalAssigned > 0 ? round(($totalClosed / $totalAssigned) * 100) : 0;
+
+        $tasaCierre = [
+            'percentage' => $percentage,     
+            'assigned'   => $totalAssigned,  
+            'closed'     => $totalClosed,   
+            'avg_days'   => $avgDays         
+        ];
+
+        // TIEMPO PROMEDIO POR ESTATUS
+        $avgTimeByStatus = $this->repo->avgTimeByStatus($args, $filters);
+        $countAvgTime = [];
+
+        foreach ($avgTimeByStatus as $value) {
+            $countAvgTime[] = round((float) $value, 1);
+        }
+
+        $avgTimeData = [
+            "categories" => $namesCategories,
+            "series" => [
+                [
+                    "name" => "Días Promedio",
+                    "data" => $countAvgTime
+                ]
+            ]
+        ];
+
+        // TARJETA DONA CIERRE
+        $totalRateSumCompleteAndClosed = $closedRate + $completedRate;
+
+        $percentageClousure = $totalRateSumCompleteAndClosed > 0 
+            ? round(($closedRate / $totalRateSumCompleteAndClosed) * 100) 
+            : 0;
+
+        $cardMetricsClousure = [
+            'percentage' => $percentageClousure, 
+            'series'     => [(int) $closedRate, (int) $completedRate],
+            'labels'     => ['Cerrados', 'Solucionados'],
+            'diff'       => 0
+        ];
+
+        // TARJETA DONA CANCELACIÓN
+        $percentageCancellation = $totalTickets > 0 
+            ? round(($cancelledRate / $totalTickets) * 100) 
+            : 0;
+
+        $cardMetricsCancellation = [
+            'percentage' => $percentageCancellation,
+            'series'     => [(int) $cancelledRate, (int) ($totalTickets - $cancelledRate)],
+            'labels'     => ['Cancelados', 'Otros'],
+            'diff'       => 0
+        ];
+    
+        return compact(
+            'dataByStatusDistribution', 
+            'tasaCierre', 
+            'avgTimeData', 
+            'cardMetricsClousure',
+            'cardMetricsCancellation'
+        );
+    }
+
+    /**
+     * Un solo miembro
+     *
+     * @param array $args
+     * @return void
+     */
+    public function formatDataChartOnlyMember($args = [], $filters = [])
+    {
         $dataByStatusDistribution = [];
         $namesCategories = ["Cerrado", "Solucionado", "En espera", "En proceso"];
         $countSeriesDistibution = [];
         $tasaCierre = [];
         $countAvgTime = [];
+        $completedRate = 0;
+        $closedRate = 0;
+        $cancelledRate = 0;
+        $totalTickets = 0;
 
-        $byStatusDistributionCtx = $this->repo->getTicketsByStatusDistribution($memberId);
+        $dateFrom = null;
+        $dateTo = null;
+
+        if (!empty($filters['date_range'])) {
+            $dates = explode(' to ', $filters['date_range']);
+            $dateFrom = trim($dates[0]) ?? null;
+        
+            if (isset($dates[1])) {
+                $dateTo = trim($dates[1]) . ' 23:59:59';
+            } elseif ($dateFrom) {
+                $dateTo = $dateFrom . ' 23:59:59';
+            }
+        }
+
+        // Estructuramos los filtros limpios para el Repositorio
+        $parsedFilters = [
+            'date_from'    => $dateFrom,
+            'date_to'      => $dateTo,
+            'category_ids' => $filters['category_ids'] ?? [],
+            'service_ids'  => $filters['service_ids'] ?? [],
+        ];
+
+        $byStatusDistributionCtx = $this->repo->getTicketsByStatusDistribution($args, $parsedFilters);
 
 
         foreach ($byStatusDistributionCtx as $value) {
 
-            if ($value->status_name === 'Cancelado') {
+            $current_status = $value?->status_name ?? '';
+            $total = $value?->total ?? 0;
+
+            //Sumar el total de los tickets
+            $totalTickets = $totalTickets + $total;
+
+            //Omito a cancelado
+            if ($current_status === 'Cancelado') {
+                $cancelledRate = (int) ($total);
                 continue;
             }
 
-            $countSeriesDistibution[] = (int) ($value->total ?? 0);
+            //Tomo sus totales para calcular más abajo
+            switch ($current_status) {
+                case 'Solucionado':
+                    
+                    $completedRate = (int) ($total);
+                    break;
+
+                case 'Cerrado':
+                    $closedRate = (int) ($total);
+                    break;
+                default:
+                    break;
+            }
+            
+            $countSeriesDistibution[] = (int) ($total);
         }
 
         $dataByStatusDistribution = [
@@ -59,7 +264,7 @@ class TicketService {
         ];
 
         // Obtener métricas de tasa de cierre
-        $closureData = $this->repo->getClosureRateByMember($memberId);
+        $closureData = $this->repo->getClosureRateByMember($args);
 
         $totalAssigned = (int) ($closureData->total_assigned ?? 0);
         $totalClosed = (int) ($closureData->total_closed ?? 0);
@@ -69,12 +274,12 @@ class TicketService {
 
         $tasaCierre = [
             'percentage' => $percentage,     
-            'assigned'   => $totalAssigned,  // 25
-            'closed'     => $totalClosed,    // 15
-            'avg_days'   => $avgDays         // 2
+            'assigned'   => $totalAssigned,  
+            'closed'     => $totalClosed,   
+            'avg_days'   => $avgDays         
         ];
 
-        $avgTimeByStatus = $this->repo->avgTimeByStatus($memberId);
+        $avgTimeByStatus = $this->repo->avgTimeByStatus($args);
 
         foreach ($avgTimeByStatus as $value) {
             $countAvgTime[] = round((float) $value, 1);
@@ -90,7 +295,64 @@ class TicketService {
                 ]
         ];
 
-        return compact('dataByStatusDistribution', 'tasaCierre', 'avgTimeData');
+        // Sumas base para graficos de las tasas 
+
+        // Solucionados + Cerrados
+        $totalRateSumCompleteAndClosed = $completedRate + $closedRate;
+
+        // Cancelados + total
+        $percentageCancellation = $totalTickets > 0 
+            ? round(($cancelledRate / $totalTickets) * 100) 
+            : 0;
+
+        $percentageClousure = $totalRateSumCompleteAndClosed > 0 
+            ? round(($closedRate / $totalRateSumCompleteAndClosed) * 100) 
+            : 0;
+
+
+        
+        $cardMetricsClousure = [
+            'percentage' => $percentageClousure, 
+            'series'     => [$closedRate,$completedRate],
+            'labels'     => ['Cerrados', 'Solucionados'],
+            'diff' =>       0
+        ];
+
+        $cardMetricsCancellation = [
+            'percentage' => $percentageCancellation,
+            'series'     => [$cancelledRate, ($totalTickets - $cancelledRate)],
+            'labels'     => ['Cancelados', 'Otros'],
+            'diff' =>       0
+        ];
+
+        return compact(
+                        'dataByStatusDistribution', 
+                        'tasaCierre', 
+                        'avgTimeData', 
+                        'cardMetricsClousure',
+                        'cardMetricsCancellation'
+        );
+    }
+
+    public function getDashboardKpis($request)
+    {
+        $membersId = $request?->members_id ?? [];
+        $payload = [];
+
+        $filters = [
+            'date_range'   => $request->input('date_range'), // String directo de Flatpickr "YYYY-MM-DD to YYYY-MM-DD"
+            'category_ids' => $request->input('categories', []),
+            'service_ids'  => $request->input('services', []),
+        ];
+       
+        //Si tiene mas miembros le preparo aparte su data
+        if (count($membersId) > 1) {
+            $payload = $this->formatDataChartMembersAll($membersId, $filters);
+        } else {
+            $payload = $this->formatDataChartOnlyMember($membersId, $filters);
+        }
+        
+        return $payload;
     }
 
     public function getToStatusesUserAssing($request)
