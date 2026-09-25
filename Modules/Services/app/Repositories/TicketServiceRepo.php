@@ -11,4 +11,9 @@ class TicketServiceRepo implements ITicketServiceRepo
     {
         return DB::table('tickets_services')->where('category_id', $category_id)->get();
     }
+
+    public function getServicesByIdsCategory($categories_ids)
+    {
+         return DB::table('tickets_services')->whereIn('category_id', $categories_ids)->get();
+    }
 }

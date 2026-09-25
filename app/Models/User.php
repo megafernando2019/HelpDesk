@@ -71,4 +71,17 @@ class User extends Authenticatable
         return $this->belongsToMany(Ticket::class, 'tickets_users_assignations')
                     ->withTimestamps();
     }
+
+    /**
+     * Tickets del integrante asignados
+     */
+    public function tickets_assing_team()
+    {
+       return $this->belongsToMany(
+         Ticket::class, 
+        'tickets_users_assignations', 
+        'user_id',
+        'ticket_id' 
+       );
+    }
 }

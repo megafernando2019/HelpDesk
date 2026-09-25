@@ -31,18 +31,25 @@
                 </div>
 
                 <div class="mb-2">
-                    <select class="form-select form-select-sm rounded-3 text-muted select2-filter" id="filter_category">
-                        <option value="" selected disabled>Selecciona categoría(s)</option>
-                        <option value="1">Soporte Técnico</option>
-                        <option value="2">Desarrollo</option>
+                    <select class="form-select 
+                    form-select-sm rounded-3 
+                    text-muted select2-filter" id="filter_category">
+                        <option>Selecciona categoría(s)</option>
+                        @forelse ($categories as $item)
+                            <option value="{{$item?->id ?? ''}}">
+                                {{$item?->name ?? ''}}
+                            </option>
+                        @empty
+                            
+                        @endforelse
                     </select>
                 </div>
 
                 <div class="mb-4">
-                    <select class="form-select form-select-sm rounded-3 text-muted select2-filter" id="filter_service">
-                        <option value="" selected disabled>Selecciona servicio(s)</option>
-                        <option value="1">Mantenimiento</option>
-                        <option value="2">Incidencia</option>
+                    <select class="form-select 
+                    form-select-sm rounded-3
+                     text-muted select2-filter" id="filter_service">
+                        <option>Selecciona servicio(s)</option>
                     </select>
                 </div>
 
@@ -51,7 +58,7 @@
                 </div>
             </div>
           </div>
-          <div class="col-md-9">
+          <div class="col-md-9 set-loading item-disabled">
               @include('tickets::partials.my_team.widget_header')
               @include('tickets::partials.my_team.widget_chars_tickets')
           </div>

@@ -4,21 +4,27 @@ namespace Modules\Services\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Modules\Services\Services\CatalogService;
 use Modules\Services\Services\GetServices;
 
 class ServicesController extends Controller
 {
+    public function __construct(
+        private readonly CatalogService $catalog_service
+    )
+    {
+        
+    }
 
-    public function getServicesByCategory(Request $request, GetServices $getServices)
+    public function getServicesByCategory(Request $request)
     {
        try {
 
-         $data = $getServices($request);
+        $data = $this->catalog_service->getServicesByCategory($request);
 
-         return response()->json([
+        return response()->json([
             'data' => $data
-         ], 200);
+        ], 200);
 
        } catch (\Throwable $th) {
 

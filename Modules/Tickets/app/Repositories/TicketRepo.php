@@ -12,10 +12,11 @@ use Modules\Tickets\Models\TicketObservation;
 class TicketRepo implements ITicketRepo {
 
     public function avgTimeByStatus(
-        $membersId = []
+        $membersId = [],
+        $filters = []
     ) 
     {
-        $q = DB::table('tickets')
+        return DB::table('tickets')
         ->join('status', 'tickets.status_id', '=', 'status.id')
         ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
         ->where('tickets.status_id', '!=', 6)
@@ -23,73 +24,30 @@ class TicketRepo implements ITicketRepo {
             'status.name as status_name',
             DB::raw('COALESCE(ROUND(AVG(DATEDIFF(tickets.updated_at, tickets.created_at)), 1), 0) as avg_days')
 
-        );
-
-        if (!empty($membersId)) {
+        )
+        ->when(!empty($membersId), function($q) use ($membersId) {
             $q->whereIn('tickets_users_assignations.user_id', $membersId);
-        }
-
-        $data = $q->groupBy('status.id', 'status.name')
-                  ->pluck('avg_days', 'status_name');
-
-        return $data;
+        })
+        // Filtro por Rango de Fechas
+        ->when(!empty($filters['date_from']) && !empty($filters['date_to']), function($q) use ($filters) {
+            $q->whereBetween('tickets.created_at', [$filters['date_from'], $filters['date_to']]);
+        })
+        // Filtro por Servicios 
+        ->when(!empty(array_filter((array) ($filters['service_ids'] ?? []))), function($q) use ($filters) {
+            $q->whereIn('tickets.ticket_service_id', $filters['service_ids']);
+        })
+        ->groupBy('status.id', 'status.name')
+        ->pluck('avg_days', 'status_name');
     }
-
-    // public function getClosureRateByMember(
-    //     $membersId = []
-    // )
-    // {
-    //     $q = DB::table('tickets')
-    //         ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id');
-
-
-    //     if (!empty($membersId)) {
-    //         $q->whereIn('tickets_users_assignations.user_id', $membersId);
-    //     }
-
-    //     $data = $q->select(
-    //         DB::raw('COUNT(tickets.id) as total_assigned'),
-    //         // Conteo de tickets cerrados
-    //         DB::raw("COUNT(CASE WHEN tickets.status_id = (SELECT id FROM status WHERE name = 'Cerrado' LIMIT 1) THEN 1 END) as total_closed"),
-    //         // Promedio de días entre creación y actualización/cierre
-    //         DB::raw("COALESCE(ROUND(AVG(DATEDIFF(tickets.updated_at, tickets.created_at)), 1), 0) as avg_resolution_days")
-    //     )->first();
-
-    //     return $data;
-    // }
-
 
     public function getClosureRateByMember(
-        $membersId = []
+        $membersId = [],
+        $filters = []
     )
-    {
-        $q = DB::table('tickets')
-            ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
-            ->join('status', 'tickets.status_id', '=', 'status.id');
-
-        if (!empty($membersId)) {
-            $q->whereIn('tickets_users_assignations.user_id', $membersId);
-        }
-
-        $data = $q->select(
-            DB::raw('COUNT(DISTINCT tickets.id) as total_assigned'),
-            DB::raw("COUNT(DISTINCT CASE WHEN status.name = 'Cerrado' THEN tickets.id END) as total_closed"),
-            DB::raw("COALESCE(ROUND(AVG(CASE WHEN status.name IN ('Cerrado', 'Solucionado') THEN DATEDIFF(tickets.updated_at, tickets.created_at) END), 1), 0) as avg_resolution_days")
-        )->first();
-
-        return $data;
-    }
-
-    public function getTicketsByStatusDistribution($membersId = [], $filters = []) 
     {
         return DB::table('tickets')
             ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
-            ->join('users', 'tickets_users_assignations.user_id', '=', 'users.id')
             ->join('status', 'tickets.status_id', '=', 'status.id')
-        
-            // JOIN por la relación team_id del usuario con tickets_categories
-            ->leftJoin('tickets_categories', 'users.team_id', '=', 'tickets_categories.team_id')
-
             // Filtro dinámico por miembros
             ->when(!empty($membersId), function($q) use ($membersId) {
                 $q->whereIn('tickets_users_assignations.user_id', $membersId);
@@ -98,13 +56,36 @@ class TicketRepo implements ITicketRepo {
             ->when(!empty($filters['date_from']) && !empty($filters['date_to']), function($q) use ($filters) {
                 $q->whereBetween('tickets.created_at', [$filters['date_from'], $filters['date_to']]);
             })
-            // Filtro por Categoría usando tickets_categories.id
-            ->when(!empty($filters['category_ids']), function($q) use ($filters) {
-                $q->whereIn('tickets_categories.id', (array) $filters['category_ids']);
+            // Filtro por Servicios 
+            ->when(!empty(array_filter((array) ($filters['service_ids'] ?? []))), function($q) use ($filters) {
+                $q->whereIn('tickets.ticket_service_id', $filters['service_ids']);
             })
-            // Filtro por Servicios (si el servicio está en la tabla tickets)
-            ->when(!empty($filters['service_ids']), function($q) use ($filters) {
-                $q->whereIn('tickets.service_id', (array) $filters['service_ids']);
+            ->where('tickets.status_id', '!=', 6)
+            ->select(
+            DB::raw('COUNT(DISTINCT tickets.id) as total_assigned'),
+            DB::raw("COUNT(DISTINCT CASE WHEN status.name = 'Cerrado' THEN tickets.id END) as total_closed"),
+            DB::raw("COALESCE(ROUND(AVG(CASE WHEN status.name IN ('Cerrado', 'Solucionado') THEN DATEDIFF(tickets.updated_at, tickets.created_at) END), 1), 0) as avg_resolution_days")
+        )
+        ->first();
+    }
+
+    public function getTicketsByStatusDistribution($membersId = [], $filters = []) 
+    {
+        return DB::table('tickets')
+            ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
+            ->join('users', 'tickets_users_assignations.user_id', '=', 'users.id')
+            ->join('status', 'tickets.status_id', '=', 'status.id')
+            // Filtro dinámico por miembros
+            ->when(!empty($membersId), function($q) use ($membersId) {
+                $q->whereIn('tickets_users_assignations.user_id', $membersId);
+            })
+            // Filtro por Rango de Fechas
+            ->when(!empty($filters['date_from']) && !empty($filters['date_to']), function($q) use ($filters) {
+                $q->whereBetween('tickets.created_at', [$filters['date_from'], $filters['date_to']]);
+            })
+            // Filtro por Servicios 
+            ->when(!empty(array_filter((array) ($filters['service_ids'] ?? []))), function($q) use ($filters) {
+                $q->whereIn('tickets.ticket_service_id', $filters['service_ids']);
             })
             ->select(
                 'users.id as user_id',
@@ -113,6 +94,8 @@ class TicketRepo implements ITicketRepo {
                 DB::raw('COUNT(DISTINCT tickets.id) as total')
             )
             ->groupBy('users.id', 'users.first_name', 'users.last_name', 'status.id', 'status.name')
+            // Forzamos el ordenamiento por la posición de la columna status.name
+            ->orderByRaw("FIELD(status.name, 'Cerrado', 'Solucionado', 'En espera', 'En proceso')")
             ->get();
     }
 

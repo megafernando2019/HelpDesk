@@ -41,7 +41,9 @@ class TicketService {
         $dateTo = null;
 
         if (!empty($filters['date_range'])) {
-            $dates = explode(' to ', $filters['date_range']);
+            
+            $dateRange = str_replace('a', ',', $filters['date_range']);
+            $dates = explode(',', $dateRange);
             $dateFrom = trim($dates[0]) ?? null;
         
             if (isset($dates[1])) {
@@ -49,6 +51,7 @@ class TicketService {
             } elseif ($dateFrom) {
                 $dateTo = $dateFrom . ' 23:59:59';
             }
+
         }
 
         // Estructuramos los filtros limpios para el Repositorio
@@ -110,7 +113,7 @@ class TicketService {
         ];
 
         // MÉTRICAS DE TASA DE CIERRE
-        $closureData = $this->repo->getClosureRateByMember($args, $filters);
+        $closureData = $this->repo->getClosureRateByMember($args, $parsedFilters);
 
         $totalAssigned = (int) ($closureData->total_assigned ?? 0);
         $totalClosed   = (int) ($closureData->total_closed ?? 0);
@@ -126,7 +129,7 @@ class TicketService {
         ];
 
         // TIEMPO PROMEDIO POR ESTATUS
-        $avgTimeByStatus = $this->repo->avgTimeByStatus($args, $filters);
+        $avgTimeByStatus = $this->repo->avgTimeByStatus($args, $parsedFilters);
         $countAvgTime = [];
 
         foreach ($avgTimeByStatus as $value) {
@@ -195,12 +198,21 @@ class TicketService {
         $closedRate = 0;
         $cancelledRate = 0;
         $totalTickets = 0;
-
         $dateFrom = null;
         $dateTo = null;
+        $distributionMap = [
+            'Cerrado'     => 0,
+            'Solucionado' => 0,
+            'En espera'   => 0,
+            'En proceso'  => 0,
+        ];
 
+        
+        
         if (!empty($filters['date_range'])) {
-            $dates = explode(' to ', $filters['date_range']);
+            
+            $dateRange = str_replace('a', ',', $filters['date_range']);
+            $dates = explode(',', $dateRange);
             $dateFrom = trim($dates[0]) ?? null;
         
             if (isset($dates[1])) {
@@ -208,8 +220,9 @@ class TicketService {
             } elseif ($dateFrom) {
                 $dateTo = $dateFrom . ' 23:59:59';
             }
-        }
 
+        }
+        
         // Estructuramos los filtros limpios para el Repositorio
         $parsedFilters = [
             'date_from'    => $dateFrom,
@@ -220,7 +233,7 @@ class TicketService {
 
         $byStatusDistributionCtx = $this->repo->getTicketsByStatusDistribution($args, $parsedFilters);
 
-
+        // dd($byStatusDistributionCtx);
         foreach ($byStatusDistributionCtx as $value) {
 
             $current_status = $value?->status_name ?? '';
@@ -249,8 +262,12 @@ class TicketService {
                     break;
             }
             
-            $countSeriesDistibution[] = (int) ($total);
+            if (array_key_exists($current_status, $distributionMap)) {
+                $distributionMap[$current_status] = $total;
+            }
         }
+
+        $countSeriesDistibution = array_values($distributionMap);
 
         $dataByStatusDistribution = [
             'mode' => 'single',
@@ -264,7 +281,7 @@ class TicketService {
         ];
 
         // Obtener métricas de tasa de cierre
-        $closureData = $this->repo->getClosureRateByMember($args);
+        $closureData = $this->repo->getClosureRateByMember($args, $parsedFilters);
 
         $totalAssigned = (int) ($closureData->total_assigned ?? 0);
         $totalClosed = (int) ($closureData->total_closed ?? 0);
@@ -279,7 +296,7 @@ class TicketService {
             'avg_days'   => $avgDays         
         ];
 
-        $avgTimeByStatus = $this->repo->avgTimeByStatus($args);
+        $avgTimeByStatus = $this->repo->avgTimeByStatus($args, $parsedFilters);
 
         foreach ($avgTimeByStatus as $value) {
             $countAvgTime[] = round((float) $value, 1);

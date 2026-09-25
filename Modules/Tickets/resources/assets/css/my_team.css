@@ -44,3 +44,17 @@
     cursor: pointer;
     background-image: url(http://127.0.0.1:8000/build/img/icons/wave_5.svg);
 }
+
+/* Estilo base para las tarjetas de miembros */
+.member-card {
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    border: 1px solid transparent;
+}
+
+/* Estado activo cuando el usuario presiona una tarjeta */
+.member-card.active {
+    box-shadow: 0 .5rem 1.2rem #0e72ff54 !important;
+    border-color: #0e72ff3b !important;
+    transform: translateY(-2px);
+}

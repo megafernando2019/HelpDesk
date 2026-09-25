@@ -6,6 +6,7 @@ use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Modules\Services\Repositories\Interfaces\ITicketServiceRepo;
 use Modules\Services\Repositories\TicketServiceRepo;
+use Modules\Services\Services\CatalogService;
 use Modules\Services\Services\GetServices;
 
 class ServicesServiceProvider extends ModuleServiceProvider
@@ -50,7 +51,8 @@ class ServicesServiceProvider extends ModuleServiceProvider
         );
 
         $this->app->bind(
-            GetServices::class
+            GetServices::class,
+            CatalogService::class
         );
     }
 

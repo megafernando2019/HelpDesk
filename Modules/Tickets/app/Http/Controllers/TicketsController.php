@@ -3,10 +3,13 @@
 namespace Modules\Tickets\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Modules\Categories\Services\TicketCategoryService;
+use Modules\Services\Services\CatalogService;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
 use Modules\Tickets\Services\TicketLogService;
@@ -25,7 +28,9 @@ class TicketsController extends Controller
     public function __construct(
         private readonly TicketService $service,
         private readonly TicketLogService $ticketLogService,
-        private readonly UserService $userService
+        private readonly UserService $userService,
+        private readonly TicketCategoryService $ticket_category_service,
+        private readonly CatalogService $catalog_service
     )
     {
         
@@ -50,9 +55,23 @@ class TicketsController extends Controller
     public function viewMyTeam()
     {
         $details = $this->service->getDetailsIndex();
+        $user = User::with('teams')->find(Auth::user()->id);
+        $user_team_id = $user->teams?->first()?->id ?? 0;
+        $categories = $this->ticket_category_service->getCategoriesByTeam(
+            null,
+            $user_team_id
+        );
+
+        $getCategoriesIds = $categories ? $categories->pluck('id')->all() : [];
+
+        $services = !empty($getCategoriesIds) 
+            ? $this->catalog_service->getServicesByCategories($getCategoriesIds)
+            : collect();
          
         return view('tickets::my_team', compact(
-            'details'
+            'details',
+            'categories',
+            'services'
         ));
     }
 

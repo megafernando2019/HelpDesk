@@ -5,6 +5,8 @@ namespace Modules\User\app\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Tickets\Models\Ticket;
+
 // use Modules\User\Database\Factories\TeamFactory;
 
 class Team extends Model
