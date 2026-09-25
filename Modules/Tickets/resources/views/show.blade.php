@@ -127,10 +127,10 @@
                                             <div class="col-md-4 mb-2">  
                                             </div>
                                             <div class="col-md-2 mb-2">
-                                                <i class="ti ti-loader"></i> Estatus
+                                                <i class="ti ti-loader"></i> Estatus 
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <p class="badge rounded float-left" style="background: {{$bgColor}}; color:#2b2b2b;">
+                                                <p class="badge rounded float-left {{$bgColor}}">
                                                     <i class="{{$icon}}"></i>
                                                     {{$status}}
                                                 </p>

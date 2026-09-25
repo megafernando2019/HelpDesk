@@ -7,12 +7,6 @@
     background: #f3f6ff !important;
 }
 
-.bg-closed-status {
-    background-color: #f3972c33 !important;
-    border: 1px solid #f3972c33 !important;
-    color: #f3972c !important;
-}
-
 .btn-mega {
     background: #0049fc !important;
     border: 1px solid #0049fc !important;
@@ -28,6 +22,43 @@
     background: #a3a4ac !important;
     border: 1px solid #a3a4ac !important;
     color: #fff !important;
+}
+
+/* Colores de los estatus por ticket */
+.bg-closed-status {
+    background-color: #fef3c7 !important;
+    border: 1px solid #fef3c7 !important;
+    color: #f59e0b !important;
+}
+
+.bg-completed-status {
+    background: #dcfce7 !important;
+    border: 1px solid #dcfce7 !important;
+    color: #1d8844 !important;
+}
+
+.bg-cancel-status {
+    background: #fee2e2 !important;
+    border: 1px solid #fee2e2 !important;
+    color: #ef4444 !important;
+}
+
+.bg-pending-status {
+    background: #f1f5f9 !important;
+    border: 1px solid #f1f5f9 !important;
+    color: #64748b !important;
+}
+
+.bg-progress-status {
+    background: #dbeafe !important;
+    border: 1px solid #dbeafe !important;
+    color: #3b82f6 !important;
+}
+
+.bg-to-assing-status {
+    background: #f0e8ff !important;
+    border: 1px solid #f0e8ff !important;
+    color: #8a5cf6 !important;
 }
 
 .text-mega {

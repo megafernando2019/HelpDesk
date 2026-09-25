@@ -49,6 +49,7 @@ final class TicketMapper {
        if (is_array($entity)) {
             $entity = (object) $entity;
        }
+
         
        $enum = TicketAction::tryFrom($entity->event_type);
        $bgColor = $enum->badgeClasses();

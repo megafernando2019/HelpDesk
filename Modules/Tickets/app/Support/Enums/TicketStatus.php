@@ -65,7 +65,7 @@ enum TicketStatus : string
             self::POR_ASIGNAR => '#faf8ff',
             self::EN_ESPERA   => '#fafbfb',
             self::SOLUCIONADO => '#d1e7dd',
-            self::CERRADO     => '#f3972c33',
+            self::CERRADO     => '#fef3c7',
             self::CANCELADO   => '#fffafa',
         };
     }
@@ -76,12 +76,12 @@ enum TicketStatus : string
     public function badgeClass(): string
     {
         return match($this) {
-            self::EN_PROCESO   => 'bg-primary-subtle text-primary',
-            self::POR_ASIGNAR => 'bg-purple-subtle text-purple',
-            self::EN_ESPERA   => 'bg-secondary-subtle text-secondary',
-            self::SOLUCIONADO => 'bg-success-subtle text-success',
-            self::CERRADO     => 'bg-warning-subtle text-warning',
-            self::CANCELADO   => 'bg-danger-subtle text-danger',
+            self::EN_PROCESO  => 'bg-progress-status',
+            self::POR_ASIGNAR => 'bg-to-assing-status',
+            self::EN_ESPERA   => 'bg-pending-status',
+            self::SOLUCIONADO => 'bg-completed-status',
+            self::CERRADO     => 'bg-closed-status',
+            self::CANCELADO   => 'bg-cancel-status',
         };
     }
 

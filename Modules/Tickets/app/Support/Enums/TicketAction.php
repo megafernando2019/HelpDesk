@@ -49,14 +49,14 @@ enum TicketAction: string
     public function badgeClasses(): string
     {
         return match($this) {
-            self::CREATE_TICKET     => 'bg-info-subtle text-info-emphasis',
+            self::CREATE_TICKET     => 'bg-to-assing-status',
             self::ASSIGN_TICKET     => 'bg-warning-subtle text-warning-emphasis',
             self::REASSIGN_TICKET   => 'bg-secondary-subtle text-secondary-emphasis',
-            self::STATUS_IN_PROGRESS => 'bg-primary-subtle text-primary-emphasis',
-            self::STATUS_PENDING    => 'bg-danger-subtle text-danger-emphasis',
-            self::STATUS_SOLVED     => 'bg-success-subtle text-success-emphasis',
+            self::STATUS_IN_PROGRESS => 'bg-progress-status',
+            self::STATUS_PENDING    => 'bg-pending-status',
+            self::STATUS_SOLVED     => 'bg-completed-status',
             self::STATUS_CLOSED     => 'bg-closed-status',
-            self::STATUS_CANCELLED  => 'bg-danger-subtle text-danger',
+            self::STATUS_CANCELLED  => 'bg-cancel-status',
             self::ADD_COMMENT,      
             self::OBSERVE_TICKET    => 'bg-info-subtle text-info',
             self::REMOVE_TICKET     => 'bg-secondary-subtle text-secondary',

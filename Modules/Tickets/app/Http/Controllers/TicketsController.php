@@ -376,7 +376,7 @@ class TicketsController extends Controller
 
         $icon = TicketStatus::getIcon($status);
 
-        $bgColor = TicketStatus::getBgColor($ticket?->status?->name);
+        $bgColor = TicketStatus::getBadgeClass($ticket?->status?->name);
 
         return view('tickets::show', compact(
         'user', 
