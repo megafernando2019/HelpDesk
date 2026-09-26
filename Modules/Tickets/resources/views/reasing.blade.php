@@ -13,7 +13,7 @@
                 <div class="row">
                      <!-- instrucciones -->
                     <div class="col-md-12">
-                        <div class="card">
+                        <div class="card" >
                             <div class="card-header p-0" style="border: none;"></div>
                             <div class="card-body">
                                 <div class="row text-center">
@@ -50,7 +50,7 @@
                     </div>
                     <!-- reasignacion body -->
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card" style="height: calc(100vh - 80px) !important;">
                             <div class="card-header" style="border: none;">
                                 <h3>
                                     Selecciona responsable
@@ -74,7 +74,7 @@
                         
                     </div>
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card" style="height: calc(100vh - 80px) !important;">
                             <div class="card-header" style="border: none;">
                                 <h3>
                                     Selecciona responsable

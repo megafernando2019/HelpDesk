@@ -435,7 +435,12 @@ class TicketService {
     public function getAssignedToUser($request)
     {
         $userId = $request->user_id ?? 0;
-        $tickets = $this->repo->getAssignedTicketsByUserId($userId);
+        $teamId = $request->team_id ?? 0;
+
+        $tickets = $this->repo->getAssignedTicketsByUserId(
+            $userId,
+            $teamId
+        );
 
         return $tickets->map(function($ticket) {
             // Formato de fecha relativo

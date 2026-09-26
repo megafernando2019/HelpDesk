@@ -152,7 +152,10 @@ class TicketRepo implements ITicketRepo {
         return $q;
     }
 
-    public function getAssignedTicketsByUserId(int $userId)
+    public function getAssignedTicketsByUserId(
+        int $userId,
+        array $team
+    )
     {
         return DB::table('tickets as t')
             ->join('tickets_users_assignations as tua', 't.id', '=', 'tua.ticket_id')
@@ -160,6 +163,7 @@ class TicketRepo implements ITicketRepo {
             ->leftJoin('tickets_services as s', 't.ticket_service_id', '=', 's.id')
             ->leftJoin('users as u', 't.user_id', '=', 'u.id')
             ->where('tua.user_id', $userId)
+            ->whereIn('t.team_id', $team) //Solo tickets pertenecientes al equipo
             ->whereNotIn('t.status_id', [4, 5, 6]) // Excluyendo resueltos/cerrados/cancelados
             ->select(
                 't.uid',

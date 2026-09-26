@@ -330,13 +330,12 @@ $(document).ready(function () {
             const selectedId = $(this).val();
         
             if (selectedId) {
-                // Buscar la información completa desde nuestro arreglo en memoria
+                
                 const data = departmentUsers.find(user => user.id == selectedId);
+
                 if (data) {
                     $('.display-name-user-asing-preview').text(`${data.text}`);
                     $('#assigned-user-info').html(`Carga actual: <small class="event-reload-count">${data.tickets_count}</small> /${currentTotalTicketsByTeam}`);
-                    
-                    console.log(data)
                     
                 }
             } else {
@@ -547,7 +546,9 @@ $(document).ready(function () {
 
                 $assignedContainer.html(html);
 
-                $('.event-reload-count').text(selectedTickets.length);
+                const data = departmentUsers.find(user => user.id == selectedId);
+
+                $('.event-reload-count').text(data.tickets_count);
             }
 
             checkConfirmButton();

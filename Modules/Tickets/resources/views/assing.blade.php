@@ -17,9 +17,37 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="card" style="">
+                                        <div class="card-header p-0" style="border: none;"></div>
+                                        <div class="card-body">
+                                                        <!-- Pasos del Proceso -->
+                                                        <div class="row text-center g-1">
+                                                            <div class="col-md-4">
+                                                                <div class="p-2 rounded-pill bg-ocean text-secondary small">
+                                                                    <i class="ti ti-user me-1"></i> Seleccionar responsable
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="p-2 rounded-pill bg-ocean text-secondary small">
+                                                                    <i class="ti ti-ticket drop me-1"></i> Arrastra ticket(s)
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="p-2 rounded-pill bg-ocean text-secondary small">
+                                                                    <i class="ti ti-user-check me-1"></i> Confirma asignación
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                        </div>
+                                        <div class="card-footer text-body-secondary p-0" style="border: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6">
-                         <div class="card">
-                            <div class="card-header">
+                         <div class="card" style="height: calc(100vh - 80px) !important;">
+                            <div class="card-header" style="border: none;">
                                 <h3>
                                     Tickets disponibles
                                 </h3>
@@ -69,33 +97,8 @@
                          
                     </div>
                     <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header p-0" style="border: none;"></div>
-                            <div class="card-body">
-                                <!-- Pasos del Proceso -->
-                                <div class="row text-center g-2">
-                                    <div class="col-md-4">
-                                        <div class="p-2 rounded-pill bg-ocean text-secondary small">
-                                            <i class="ti ti-user me-1"></i> Seleccionar responsable
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="p-2 rounded-pill bg-ocean text-secondary small">
-                                            <i class="ti ti-ticket drop me-1"></i> Arrastra ticket(s)
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="p-2 rounded-pill bg-ocean text-secondary small">
-                                            <i class="ti ti-user-check me-1"></i> Confirma asignación
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer text-body-secondary p-0" style="border: none;"></div>
-                        </div>
-                        
                         <!-- Card del Proceso / Asignación -->
-                        <div class="card shadow-sm border rounded-3">
+                        <div class="card shadow-sm border rounded-3" style="height: calc(100vh - 80px) !important;">
                             <div class="card-header" style="border: none;">
                                   <h3>
                                      Proceso

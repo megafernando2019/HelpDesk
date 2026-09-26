@@ -53,7 +53,10 @@ interface ITicketRepo {
      * @param integer $userId
      * @return void
      */
-    public function getAssignedTicketsByUserId(int $userId);
+    public function getAssignedTicketsByUserId(
+        int $userId,
+        array $team
+    );
 
     /**
      *

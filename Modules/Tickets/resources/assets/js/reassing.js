@@ -9,6 +9,7 @@ $(document).ready(function () {
     const $selectUserNewAssign = $('.select2-users-new-assing');
     let ticketsDataUserOld = [];
     let ticketsDataUserNew = [];
+    let currentTotalTicketsByTeam = 0;
     let currentTeamId = $('.metadata-page-asing').data('teamId');
 
     function customUserMatcher(params, data) {
@@ -34,6 +35,22 @@ $(document).ready(function () {
         return null;
     }
 
+     function fetchTotalsTicketsByTeams() {
+
+            axios.get('/count_ticket_to_user_team', {
+                params: {
+                    team_id: currentTeamId
+                }
+            })
+            .then(response => {
+                currentTotalTicketsByTeam = response.data;
+                
+            })
+            .catch(error => {
+                console.error('Error al obtener total de tickets', error);
+               
+            });
+    }
 
     function formatUserOption(user, typeSelect) {
         if (!user.id) return user.text;
@@ -66,10 +83,8 @@ $(document).ready(function () {
                 </div>
             </div>
             <span class="badge badge-soft-info text-mega fw-semibold" style="box-shadow: none !important;font-size: 0.7rem;">
-                Carga actual: ${isNew ? 
-                    ticketsDataUserNew.length || 0 :
-                    ticketsDataUserOld.length || 0
-                }/${user.tickets_count} tickets
+                Carga actual: ${user?.tickets_count ?? 0
+                }/${currentTotalTicketsByTeam} tickets
             </span>
         </div>
     `);
@@ -158,7 +173,10 @@ $(document).ready(function () {
     async function fetchTicketsByUser(userId = 0) {
         try {
             const response = await axios.get('/get_tickets_to_user_assing', {
-                params: { user_id: userId }
+                params: { 
+                    user_id: userId,
+                    team_id: currentTeamId
+                }
             });
 
             return response.data;
@@ -357,7 +375,8 @@ $(document).ready(function () {
             // Limpiar los contenedores HTML
             renderTicketsList([], '#containerUserOld');
             renderTicketsList([], '#containerUserNew');
-            
+
+            fetchTotalsTicketsByTeams();
             initSelectNewAssingU();
             initSelectOldAssingU();
 
@@ -462,6 +481,7 @@ $(document).ready(function () {
         console.log('Tickets Usuario Destino actualizados:', ticketsDataUserNew);
     }
 
+    fetchTotalsTicketsByTeams();
     initSelectOldAssingU();
     initSelectNewAssingU();
     initDragAndDrop();
