@@ -4,5 +4,6 @@
     "Departments": true,
     "Services": true,
     "Tags": true,
-    "User": true
+    "User": true,
+    "Reports": true
 }

@@ -128,12 +128,27 @@
                     </li>
                     <li class="submenu-open">
                         <ul>
-                            <li
-                                class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
+                            <li class="submenu">
                                 <a 
-                                href="{{route('tickets.index')}}">
-                                <i class="ti ti-chart-pie fs-16 me-2"></i>
-                                <span>Reportes</span></a>
+                                   href="javascript:void(0);">
+                                    <i class="ti ti-chart-pie fs-16 me-2"></i>
+                                    <span>Reportes</span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <ul>
+                                    <li><a href="{{route('reports.index')}}"
+                                            class="">Categorías
+                                        </a>
+                                    </li>
+                                    <li><a href="#"
+                                            class="">Etiquetas
+                                        </a>
+                                    </li>
+                                    <li><a href="#"
+                                            class="">Encargado
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                             <li
                                 class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
