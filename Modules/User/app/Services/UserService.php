@@ -53,6 +53,11 @@ class UserService
     {
         $teamId = $request?->team_id ?? [];
         
+        if (!empty($teamId)) {
+            $teamId = array_map(function ($teamId) {
+                   return (int) $teamId;
+            }, $teamId );
+        }
 
         $rows = $this->repo->getUsersByTeamId($teamId);
 

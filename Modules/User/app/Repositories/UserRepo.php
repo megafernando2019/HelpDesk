@@ -36,12 +36,14 @@ class UserRepo implements IUserRepo
                 'u.last_name',
                 'u.email'
             )
-            ->selectSub(function ($query) {
+            ->selectSub(function ($query)  use($teamId) {
                 $query->selectRaw('count(*)')
                       ->from('tickets_users_assignations as tua')
                       ->join('tickets as t', 'tua.ticket_id', '=', 't.id')
+
                       ->whereColumn('tua.user_id', 'u.id') 
-                      ->whereNotIn('t.status_id', [4, 5, 6]);
+                      ->whereNotIn('t.status_id', [4, 5, 6])
+                      ->whereIn('t.team_id', $teamId);
             }, 'tickets_count')
             ->distinct()
             ->get();
