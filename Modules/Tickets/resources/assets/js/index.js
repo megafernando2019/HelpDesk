@@ -10,6 +10,10 @@ $(document).ready(function () {
     const modalObservation = $('#addObservationModal');
     const modalAssingUser = $('#assingUserModal');
     const observationDescription = $('#observationDescription');
+     //modal razon cancelacion
+    const reasonCancelledModal = $('#addReasonModal');
+    //modal razon solucionado
+    const reasonCompletedModal = $('#addReasonCompletedModal');
     let supportUsersInMemory = [];
     let currentTeamId = $('.metadata-page-index').data('teamId');
 
@@ -132,6 +136,8 @@ $(document).ready(function () {
         const priorityId = $('#modal_ob_priority_id').val();
         const statusId = $('#modal_ob_status_id').val();
         const userId = $('#modal_ob_user_id').val();
+        const currentIdStatus = hasClassActiveFilter();
+        const priority = $('[data-action=filter-by-priority]').val() || 0;
 
          observationDescription.removeClass('is-invalid');
          $('.error-input-observation').text('');
@@ -173,7 +179,12 @@ $(document).ready(function () {
                     draggable: true
                 }).then(() => {
                     
-                    getTicketsDataKanban(statusId);
+                     getTicketsDataKanban(
+                        currentIdStatus,
+                        null,
+                        priority,
+                        1
+                    );
                 });
             }, 300);
         })
@@ -193,6 +204,8 @@ $(document).ready(function () {
         const ticketId = $('.ticket-id-modal-assign-user').val();
         const userId = $('.select2-assignees').val();
         const statusId = $('.status-id-modal-assing-user').val();
+        const currentIdStatus = hasClassActiveFilter();
+        const priority = $('[data-action=filter-by-priority]').val() || 0;
 
         if (!userId || userId === 'Cargando usuarios...') {
             ui.showToast('error', 'Debes seleccionar un usuario almenos para continuar');
@@ -217,7 +230,12 @@ $(document).ready(function () {
                     draggable: true
                 }).then(() => {
                     
-                    getTicketsDataKanban(statusId);
+                    getTicketsDataKanban(
+                        currentIdStatus,
+                        null,
+                        priority,
+                        1
+                    );
                 });
             }, 300);
         })
@@ -383,18 +401,36 @@ $(document).ready(function () {
         }
     }
 
+    function hasClassActiveFilter() {
+        const $widget = $('.status-card-widget');
+        let dataId = 0;
+
+        // Verificamos si tiene la clase shadow-lg
+        if ($widget.hasClass('shadow-lg')) {
+            // Obtenemos el valor de data-id
+            dataId = $widget.data('id');
+        }
+
+        return dataId;
+    }
+
 
     function getTicketsDataKanban(
                                   status = null, 
                                   bgColor = null,
-                                  priority = 0
+                                  priority = 0,
+                                  noAlertDefault = 0
     ) {
 
         const $container = $('#tickets-container');
         let startDate = null;
         let endDate = null;
+        let showBtn = '';
 
-        ui.showToast('info', 'Consultando tickets...');
+        if (noAlertDefault === 0) {
+            ui.showToast('info', 'Consultando tickets...');
+        }
+        
         $container.addClass('item-disabled');
 
         if (dateRangePicker && dateRangePicker.selectedDates.length === 2) {
@@ -457,6 +493,195 @@ $(document).ready(function () {
                 };
 
                 let assigned_name = ticket?.assignedUserName ?? '';
+                let actionsHtml = '';
+                showBtn = `
+                    <a 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       href="/tickets/${ticket?.uid || ''}" 
+                       data-action="ticket-show" 
+                       data-id="${ticket?.id || 0}" 
+                       data-bs-toggle="tooltip" 
+                       class="text-secondary" 
+                       title="Ver">
+                         <i class="ti ti-eye fs-18"></i>
+                    </a>`;
+
+
+                switch (ticket?.statusId || 0) {
+                    case 1:
+                        actionsHtml += ` 
+                            <a href="javascript:void(0);" 
+                               data-id="${ticket?.id || 0}" 
+                               data-status-id="${ticket?.statusId || 0}"  
+                               data-priority-id="${ticket?.priorityId || 0}"
+                               data-user-id="${ticket?.userId || 0}" 
+                               data-observation="${ticket?.observation || ''}"
+                               data-bs-toggle="tooltip" 
+                               class="text-secondary ticket-add-observation" 
+                               title="Agregar observación">
+                                <i class="ti ti-edit-circle fs-18"></i>
+                            </a>
+                            <a href="javascript:void(0);"
+                              data-id="${ticket?.id || 0}"
+                              data-user-assing-id="${ticket?.userAssingId || ''}"
+                              data-status-id="${ticket?.statusId || 0}" 
+                              data-bs-toggle="tooltip" 
+                              class="btn-assing-user"
+                              title="Asignar">
+                                <i class="ti ti-user-check fs-18"></i>
+                            </a>`;
+
+                        break;
+                    case 2:
+                         actionsHtml += `
+                             <a  href="javascript:void(0);"
+                                data-id="${ticket?.id || 0}"
+                                data-user-assing-id="${ticket?.userAssingId || ''}"
+                                data-status-id="${ticket?.statusId || 0}" 
+                                data-bs-toggle="tooltip" 
+                                class="btn-assing-user"
+                                title="Reasignar">
+                                 <i class="ti ti-replace-user fs-18"></i>
+                             </a>
+                             <a 
+                                    href="javascript:void(0);" 
+                                    data-id="${ticket?.id ?? 0}" 
+                                    data-status-id="6"  
+                                    data-user-id="${ticket?.userId ?? 0}" 
+                                    data-uid="${ticket?.uid ?? ''}"
+                                    class="text-secondary ticket-status-cancel" 
+                                    data-bs-toggle="tooltip"
+                                    title="Cancelar">
+                                    <i class="ti ti-cancel fs-18"></i>
+                             </a>
+                             <a 
+                                    href="javascript:void(0);" 
+                                    data-id="${ticket?.id ?? 0}" 
+                                    data-status-id="3"  
+                                    data-user-id="${ticket?.user_id ?? 0}"
+                                    data-uid="${ticket?.uid ?? ''}"
+                                    class="text-secondary ticket-status-waiting" 
+                                    data-bs-toggle="tooltip"
+                                    title="En espera">
+                                    <i class="ti ti-clock fs-18"></i>
+                             </a>
+                            <a 
+                                    href="javascript:void(0);" 
+                                    data-id="${ticket?.id ?? 0}" 
+                                    data-status-id="4"  
+                                    data-user-id="${ticket?.user_id ?? 0}"
+                                    data-uid="${ticket?.uid ?? ''}"
+                                    class="text-secondary ticket-status-completed" 
+                                    data-bs-toggle="tooltip"
+                                    title="Solucionado">
+                                    <i class="ti ti-circle-check fs-18"></i>
+                            </a>
+                            <a      href="javascript:void(0);" 
+                                    data-id="${ticket?.id || 0}" 
+                                    data-status-id="${ticket?.statusId || 0}"  
+                                    data-priority-id="${ticket?.priorityId || 0}"
+                                    data-user-id="${ticket?.userId || 0}" 
+                                    data-observation="${ticket?.observation || ''}"
+                                    data-bs-toggle="tooltip" 
+                                    class="text-secondary ticket-add-observation" 
+                                    title="Agregar observación">
+                                <i class="ti ti-edit-circle fs-18"></i>
+                            </a>`;
+                             
+                        break;
+                    case 3:
+                        actionsHtml = `
+                            <a  href="javascript:void(0);"
+                                data-id="${ticket?.id || 0}"
+                                data-user-assing-id="${ticket?.userAssingId || ''}"
+                                data-status-id="${ticket?.statusId || 0}" 
+                                data-bs-toggle="tooltip" 
+                                class="btn-assing-user"
+                                title="Reasignar">
+                                <i class="ti ti-replace-user fs-18"></i>
+                            </a>
+                            <a 
+                                    href="javascript:void(0);" 
+                                    data-id="${ticket?.id ?? 0}" 
+                                    data-status-id="6"  
+                                    data-user-id="${ticket?.userId ?? 0}" 
+                                    data-uid="${ticket?.uid ?? ''}"
+                                    class="text-secondary ticket-status-cancel" 
+                                    data-bs-toggle="tooltip"
+                                    title="Cancelar">
+                                    <i class="ti ti-cancel fs-18"></i>
+                            </a>
+                            <a 
+                                    href="javascript:void(0);" 
+                                    data-id="${ticket?.id ?? 0}" 
+                                    data-status-id="4"  
+                                    data-user-id="${ticket?.user_id ?? 0}"
+                                    data-uid="${ticket?.uid ?? ''}"
+                                    class="text-secondary ticket-status-completed" 
+                                    data-bs-toggle="tooltip"
+                                    title="Solucionado">
+                                    <i class="ti ti-circle-check fs-18"></i>
+                            </a>
+                            <a      href="javascript:void(0);" 
+                                    data-id="${ticket?.id || 0}" 
+                                    data-status-id="${ticket?.statusId || 0}"  
+                                    data-priority-id="${ticket?.priorityId || 0}"
+                                    data-user-id="${ticket?.userId || 0}" 
+                                    data-observation="${ticket?.observation || ''}"
+                                    data-bs-toggle="tooltip" 
+                                    class="text-secondary ticket-add-observation" 
+                                    title="Agregar observación">
+                                <i class="ti ti-edit-circle fs-18"></i>
+                            </a>
+                        `;
+                        break;
+                    case 4:
+                        actionsHtml = `
+                            <a 
+                                    href="javascript:void(0);" 
+                                    data-id="${ticket?.id ?? 0}" 
+                                    data-status-id="6"  
+                                    data-user-id="${ticket?.userId ?? 0}" 
+                                    data-uid="${ticket?.uid ?? ''}"
+                                    class="text-secondary ticket-status-cancel" 
+                                    data-bs-toggle="tooltip"
+                                    title="Cancelar">
+                                    <i class="ti ti-cancel fs-18"></i>
+                            </a>
+                            <a      href="javascript:void(0);" 
+                                    data-id="${ticket?.id || 0}" 
+                                    data-status-id="${ticket?.statusId || 0}"  
+                                    data-priority-id="${ticket?.priorityId || 0}"
+                                    data-user-id="${ticket?.userId || 0}" 
+                                    data-observation="${ticket?.observation || ''}"
+                                    data-bs-toggle="tooltip" 
+                                    class="text-secondary ticket-add-observation" 
+                                    title="Agregar observación">
+                                <i class="ti ti-edit-circle fs-18"></i>
+                            </a>
+                        `;
+                    break;
+                    case 5:
+                    case 6:
+                        actionsHtml = `
+                            <a      href="javascript:void(0);" 
+                                    data-id="${ticket?.id || 0}" 
+                                    data-status-id="${ticket?.statusId || 0}"  
+                                    data-priority-id="${ticket?.priorityId || 0}"
+                                    data-user-id="${ticket?.userId || 0}" 
+                                    data-observation="${ticket?.observation || ''}"
+                                    data-bs-toggle="tooltip" 
+                                    class="text-secondary ticket-add-observation" 
+                                    title="Agregar observación">
+                                <i class="ti ti-edit-circle fs-18"></i>
+                            </a>
+                        `;
+                    break;
+                
+                    default:
+                        break;
+                }
 
                 let card = templateHtml
                     .replace(/{id}/g, ticket?.id || 0)
@@ -474,7 +699,9 @@ $(document).ready(function () {
                     .replace(/{current_color}/g, currentColor || '#eee')
                     .replace(/{current_color_priority}/g, priorityStyles.bg || '#eee')
                     .replace(/{userAssingId}/g, ticket?.userAssingId || '')
-                    .replace(/{txt_current_color_priority}/g, priorityStyles.text || '#eee');
+                    .replace(/{txt_current_color_priority}/g, priorityStyles.text || '#eee')
+                    .replace(/{actions_buttons}/g, actionsHtml)
+                    .replace(/{showBtn}/g, showBtn);
 
                 $container.append(card);
             });
@@ -488,6 +715,216 @@ $(document).ready(function () {
             $container.removeClass('item-disabled');
         });
     }
+
+
+
+    $(document).on('click', '.ticket-status-process, .ticket-status-cancel, .ticket-status-completed, .ticket-status-waiting', function (e) {
+        e.preventDefault();
+
+        const $btn = $(this);
+        const ticketId = $btn.data('id');
+        const statusId = parseInt($btn.data('statusId'));
+        const ticketUid = $btn.data('uid');
+        const currentIdStatus = hasClassActiveFilter();
+        const priority = $('[data-action=filter-by-priority]').val() || 0;
+
+        // Confirmación opcional antes de realizar la acción
+        let actionText = '';
+
+        switch (statusId) {
+            case 1:
+                actionText = "poner en por asignar";
+                break;
+            case 2:
+                actionText = "poner en proceso";
+                break;
+            case 3:
+                actionText = "poner en espera";
+                break;
+            case 4:
+                actionText = "solucionar";
+                break;
+            case 5:
+                actionText = "cerrar";
+                break;
+            case 6:
+                actionText = "cancelar";
+                
+                break;
+        
+            default:
+                break;
+        }
+
+        //Si la accion es solucionado
+        if (statusId === 4) {
+
+            $('#ReasonCompletedDescription').val('');
+            $('.error-input-reason-completed').text('');
+            $('#ReasonCompletedDescription').removeClass('is-invalid');
+
+            $('#modal_completed_reason_ticket_id').val(ticketId);
+            $('#modal_completed_reason_status_id').val(statusId);
+
+            reasonCompletedModal.modal('show');
+            return;
+        }
+        // o cancelado
+        else if (statusId === 6) {
+            $('#ReasonCancelledDescription').val('');
+            $('.error-input-reason-cancelled').text('');
+            $('#ReasonCancelledDescription').removeClass('is-invalid');
+
+            $('#modal_cancelled_reason_ticket_id').val(ticketId);
+            $('#modal_cancelled_reason_status_id').val(statusId);
+
+            reasonCancelledModal.modal('show');
+            return;
+        }
+
+        Swal.fire({
+          title: `¿Estás seguro de que deseas ${actionText} este ticket?`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#0049fc",
+          cancelButtonColor: "#d33",
+          cancelButtonText: "Regresar",
+          confirmButtonText: "Confirmar"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $btn.addClass('disabled');
+
+            axios.post('/updated_status', {
+                ticket_id: ticketId,
+                ticket_status: statusId,
+                current_uid: ticketUid
+            })
+            .then(function (response) {
+                getTicketsDataKanban(
+                    currentIdStatus,
+                    null,
+                    priority,
+                    1
+                );
+
+                ui.showToast('success', 'Estatus actualizado correctamente.');
+            })
+            .catch(function (error) {
+                console.error(error);
+                ui.showToast('error', 'Ocurrió un error al actualizar el estatus del ticket.');
+            })
+            .finally(function () {
+                $btn.removeClass('disabled');
+            });
+
+          }
+        });
+    });
+
+
+     $('#addReasonCancelledForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const $submitBtn = $(this).find('.save-modal-reason-cancelled');
+        const ticketId = $('#modal_cancelled_reason_ticket_id').val();
+        const statusId = $('#modal_cancelled_reason_status_id').val();
+        const reason = $('#ReasonCancelledDescription').val().trim();
+        const $errorLabel = $('.error-input-reason-cancelled');
+        const currentIdStatus = hasClassActiveFilter();
+        const priority = $('[data-action=filter-by-priority]').val() || 0;
+
+        // Validación
+        if (!reason) {
+            $errorLabel.text('Por favor, ingresa el motivo de la cancelación.');
+            $('#ReasonCancelledDescription').addClass('is-invalid');
+            return;
+        }
+
+        $errorLabel.text('');
+        $submitBtn.prop('disabled', true);
+        $('#ReasonCancelledDescription').removeClass('is-invalid');
+
+        axios.post('/updated_status', {
+            ticket_id: ticketId,
+            ticket_status: statusId,
+            cancel_reason: reason, 
+            name_status: 'Cancelado'
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => {
+            ui.showToast('success', `Se ha actualizado a estatus (Cancelado).`);
+            reasonCancelledModal.modal('hide');
+            getTicketsDataKanban(
+                currentIdStatus,
+                null,
+                priority,
+                1
+            );
+        })
+        .catch(error => {
+            console.error(error);
+            ui.showToast('error', error.response?.data?.message || 'Ocurrió un error al actualizar el estatus.');
+        })
+        .finally(() => {
+            $submitBtn.prop('disabled', false);
+        });
+        
+    });
+
+    $('#addReasonCompletedModal').on('submit', function (e) {
+        e.preventDefault();
+
+        const $submitBtn = $(this).find('.save-modal-reason-completed');
+        const ticketId = $('#modal_completed_reason_ticket_id').val();
+        const statusId = $('#modal_completed_reason_status_id').val();
+        const reason = $('#ReasonCompletedDescription').val().trim();
+        const $errorLabel = $('.error-input-reason-completed');
+        const currentIdStatus = hasClassActiveFilter();
+        const priority = $('[data-action=filter-by-priority]').val() || 0;
+
+        // Validación
+        if (!reason) {
+            $errorLabel.text('Por favor, ingresa el motivo de la solución.');
+            $('#ReasonCompletedDescription').addClass('is-invalid');
+            return;
+        }
+
+        $errorLabel.text('');
+        $submitBtn.prop('disabled', true);
+        $('#ReasonCompletedDescription').removeClass('is-invalid');
+
+        axios.post('/updated_status', {
+            ticket_id: ticketId,
+            ticket_status: statusId,
+            completed_reason: reason, 
+            name_status: 'Solucionado'
+        }, {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => {
+            ui.showToast('success', `Se ha actualizado a estatus (Solucionado).`);
+            reasonCompletedModal.modal('hide');
+            getTicketsDataKanban(
+                currentIdStatus,
+                null,
+                priority,
+                1
+            );
+        })
+        .catch(error => {
+            console.error(error);
+            ui.showToast('error', error.response?.data?.message || 'Ocurrió un error al actualizar el estatus.');
+        })
+        .finally(() => {
+            $submitBtn.prop('disabled', false);
+        });
+        
+    });
 
 
     getTicketsDataKanban(1);

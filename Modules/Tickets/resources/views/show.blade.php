@@ -399,6 +399,17 @@
                                                 <i class="ti ti-circle-check"></i>
                                             </button>
 
+                                            <button
+                                                 type="button" 
+                                                 class="btn btn-status-action"
+                                                 data-status="3"
+                                                 data-name="En espera"
+                                                 data-bs-toggle="tooltip"
+                                                 data-bs-placement="top"
+                                                 title="Enviar a en espera"
+                                            >
+                                                <i class="ti ti-clock"></i>
+                                            </button>
                                             <button type="button" 
                                                     class="btn btn-status-action"
                                                     data-status="6"

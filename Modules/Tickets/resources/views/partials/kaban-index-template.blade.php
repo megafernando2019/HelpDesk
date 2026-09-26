@@ -30,12 +30,14 @@
                     </p>
                 </div>
 
-                <!-- Footer: Acciones y Encargado -->
+                <!-- Acciones y Encargado -->
                 <div class="pt-2 d-flex border-top justify-content-between align-items-center">
                     <div>
                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                         <div class="d-flex gap-2">
-                            <a href="tickets/{uid}" 
+                            {showBtn}
+                            {actions_buttons}
+                            <!-- <a href="tickets/{uid}" 
                                data-action="ticket-show" 
                                data-id="{id}" 
                                data-bs-toggle="tooltip" 
@@ -52,7 +54,7 @@
                                     data-observation="{observation}"
                                     data-bs-toggle="tooltip" 
                                     class="text-secondary ticket-add-observation" 
-                                    title="Editar">
+                                    title="Agregar observación">
                                 <i class="ti ti-edit-circle fs-18"></i>
                             </a>
                             <a 
@@ -65,7 +67,7 @@
                                 title="Asignar"
                                 >
                                 <i class="ti ti-user-check fs-18"></i>
-                            </a>
+                            </a> -->
                         </div>
                     </div>
 

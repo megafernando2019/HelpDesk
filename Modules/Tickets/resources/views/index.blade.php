@@ -25,7 +25,7 @@
                         data-bg-color="{{$item?->bg_color ?? '#fff'}}"
                         style="background-color: 
                         {{$item?->bg_color ?? '#fff'}}; width:250px; border: 1px solid #eee; border-radius: 11px;"; 
-                        class="{{$item?->id === 1 ? 'shadow-lg' : ''}} p-2 d-flex align-items-center gap-2 cursor: pointer;">
+                        class="{{$item?->id === 1 ? 'shadow-lg' : ''}} status-card-widget p-2 d-flex align-items-center gap-2 cursor: pointer;">
                         <span class="d-flex align-items-center justify-content-center" style="background: {{$item?->badge_bg??''}}; height: 50px; width: 50px; border-radius: 50%;">
                             <i style="color: {{$item?->text_color ?? ''}};" class="{{$item?->icon ?? ''}} fs-26"></i>
                         </span>
@@ -79,7 +79,8 @@
         @include('tickets::partials.kaban-index-template')
         @include('tickets::partials.modal-assing-user-index')
         @include('tickets::partials.modal-add-observation')
-
+        @include('tickets::partials.modal-add-reason-cancelled')
+        @include('tickets::partials.modal-add-reason-completed')
     </div>
 </div>
 
