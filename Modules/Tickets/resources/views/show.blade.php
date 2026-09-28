@@ -361,16 +361,6 @@
                                         @case(1)
                                             <button type="button" 
                                                     class="btn btn-status-action"
-                                                    data-status="2"
-                                                    data-name="En proceso"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Cambiar a En proceso">
-                                                <i class="ti ti-progress-check"></i>
-                                            </button>
-
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
                                                     data-status="6"
                                                     data-name="Cancelado"
                                                     data-bs-toggle="tooltip"
