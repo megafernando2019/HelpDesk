@@ -470,8 +470,6 @@
                                             @break
 
                                         @case(5)
-                                            @break
-
                                         @case(6)
                                             <button type="button" 
                                                     class="btn btn-status-observation"
