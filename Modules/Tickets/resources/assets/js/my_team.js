@@ -185,6 +185,8 @@ $(document).ready(function () {
 
         ui.showToast('info', 'Consultando datos...');
         $('.set-loading').addClass('item-disabled');
+        $('.periordo-tasa-cancelation').text('');
+        $('.periordo-tasa-closed').text('');
 
         try {
             const response = await axios.get('/tickets/my_team/apply_filters_charts', { params });
@@ -258,6 +260,8 @@ $(document).ready(function () {
             // --- Tasa de Cierre ---
             const tasaCierre = response.data.tasaCierre ?? {};
 
+            // cardMetricsClousure
+
             $('.title-count-assigned').text(tasaCierre.assigned ?? 0);         
             $('.title-count-closed-rate').text(tasaCierre.closed ?? 0);
             $('.title-avg-days').html(
@@ -295,11 +299,39 @@ $(document).ready(function () {
             if (response.data.cardMetricsClousure && typeof closeRateRadialChart !== 'undefined') {
                 $('.percentage-tasa-closed').text(`${response.data.cardMetricsClousure.percentage ?? 0}%`);
                 closeRateRadialChart.updateSeries(response.data.cardMetricsClousure.series || []);
+
+                //Si diff no viene null
+                if (response.data.cardMetricsClousure.diff !== null) {
+                    const metrics = response.data.cardMetricsClousure;
+                    const colorClass = 'text-danger';
+                    const arrow = '↓';
+
+                    $('.periordo-tasa-closed').html(`
+                        <p class="text-muted">
+                            <span class="${colorClass}">${arrow} ${metrics.diff}%</span>
+                            vs periodo anterior
+                        </p>
+                    `);
+                }
             }
 
             if (response.data.cardMetricsCancellation && typeof cancellationRadialChart !== 'undefined') {
                 $('.percentage-tasa-cancelation').text(`${response.data.cardMetricsCancellation.percentage ?? 0}%`);
                 cancellationRadialChart.updateSeries(response.data.cardMetricsCancellation.series || []);
+
+                //Si diff no viene null
+                if (response.data.cardMetricsCancellation.diff !== null) {
+                    const metrics = response.data.cardMetricsCancellation;
+                    const colorClass = 'text-danger';
+                    const arrow = '↓';
+
+                    $('.periordo-tasa-cancelation').html(`
+                        <p class="text-muted">
+                            <span class="${colorClass}">${arrow} ${metrics.diff}%</span>
+                            vs periodo anterior
+                        </p>
+                    `);
+                }
             }
 
         } catch (error) {

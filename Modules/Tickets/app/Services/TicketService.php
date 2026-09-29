@@ -36,21 +36,45 @@ class TicketService {
     public function formatDataChartMembersAll( $args = [], $filters = []): array
     {
         $namesCategories = ["Cerrado", "Solucionado", "En espera", "En proceso"];
-
         $dateFrom = null;
         $dateTo = null;
-
+        //Para cancelado 
+        $absDiffCancellation = null;
+        $totalTicketsPrev = 0;
+        $cancelledRatePrev = 0;
+        $trendCancellation = null;
+        $previousArgs = [];
+        //Para cerrados
+        $absDiffClosure = null;
+        $closureRatePrev = 0;
+        $trendClosure = null;
+       
         if (!empty($filters['date_range'])) {
-            
+            //Seperarar fechas
             $dateRange = str_replace('a', ',', $filters['date_range']);
             $dates = explode(',', $dateRange);
-            $dateFrom = trim($dates[0]) ?? null;
-        
-            if (isset($dates[1])) {
-                $dateTo = trim($dates[1]) . ' 23:59:59';
-            } elseif ($dateFrom) {
-                $dateTo = $dateFrom . ' 23:59:59';
-            }
+
+            $dateFromStr = trim($dates[0]);
+            $dateToStr   = isset($dates[1]) ? trim($dates[1]) : $dateFromStr;
+
+            $currentStart = Carbon::parse($dateFromStr);
+            $currentEnd   = Carbon::parse($dateToStr);
+
+            // Fechas formateadas para la consulta actual
+            $dateFrom = $currentStart->format('Y-m-d 00:00:00');
+            $dateTo   = $currentEnd->format('Y-m-d 23:59:59');
+
+            // Días de duración del rango seleccionado
+            $daysDiff = $currentStart->diffInDays($currentEnd) + 1;
+
+            $previousEnd   = $currentStart->copy()->subDay();
+            $previousStart = $previousEnd->copy()->subDays($daysDiff - 1);
+
+            // Argumentos para consultar el período anterior
+            $previousArgs = array_merge($args, [
+                'start_date' => $previousStart->format('Y-m-d'),
+                'end_date'   => $previousEnd->format('Y-m-d')
+            ]);
 
         }
 
@@ -64,6 +88,7 @@ class TicketService {
     
         // Obtener la distribución filtrada desde el repositorio
         $byStatusDistributionCtx = $this->repo->getTicketsByStatusDistribution($args, $parsedFilters);
+
     
         $groupedByUser = $byStatusDistributionCtx->groupBy('user_name');
         $displayNamesUsers = $groupedByUser->keys()->toArray();
@@ -73,9 +98,8 @@ class TicketService {
         $closedRate = 0;
         $cancelledRate = 0;
         $totalTickets = 0;
-
-
-
+        $totalNonCanceled = 0;
+       
         // CONSTRUCCIÓN DE LA GRÁFICA STACKED
         foreach ($namesCategories as $value) {
             $userData = [];
@@ -103,7 +127,12 @@ class TicketService {
             $totalTickets += (int) $item->total;
             if ($item->status_name === 'Cancelado') {
                 $cancelledRate += (int) $item->total;
+                continue;
             }
+
+            //No se cuenta cancelados
+            $totalNonCanceled += (int) $item->total;
+            
         }
 
         $dataByStatusDistribution = [
@@ -115,9 +144,9 @@ class TicketService {
         // MÉTRICAS DE TASA DE CIERRE
         $closureData = $this->repo->getClosureRateByMember($args, $parsedFilters);
 
-        $totalAssigned = (int) ($closureData->total_assigned ?? 0);
-        $totalClosed   = (int) ($closureData->total_closed ?? 0);
-        $avgDays       = (float) ($closureData->avg_resolution_days ?? 0);
+        $totalAssigned = (int) ($closureData?->total_assigned ?? 0);
+        $totalClosed   = (int) ($closureData?->total_closed ?? 0);
+        $avgDays       = (float) ($closureData?->avg_resolution_days ?? 0);
 
         $percentage = $totalAssigned > 0 ? round(($totalClosed / $totalAssigned) * 100) : 0;
 
@@ -146,31 +175,72 @@ class TicketService {
             ]
         ];
 
-        // TARJETA DONA CIERRE
-        $totalRateSumCompleteAndClosed = $closedRate + $completedRate;
-
-        $percentageClousure = $totalRateSumCompleteAndClosed > 0 
-            ? round(($closedRate / $totalRateSumCompleteAndClosed) * 100) 
+        // total de tickets cerrados / total de tickets recibidos por el equipo x 100
+        $percentageClousure = $totalNonCanceled > 0 
+            ? round(($closedRate / $totalNonCanceled) * 100) 
             : 0;
-
-        $cardMetricsClousure = [
-            'percentage' => $percentageClousure, 
-            'series'     => [(int) $closedRate, (int) $completedRate],
-            'labels'     => ['Cerrados', 'Solucionados'],
-            'diff'       => 0
-        ];
 
         // TARJETA DONA CANCELACIÓN
         $percentageCancellation = $totalTickets > 0 
             ? round(($cancelledRate / $totalTickets) * 100) 
             : 0;
 
+
+        if (!empty($previousArgs)) {
+
+            //Busco por las fechas seleccionadas
+            $byStatusCtxPrevious = $this->repo->getTicketsByStatusDistribution($args, $previousArgs);
+
+            foreach ($byStatusCtxPrevious as $item) {
+                $current_status_name = $item?->status_name ?? '';
+                $current_total = (int) $item?->total ?? 0;
+                $totalTicketsPrev += (int) $item->total;
+
+                match ($current_status_name) {
+                    'Cancelado' => $cancelledRatePrev += $current_total,
+                    'Cerrado'   => $closureRatePrev += $current_total,
+                    default     => null,
+                };
+               
+            }
+
+            // Tasa de Cancelación del período anterior: (Cancelados / total asigandos del equipo) * 100
+            $percentageCancellationPrev = $totalTicketsPrev > 0 
+                ? round(($cancelledRatePrev / $totalTicketsPrev) * 100) 
+                : 0;
+
+            // Variación contra el período actual
+            $diffCancellation    = $percentageCancellation - $percentageCancellationPrev;
+            $trendCancellation   = $diffCancellation > $percentageCancellation ? 'up' : 'down';
+            $absDiffCancellation = abs($diffCancellation);
+
+             // Tasa de Cerrados del período anterior: (Cerrados / total asigandos del equipo) * 100
+            $percentageClosurePrev = $totalTicketsPrev > 0 
+                ? round(($closureRatePrev / $totalTicketsPrev) * 100) 
+                : 0;
+
+              // Variación contra el período actual
+            $diffClosure    = $percentageClousure - $percentageClosurePrev;
+            $trendClosure   = $diffClosure > $percentageClousure ? 'up' : 'down';
+            $absDiffClosure = abs($diffClosure);
+        }
+
         $cardMetricsCancellation = [
             'percentage' => $percentageCancellation,
             'series'     => [(int) $cancelledRate, (int) ($totalTickets - $cancelledRate)],
             'labels'     => ['Cancelados', 'Otros'],
-            'diff'       => 0
+            'diff'       => $absDiffCancellation,
+            'trend'      => $trendCancellation
         ];
+
+        $cardMetricsClousure = [
+            'percentage' => $percentageClousure, 
+            'series'     => [(int) $closedRate, (int) $completedRate],
+            'labels'     => ['Cerrados', 'Solucionados'],
+            'diff'       => $absDiffClosure,
+            'trend'      => $trendClosure
+        ];
+
     
         return compact(
             'dataByStatusDistribution', 
@@ -198,6 +268,7 @@ class TicketService {
         $closedRate = 0;
         $cancelledRate = 0;
         $totalTickets = 0;
+        $totalNonCanceled = 0;
         $dateFrom = null;
         $dateTo = null;
         $distributionMap = [
@@ -206,20 +277,44 @@ class TicketService {
             'En espera'   => 0,
             'En proceso'  => 0,
         ];
+         //Para cancelado 
+        $absDiffCancellation = null;
+        $totalTicketsPrev = 0;
+        $cancelledRatePrev = 0;
+        $trendCancellation = null;
+        $previousArgs = [];
+        //Para cerrados
+        $absDiffClosure = null;
+        $closureRatePrev = 0;
+        $trendClosure = null;
 
         
-        
         if (!empty($filters['date_range'])) {
-            
+            //Seperarar fechas
             $dateRange = str_replace('a', ',', $filters['date_range']);
             $dates = explode(',', $dateRange);
-            $dateFrom = trim($dates[0]) ?? null;
-        
-            if (isset($dates[1])) {
-                $dateTo = trim($dates[1]) . ' 23:59:59';
-            } elseif ($dateFrom) {
-                $dateTo = $dateFrom . ' 23:59:59';
-            }
+
+            $dateFromStr = trim($dates[0]);
+            $dateToStr   = isset($dates[1]) ? trim($dates[1]) : $dateFromStr;
+
+            $currentStart = Carbon::parse($dateFromStr);
+            $currentEnd   = Carbon::parse($dateToStr);
+
+            // Fechas formateadas para la consulta actual
+            $dateFrom = $currentStart->format('Y-m-d 00:00:00');
+            $dateTo   = $currentEnd->format('Y-m-d 23:59:59');
+
+            // Días de duración del rango seleccionado
+            $daysDiff = $currentStart->diffInDays($currentEnd) + 1;
+
+            $previousEnd   = $currentStart->copy()->subDay();
+            $previousStart = $previousEnd->copy()->subDays($daysDiff - 1);
+
+            // Argumentos para consultar el período anterior
+            $previousArgs = array_merge($args, [
+                'start_date' => $previousStart->format('Y-m-d'),
+                'end_date'   => $previousEnd->format('Y-m-d')
+            ]);
 
         }
         
@@ -265,7 +360,11 @@ class TicketService {
             if (array_key_exists($current_status, $distributionMap)) {
                 $distributionMap[$current_status] = $total;
             }
+
+            //No se cuenta cancelados
+            $totalNonCanceled += (int) $value->total;
         }
+
 
         $countSeriesDistibution = array_values($distributionMap);
 
@@ -312,34 +411,69 @@ class TicketService {
                 ]
         ];
 
-        // Sumas base para graficos de las tasas 
-
-        // Solucionados + Cerrados
-        $totalRateSumCompleteAndClosed = $completedRate + $closedRate;
-
         // Cancelados + total
         $percentageCancellation = $totalTickets > 0 
             ? round(($cancelledRate / $totalTickets) * 100) 
             : 0;
 
-        $percentageClousure = $totalRateSumCompleteAndClosed > 0 
-            ? round(($closedRate / $totalRateSumCompleteAndClosed) * 100) 
+        $percentageClousure =  $totalNonCanceled > 0 
+            ? round(($closedRate /  $totalNonCanceled) * 100) 
             : 0;
 
 
-        
+        if (!empty($previousArgs)) {
+
+            //Busco por las fechas seleccionadas
+            $byStatusCtxPrevious = $this->repo->getTicketsByStatusDistribution($args, $previousArgs);
+
+            foreach ($byStatusCtxPrevious as $item) {
+                $current_status_name = $item?->status_name ?? '';
+                $current_total = (int) $item?->total ?? 0;
+                $totalTicketsPrev += (int) $item->total;
+
+                match ($current_status_name) {
+                    'Cancelado' => $cancelledRatePrev += $current_total,
+                    'Cerrado'   => $closureRatePrev += $current_total,
+                    default     => null,
+                };
+               
+            }
+
+            // Tasa de Cancelación del período anterior: (Cancelados / total asigandos del equipo) * 100
+            $percentageCancellationPrev = $totalTicketsPrev > 0 
+                ? round(($cancelledRatePrev / $totalTicketsPrev) * 100) 
+                : 0;
+
+            // Variación contra el período actual
+            $diffCancellation    = $percentageCancellation - $percentageCancellationPrev;
+            $trendCancellation   = $diffCancellation > $percentageCancellation ? 'up' : 'down';
+            $absDiffCancellation = abs($diffCancellation);
+
+             // Tasa de Cerrados del período anterior: (Cerrados / total asigandos del equipo) * 100
+            $percentageClosurePrev = $totalTicketsPrev > 0 
+                ? round(($closureRatePrev / $totalTicketsPrev) * 100) 
+                : 0;
+
+              // Variación contra el período actual
+            $diffClosure    = $percentageClousure - $percentageClosurePrev;
+            $trendClosure   = $diffClosure > $percentageClousure ? 'up' : 'down';
+            $absDiffClosure = abs($diffClosure);
+        }
+
         $cardMetricsClousure = [
             'percentage' => $percentageClousure, 
             'series'     => [$closedRate,$completedRate],
             'labels'     => ['Cerrados', 'Solucionados'],
-            'diff' =>       0
+            'diff'       => $absDiffClosure,
+            'trend'      => $trendClosure     
         ];
 
         $cardMetricsCancellation = [
             'percentage' => $percentageCancellation,
             'series'     => [$cancelledRate, ($totalTickets - $cancelledRate)],
             'labels'     => ['Cancelados', 'Otros'],
-            'diff' =>       0
+            'diff'       => $absDiffCancellation,
+            'trend'      => $trendCancellation
         ];
 
         return compact(

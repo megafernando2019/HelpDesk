@@ -62,11 +62,11 @@
                         <h5 class="card-title fw-bold text-dark mb-1">Tasa de cierre</h5>
                         <p class="card-subtitle text-muted fs-7 mb-3">Porcentaje de tickets solucionados o cerrados.</p>
                         <h2 class="display-6 fw-bold text-dark mb-1 percentage-tasa-closed">0%</h2>
-                        <span class="text-danger fs-7 fw-semibold periodo-tasa-closed"></span>
+                        <span class="periordo-tasa-closed"></span>
                     </div>
                     <div style="width: 120px; height: 120px;">
                         <div id="close-rate-radial-chart"></div>
-                    </div>
+                    </div>   
                 </div>
             </div>
         </div>
@@ -78,8 +78,7 @@
                         <h5 class="card-title fw-bold text-dark mb-1">Tasa de cancelación</h5>
                         <p class="card-subtitle text-muted fs-7 mb-3">Porcentaje de tickets cancelados respecto al total.</p>
                         <h2 class="display-6 fw-bold text-dark mb-1 percentage-tasa-cancelation">0%</h2>
-                        <span class="text-danger fs-7 fw-semibold periordo-tasa-cancelation"></span>
-                        </span>
+                        <div class="periordo-tasa-cancelation"></div>
                     </div>
                     <div class="position-relative" style="width: 120px; height: 120px;">
                         <div id="cancellation-rate-chart"></div>
