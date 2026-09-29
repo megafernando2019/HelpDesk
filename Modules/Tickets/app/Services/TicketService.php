@@ -4,6 +4,7 @@ namespace Modules\Tickets\Services;
 
 use App\Traits\HelpDeskUtils;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
@@ -261,6 +262,7 @@ class TicketService {
     {
         $dataByStatusDistribution = [];
         $namesCategories = ["Cerrado", "Solucionado", "En espera", "En proceso"];
+        // $namesWeekendDays = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
         $countSeriesDistibution = [];
         $tasaCierre = [];
         $countAvgTime = [];
@@ -287,6 +289,10 @@ class TicketService {
         $absDiffClosure = null;
         $closureRatePrev = 0;
         $trendClosure = null;
+        $currentStart = null;
+        $currentEnd   = null;
+        $daysDiff     = null;
+        $cardMetricsReceiverVsClosure = [];
 
         
         if (!empty($filters['date_range'])) {
@@ -458,6 +464,42 @@ class TicketService {
             $diffClosure    = $percentageClousure - $percentageClosurePrev;
             $trendClosure   = $diffClosure > $percentageClousure ? 'up' : 'down';
             $absDiffClosure = abs($diffClosure);
+
+            //Grafica fechas tickets cerrados vs los que se reciben
+            $datas = $this->repo->getRateToAssingVsClosure($args, $filters);
+            $useDayNames = $daysDiff <= 7;
+
+            // Crear el periodo de fechas para rellenar los días sin registros (con 0)
+            $period = CarbonPeriod::create($currentStart, $currentEnd);
+            $namesWeekendDays = [];
+            $seriesReceived = [];
+            $seriesClosed = [];
+
+            foreach ($period as $date) {
+                $dateKey = $date->format('Y-m-d');
+                $namesWeekendDays[] = $useDayNames
+                                    ? ucfirst($date->locale('es')->isoFormat('dddd')) 
+                                    : $date->locale('es')->isoFormat('DD MMM');
+
+                // Extraer totales de la BD o asignar 0 si no existen datos en esa fecha
+                $seriesReceived[] = $datas['received'][$dateKey] ?? 0;
+                $seriesClosed[]   = $datas['closed'][$dateKey]   ?? 0;
+            }
+
+            // Estructura de métricas para la Card del Frontend
+            $cardMetricsReceiverVsClosure = [
+                "categories" => $namesWeekendDays,
+                "series" => [
+                    [
+                        "name" => "Recibidos",
+                        "data" => $seriesReceived
+                    ],
+                    [
+                        "name" => "Cerrados",
+                        "data" => $seriesClosed
+                    ]
+                ]
+            ];
         }
 
         $cardMetricsClousure = [
@@ -481,7 +523,8 @@ class TicketService {
                         'tasaCierre', 
                         'avgTimeData', 
                         'cardMetricsClousure',
-                        'cardMetricsCancellation'
+                        'cardMetricsCancellation',
+                        'cardMetricsReceiverVsClosure'
         );
     }
 

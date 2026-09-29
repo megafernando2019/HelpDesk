@@ -6,6 +6,12 @@ use Modules\Tickets\Models\Ticket;
 
 interface ITicketRepo {
 
+  
+    public function getRateToAssingVsClosure(
+      $membersId = [],
+      $filters = []
+    );
+
     /**
      *
      * @param array $membersId

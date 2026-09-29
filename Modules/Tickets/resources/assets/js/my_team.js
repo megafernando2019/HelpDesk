@@ -161,6 +161,83 @@ $(document).ready(function () {
     var chart = new ApexCharts(document.querySelector("#tickets-status-chart"), options);
     chart.render();
 
+    var optionsReceivedVsClosed = {
+        series: [
+            { name: 'Recibidos', data: [] },
+            { name: 'Cerrados', data: [] }
+        ],
+        chart: {
+            type: 'line',
+            height: 300,
+            toolbar: { show: false },
+            zoom: { enabled: false }
+        },
+        colors: ['#0cc0df', '#f3972c'],
+        stroke: {
+            curve: 'smooth',
+            width: 3
+        },
+        markers: {
+            size: 5,
+            hover: { size: 7 }
+        },
+        dataLabels: { enabled: false },
+        grid: {
+            borderColor: '#f1f1f1',
+            strokeDashArray: 0,
+            xaxis: { lines: { show: false } },
+            yaxis: { lines: { show: true } }
+        },
+        xaxis: {
+            categories: [],
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            labels: {
+                style: {
+                    colors: '#4b5563',
+                    fontSize: '13px',
+                    fontWeight: 500
+                }
+            }
+        },
+        yaxis: {
+            min: 0,
+            forceNiceScale: true,
+            labels: {
+                formatter: function (val) {
+                    return Math.floor(val);
+                },
+                style: {
+                    colors: '#6e8192',
+                    fontSize: '12px'
+                }
+            }
+        },
+        legend: {
+            show: true,
+            position: 'top',
+            horizontalAlign: 'center',
+            fontSize: '15px',
+            fontWeight: 500,
+            markers: {
+                width: 14,
+                height: 14,
+                radius: 12
+            },
+            itemMargin: {
+                horizontal: 15,
+                vertical: 0
+            }
+        },
+        tooltip: {
+            shared: true,
+            intersect: false
+        }
+    };
+
+    let receivedVsClosedChart = new ApexCharts(document.querySelector("#received-vs-closed-chart"), optionsReceivedVsClosed);
+    receivedVsClosedChart.render();
+
 
     /**
      * Extrae todos los filtros del DOM y el array de miembros seleccionado
@@ -332,6 +409,19 @@ $(document).ready(function () {
                         </p>
                     `);
                 }
+            }
+
+            // --- Actualización de la Gráfica: Recibidos vs. Cerrados ---
+            if (response.data.cardMetricsReceiverVsClosure && typeof receivedVsClosedChart !== 'undefined') {
+                const chartMetrics = response.data.cardMetricsReceiverVsClosure;
+
+                receivedVsClosedChart.updateOptions({
+                    xaxis: {
+                        categories: chartMetrics.categories || []
+                    }
+                }, false, true);
+
+                receivedVsClosedChart.updateSeries(chartMetrics.series || []);
             }
 
         } catch (error) {

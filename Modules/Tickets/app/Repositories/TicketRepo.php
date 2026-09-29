@@ -11,6 +11,52 @@ use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
 
+     public function getRateToAssingVsClosure(
+      $membersId = [],
+      $filters = []
+    )
+    {
+        $q = DB::table('tickets')
+               ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
+               ->when(!empty($membersId), function($q) use ($membersId) {
+                    $q->whereIn('tickets_users_assignations.user_id', $membersId);
+                })
+               ->when(!empty(array_filter((array) ($filters['service_ids'] ?? []))), function($q) use ($filters) {
+                    $q->whereIn('tickets.ticket_service_id', $filters['service_ids']);
+                });
+
+        $received = (clone $q)
+            ->when(!empty($filters['date_from']) && !empty($filters['date_to']), function($q) use ($filters) {
+                $q->whereBetween('tickets.created_at', [$filters['date_from'], $filters['date_to']]);
+            })
+            ->select(
+                DB::raw('DATE(tickets.created_at) as date_key'),
+                DB::raw('COUNT(DISTINCT tickets.id) as total')
+            )
+            ->groupBy(DB::raw('DATE(tickets.created_at)'))
+            ->pluck('total', 'date_key')
+            ->toArray();
+
+        $closed = (clone $q)
+            ->join('status', 'tickets.status_id', '=', 'status.id')
+            ->whereIn('status.name', ['Cerrado', 'Solucionado'])
+            ->when(!empty($filters['date_from']) && !empty($filters['date_to']), function($q) use ($filters) {
+                $q->whereBetween('tickets.updated_at', [$filters['date_from'], $filters['date_to']]);
+            })
+            ->select(
+                DB::raw('DATE(tickets.updated_at) as date_key'),
+                DB::raw('COUNT(DISTINCT tickets.id) as total')
+            )
+            ->groupBy(DB::raw('DATE(tickets.updated_at)'))
+            ->pluck('total', 'date_key')
+            ->toArray();
+        
+        return compact(
+                        'received',
+                        'closed'
+        );
+    }
+
     public function avgTimeByStatus(
         $membersId = [],
         $filters = []

@@ -55,41 +55,53 @@
 
     <div class="col-md-6 d-flex">
        <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow-sm border-0 rounded-4 mb-3">
-                <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                    <div>
-                        <h5 class="card-title fw-bold text-dark mb-1">Tasa de cierre</h5>
-                        <p class="card-subtitle text-muted fs-7 mb-3">Porcentaje de tickets solucionados o cerrados.</p>
-                        <h2 class="display-6 fw-bold text-dark mb-1 percentage-tasa-closed">0%</h2>
-                        <span class="periordo-tasa-closed"></span>
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0 rounded-4 mb-3">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="card-title fw-bold text-dark mb-1">Tasa de cierre</h5>
+                            <p class="card-subtitle text-muted fs-7 mb-3">Porcentaje de tickets solucionados o cerrados.</p>
+                            <h2 class="display-6 fw-bold text-dark mb-1 percentage-tasa-closed">0%</h2>
+                            <span class="periordo-tasa-closed"></span>
+                        </div>
+                        <div style="width: 120px; height: 120px;">
+                            <div id="close-rate-radial-chart"></div>
+                        </div>   
                     </div>
-                    <div style="width: 120px; height: 120px;">
-                        <div id="close-rate-radial-chart"></div>
-                    </div>   
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-12">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                    <div>
-                        <h5 class="card-title fw-bold text-dark mb-1">Tasa de cancelación</h5>
-                        <p class="card-subtitle text-muted fs-7 mb-3">Porcentaje de tickets cancelados respecto al total.</p>
-                        <h2 class="display-6 fw-bold text-dark mb-1 percentage-tasa-cancelation">0%</h2>
-                        <div class="periordo-tasa-cancelation"></div>
-                    </div>
-                    <div class="position-relative" style="width: 120px; height: 120px;">
-                        <div id="cancellation-rate-chart"></div>
-                        <!-- Icono central -->
-                        <div class="position-absolute top-50 start-50 translate-middle text-danger">
-                            <i class="bi bi-slash-circle fs-4"></i>
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="card-title fw-bold text-dark mb-1">Tasa de cancelación</h5>
+                            <p class="card-subtitle text-muted fs-7 mb-3">Porcentaje de tickets cancelados respecto al total.</p>
+                            <h2 class="display-6 fw-bold text-dark mb-1 percentage-tasa-cancelation">0%</h2>
+                            <div class="periordo-tasa-cancelation"></div>
+                        </div>
+                        <div class="position-relative" style="width: 120px; height: 120px;">
+                            <div id="cancellation-rate-chart"></div>
+                            <!-- Icono central -->
+                            <div class="position-absolute top-50 start-50 translate-middle text-danger">
+                                <i class="bi bi-slash-circle fs-4"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-transparent border-0 pb-0 pt-3">
+                        <h5 class="card-title fw-bold text-dark mb-0">Tickets recibidos vs. cerrados</h5>
+                        <small class="text-muted">Evolución del volumen de entrada y salida del equipo durante el período seleccionado.</small>
+                    </div>
+                    <div class="card-body">
+                        <div id="chart-received-vs-closed" style="min-height: 280px;"></div>
+                    </div>
+                </div>
+            </div>
        </div>
     </div>
 </div>
