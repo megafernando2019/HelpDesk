@@ -11,6 +11,33 @@ use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
 
+    public function getOpenTicketsAgeDistribution($membersId = [], $filters = [])
+    {
+        return DB::table('tickets')
+            ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
+            ->selectRaw("
+                CASE 
+                    WHEN DATEDIFF(NOW(), tickets.created_at) <= 1 THEN '1 día'
+                    WHEN DATEDIFF(NOW(), tickets.created_at) BETWEEN 2 AND 3 THEN '2 - 3 días'
+                    WHEN DATEDIFF(NOW(), tickets.created_at) BETWEEN 4 AND 5 THEN '4 - 5 días'
+                    ELSE '6+ días'
+                END AS range_label,
+                COUNT(*) AS total
+            ")
+            ->when(!empty($membersId), function($q) use ($membersId) {
+                $q->whereIn('tickets_users_assignations.user_id', $membersId);
+            })
+            ->when(!empty(array_filter((array) ($filters['service_ids'] ?? []))), function($q) use ($filters) {
+                $q->whereIn('tickets.ticket_service_id', $filters['service_ids']);
+            })
+            ->when(!empty($filters['date_from']) && !empty($filters['date_to']), function($q) use ($filters) {
+                $q->whereBetween('tickets.updated_at', [$filters['date_from'], $filters['date_to']]);
+            })
+            ->whereNotIn('tickets.status_id', [4,5,6])
+            ->groupBy('range_label')
+            ->get();
+    }
+
      public function getRateToAssingVsClosure(
       $membersId = [],
       $filters = []

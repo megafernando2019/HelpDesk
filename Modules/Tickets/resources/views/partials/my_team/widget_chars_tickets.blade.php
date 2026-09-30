@@ -90,18 +90,28 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-transparent border-0 pb-0 pt-3">
-                        <h5 class="card-title fw-bold text-dark mb-0">Tickets recibidos vs. cerrados</h5>
-                        <small class="text-muted">Evolución del volumen de entrada y salida del equipo durante el período seleccionado.</small>
-                    </div>
-                    <div class="card-body">
-                        <div id="chart-received-vs-closed" style="min-height: 280px;"></div>
-                    </div>
-                </div>
-            </div>
+            
        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent border-0 pb-0 pt-3">
+                <h5 class="card-title fw-bold text-dark mb-0">Tickets recibidos vs. cerrados</h5>
+                <small class="text-muted">Evolución del volumen de entrada y salida del equipo durante el período seleccionado.</small>
+            </div>
+            <div class="card-body">
+                <div id="received-vs-closed-chart" style="min-height: 280px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card p-4 rounded-3 shadow-sm">
+            <h5 class="fw-bold mb-1">Antigüedad de tickets</h5>
+            <p class="text-muted fs-7 mb-3">Muestra cuánto tiempo llevan abiertos los tickets para identificar aquellos con mayor tiempo de atención.</p>
+    
+            <div id="ticketAgeChart"></div>
+        </div>
     </div>
 </div>

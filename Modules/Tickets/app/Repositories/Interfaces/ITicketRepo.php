@@ -6,7 +6,20 @@ use Modules\Tickets\Models\Ticket;
 
 interface ITicketRepo {
 
+    /**
+     *
+     * @param array $membersId
+     * @param array $filters
+     * @return void
+     */
+    public function getOpenTicketsAgeDistribution($membersId = [], $filters = []);
   
+    /**
+     *
+     * @param array $membersId
+     * @param array $filters
+     * @return void
+     */
     public function getRateToAssingVsClosure(
       $membersId = [],
       $filters = []

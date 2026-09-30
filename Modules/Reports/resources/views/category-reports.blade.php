@@ -13,7 +13,7 @@
 
             <div class="row w-100">
                 <div class="col-md-3">
-                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white" style="max-width: 280px;">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white" style="height: calc(100vh - 120px);">
                         <!-- Encabezado -->
                         <div class="d-flex align-items-center gap-2 mb-3 text-secondary">
                             <i class="ti ti-chart-pie fs-4"></i>

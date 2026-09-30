@@ -13,7 +13,7 @@ $(document).ready(function () {
         'En proceso': '#0049fc'   // Azul
     };
 
-    // Almacena los IDs de los miembros seleccionados (Siempre como ARRAY)
+    // Almacena los IDs de los miembros seleccionados 
     let currentMembersIds = [];
 
     /**
@@ -65,8 +65,7 @@ $(document).ready(function () {
                     <img src="/build/img/icons/tugui_en_computadora.png" alt="Tugui" style="width: 60px; height: 60px; object-fit: cover;">
                     <div class="title-all">
                         <span class="fw-bold text-dark fs-14">Todos</span>
-                        <span class="fs-14 hide-word">Todos</span>
-                        <span class="fs-14 hide-word">Todos</span>
+                       
                     </div>
                 </div>
             </div>
@@ -237,6 +236,61 @@ $(document).ready(function () {
 
     let receivedVsClosedChart = new ApexCharts(document.querySelector("#received-vs-closed-chart"), optionsReceivedVsClosed);
     receivedVsClosedChart.render();
+
+    let ticketAgeChart = null;
+
+    const optionsAgeChart = {
+        series: [0, 0, 0, 0], // Valores iniciales vacíos
+        labels: ['1 día', '2 - 3 días', '4 - 5 días', '6+ días'],
+        chart: {
+            type: 'donut',
+            height: 300
+        },
+        // Colores del mockup: Verde (1 día), Amarillo (2-3), Naranja (4-5), Rojo (6+)
+        colors: ['#7ad043', '#facc15', '#f9962b', '#ef4444'],
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '65%' // Tamaño del hueco central
+                }
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function (val) {
+                return Math.round(val) + "%";
+            },
+            style: {
+                fontSize: '12px',
+                fontWeight: 'bold',
+                colors: ['#fff']
+            },
+            dropShadow: { enabled: false }
+        },
+        legend: {
+            show: false 
+        },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return value + " tickets"; 
+                }
+            }
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: { width: 280 }
+            }
+        }]
+    };
+
+    // Renderizar la gráfica vacía por primera vez
+    const chartEl = document.querySelector("#ticketAgeChart");
+    if (chartEl) {
+        ticketAgeChart = new ApexCharts(chartEl, optionsAgeChart);
+        ticketAgeChart.render();
+    }
 
 
     /**
@@ -411,18 +465,34 @@ $(document).ready(function () {
                 }
             }
 
-            // --- Actualización de la Gráfica: Recibidos vs. Cerrados ---
+            // --- Recibidos vs. Cerrados ---
             if (response.data.cardMetricsReceiverVsClosure && typeof receivedVsClosedChart !== 'undefined') {
                 const chartMetrics = response.data.cardMetricsReceiverVsClosure;
 
                 receivedVsClosedChart.updateOptions({
                     xaxis: {
-                        categories: chartMetrics.categories || []
-                    }
-                }, false, true);
-
-                receivedVsClosedChart.updateSeries(chartMetrics.series || []);
+                        categories: chartMetrics.categories || [],
+                        tickAmount: chartMetrics.categories ? chartMetrics.categories.length : undefined,
+                        labels: {
+                            show: true,
+                            rotate: 0,
+                            trim: false
+                        }
+                    },
+                    series: chartMetrics.series || []
+                }, true, true); // (redrawPaths: true, animate: true)
             }
+
+            // --- tickets por antiguedad en tiempo transcurrido
+            if (response.data.cardMetricsLegacyTickets && typeof ticketAgeChart !== 'undefined') {
+                const ageData = response.data.cardMetricsLegacyTickets;
+
+                ticketAgeChart.updateOptions({
+                    labels: ageData.labels || ['1 día', '2 - 3 días', '4 - 5 días', '6+ días'],
+                    series: ageData.series || [0, 0, 0, 0]
+                }, true, true);
+            }
+            
 
         } catch (error) {
             console.error('Error al cargar métricas:', error);

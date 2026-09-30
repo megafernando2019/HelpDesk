@@ -37,6 +37,7 @@ class TicketService {
     public function formatDataChartMembersAll( $args = [], $filters = []): array
     {
         $namesCategories = ["Cerrado", "Solucionado", "En espera", "En proceso"];
+        $namesWeekendDays = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
         $dateFrom = null;
         $dateTo = null;
         //Para cancelado 
@@ -45,10 +46,28 @@ class TicketService {
         $cancelledRatePrev = 0;
         $trendCancellation = null;
         $previousArgs = [];
+        $totalsByDay = [
+            "Lunes"     => ['received' => 0, 'closed' => 0],
+            "Martes"    => ['received' => 0, 'closed' => 0],
+            "Miercoles" => ['received' => 0, 'closed' => 0],
+            "Jueves"    => ['received' => 0, 'closed' => 0],
+            "Viernes"   => ['received' => 0, 'closed' => 0],
+        ];
+        $ageDistributionMap = [
+            '1 día'      => 0,
+            '2 - 3 días' => 0,
+            '4 - 5 días' => 0,
+            '6+ días'    => 0,
+        ];
         //Para cerrados
         $absDiffClosure = null;
         $closureRatePrev = 0;
         $trendClosure = null;
+        $currentStart = null;
+        $currentEnd   = null;
+        $daysDiff     = null;
+        $cardMetricsReceiverVsClosure = [];
+
        
         if (!empty($filters['date_range'])) {
             //Seperarar fechas
@@ -224,7 +243,63 @@ class TicketService {
             $diffClosure    = $percentageClousure - $percentageClosurePrev;
             $trendClosure   = $diffClosure > $percentageClousure ? 'up' : 'down';
             $absDiffClosure = abs($diffClosure);
+
+             //Grafica fechas tickets cerrados vs los que se reciben
+            $datas = $this->repo->getRateToAssingVsClosure($args, $filters);
+
+            // Crear el periodo de fechas para rellenar los días sin registros
+            $period = CarbonPeriod::create($currentStart, $currentEnd);
+          
+            $seriesReceived = [];
+            $seriesClosed = [];
+
+            foreach ($period as $date) {
+                $dateKey = $date->format('Y-m-d');
+
+                $dayName = ucfirst($date->locale('es')->isoFormat('dddd'));
+
+                $dayNameClean = str_replace(['Miércoles', 'miércoles'], 'Miercoles', $dayName);
+
+                    if (isset($totalsByDay[$dayNameClean])) {
+                        $totalsByDay[$dayNameClean]['received'] += $datas['received'][$dateKey] ?? 0;
+                        $totalsByDay[$dayNameClean]['closed']   += $datas['closed'][$dateKey]   ?? 0;
+                    }
+                
+
+                $seriesReceived = array_column($totalsByDay, 'received');
+                $seriesClosed   = array_column($totalsByDay, 'closed');
+            }
+
+            // Estructura de métricas para la Card del Frontend
+            $cardMetricsReceiverVsClosure = [
+                "categories" => $namesWeekendDays,
+                "series" => [
+                    [
+                        "name" => "Recibidos",
+                        "data" => $seriesReceived
+                    ],
+                    [
+                        "name" => "Cerrados",
+                        "data" => $seriesClosed
+                    ]
+                ]
+            ];
+
         }
+
+        $ageData = $this->repo->getOpenTicketsAgeDistribution($args, $parsedFilters);
+
+        foreach ($ageData as $row) {
+            if (array_key_exists($row->range_label, $ageDistributionMap)) {
+                $ageDistributionMap[$row->range_label] = (int) $row->total;
+            }
+        }
+
+        // Estructura limpia para ApexCharts Donut
+        $cardMetricsLegacyTickets = [
+            'labels' => array_keys($ageDistributionMap),   
+            'series' => array_values($ageDistributionMap) 
+        ];
 
         $cardMetricsCancellation = [
             'percentage' => $percentageCancellation,
@@ -248,7 +323,9 @@ class TicketService {
             'tasaCierre', 
             'avgTimeData', 
             'cardMetricsClousure',
-            'cardMetricsCancellation'
+            'cardMetricsCancellation',
+            'cardMetricsReceiverVsClosure',
+            'cardMetricsLegacyTickets'
         );
     }
 
@@ -262,7 +339,7 @@ class TicketService {
     {
         $dataByStatusDistribution = [];
         $namesCategories = ["Cerrado", "Solucionado", "En espera", "En proceso"];
-        // $namesWeekendDays = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
+        $namesWeekendDays = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
         $countSeriesDistibution = [];
         $tasaCierre = [];
         $countAvgTime = [];
@@ -278,6 +355,19 @@ class TicketService {
             'Solucionado' => 0,
             'En espera'   => 0,
             'En proceso'  => 0,
+        ];
+        $totalsByDay = [
+            "Lunes"     => ['received' => 0, 'closed' => 0],
+            "Martes"    => ['received' => 0, 'closed' => 0],
+            "Miercoles" => ['received' => 0, 'closed' => 0],
+            "Jueves"    => ['received' => 0, 'closed' => 0],
+            "Viernes"   => ['received' => 0, 'closed' => 0],
+        ];
+        $ageDistributionMap = [
+            '1 día'      => 0,
+            '2 - 3 días' => 0,
+            '4 - 5 días' => 0,
+            '6+ días'    => 0,
         ];
          //Para cancelado 
         $absDiffCancellation = null;
@@ -334,7 +424,6 @@ class TicketService {
 
         $byStatusDistributionCtx = $this->repo->getTicketsByStatusDistribution($args, $parsedFilters);
 
-        // dd($byStatusDistributionCtx);
         foreach ($byStatusDistributionCtx as $value) {
 
             $current_status = $value?->status_name ?? '';
@@ -467,23 +556,27 @@ class TicketService {
 
             //Grafica fechas tickets cerrados vs los que se reciben
             $datas = $this->repo->getRateToAssingVsClosure($args, $filters);
-            $useDayNames = $daysDiff <= 7;
 
-            // Crear el periodo de fechas para rellenar los días sin registros (con 0)
+            // Crear el periodo de fechas para rellenar los días sin registros
             $period = CarbonPeriod::create($currentStart, $currentEnd);
-            $namesWeekendDays = [];
             $seriesReceived = [];
             $seriesClosed = [];
 
             foreach ($period as $date) {
                 $dateKey = $date->format('Y-m-d');
-                $namesWeekendDays[] = $useDayNames
-                                    ? ucfirst($date->locale('es')->isoFormat('dddd')) 
-                                    : $date->locale('es')->isoFormat('DD MMM');
 
-                // Extraer totales de la BD o asignar 0 si no existen datos en esa fecha
-                $seriesReceived[] = $datas['received'][$dateKey] ?? 0;
-                $seriesClosed[]   = $datas['closed'][$dateKey]   ?? 0;
+                $dayName = ucfirst($date->locale('es')->isoFormat('dddd'));
+
+                $dayNameClean = str_replace(['Miércoles', 'miércoles'], 'Miercoles', $dayName);
+
+                    if (isset($totalsByDay[$dayNameClean])) {
+                        $totalsByDay[$dayNameClean]['received'] += $datas['received'][$dateKey] ?? 0;
+                        $totalsByDay[$dayNameClean]['closed']   += $datas['closed'][$dateKey]   ?? 0;
+                    }
+                
+
+                $seriesReceived = array_column($totalsByDay, 'received');
+                $seriesClosed   = array_column($totalsByDay, 'closed');
             }
 
             // Estructura de métricas para la Card del Frontend
@@ -501,6 +594,20 @@ class TicketService {
                 ]
             ];
         }
+
+        $ageData = $this->repo->getOpenTicketsAgeDistribution($args, $parsedFilters);
+
+        foreach ($ageData as $row) {
+            if (array_key_exists($row->range_label, $ageDistributionMap)) {
+                $ageDistributionMap[$row->range_label] = (int) $row->total;
+            }
+        }
+
+        // Estructura limpia para ApexCharts Donut
+        $cardMetricsLegacyTickets = [
+            'labels' => array_keys($ageDistributionMap),   
+            'series' => array_values($ageDistributionMap) 
+        ];
 
         $cardMetricsClousure = [
             'percentage' => $percentageClousure, 
@@ -524,7 +631,8 @@ class TicketService {
                         'avgTimeData', 
                         'cardMetricsClousure',
                         'cardMetricsCancellation',
-                        'cardMetricsReceiverVsClosure'
+                        'cardMetricsReceiverVsClosure',
+                        'cardMetricsLegacyTickets'
         );
     }
 
