@@ -8,7 +8,7 @@
     <div class="page-wrapper">
         <div class="content container-fluid">
 
-            <div class="page-header metadata-page-index">
+            <div class="page-header metadata-page-index" data-team-id="{{$user_team_id}}">
             </div>
 
             <div class="row w-100">
@@ -41,11 +41,18 @@
                     <!-- Botones de Exportación -->
                     <div class="d-flex align-items-center gap-2 mb-3">
                         <button type="button"
+                            id="btn-export-pdf"
+                            data-bs-toggle="tooltip" 
+                            title="Exportar a PDF"
                             class="btn btn-outline-light text-dark bg-white border px-4 py-2 fw-semibold shadow-sm rounded-2">
                             PDF
                         </button>
                         <button type="button"
-                            class="btn btn-outline-primary bg-white border border-primary px-4 py-2 fw-semibold shadow-sm rounded-2 text-primary">
+                            id="btn-export-excel"
+                            data-bs-toggle="tooltip" 
+                            title="Exportar a Excel"
+                            class="btn btn-outline-success bg-white px-4 py-2 fw-semibold rounded-2">
+                            <i class="ti ti-file-type-xls"></i>
                             Excel
                         </button>
                     </div>
@@ -72,87 +79,14 @@
                                         </tr>
                                     </thead>
                                     <tbody class="text-secondary fs-14">
-                                        <tr>
-                                            <td>1</td>
-                                            <td class="text-start text-dark fw-medium">Equipo de cómputo</td>
-                                            <td>26</td>
-                                            <td>6</td>
-                                            <td>10</td>
-                                            <td>2</td>
-                                            <td>8</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>3.25%</td>
-                                            <td>1 día</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td class="text-start text-dark fw-medium">Equipo de cómputo</td>
-                                            <td>26</td>
-                                            <td>6</td>
-                                            <td>10</td>
-                                            <td>2</td>
-                                            <td>8</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>3.25%</td>
-                                            <td>1 día</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td class="text-start text-dark fw-medium">Equipo de cómputo</td>
-                                            <td>26</td>
-                                            <td>6</td>
-                                            <td>10</td>
-                                            <td>2</td>
-                                            <td>8</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>3.25%</td>
-                                            <td>1 día</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td class="text-start text-dark fw-medium">Equipo de cómputo</td>
-                                            <td>26</td>
-                                            <td>6</td>
-                                            <td>10</td>
-                                            <td>2</td>
-                                            <td>8</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>3.25%</td>
-                                            <td>1 día</td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td class="text-start text-dark fw-medium">Equipo de cómputo</td>
-                                            <td>26</td>
-                                            <td>6</td>
-                                            <td>10</td>
-                                            <td>2</td>
-                                            <td>8</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>3.25%</td>
-                                            <td>1 día</td>
-                                        </tr>
-                                        <tr>
-                                            <td>6</td>
-                                            <td class="text-start text-dark fw-medium">Equipo de cómputo</td>
-                                            <td>26</td>
-                                            <td>6</td>
-                                            <td>10</td>
-                                            <td>2</td>
-                                            <td>8</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>3.25%</td>
-                                            <td>1 día</td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
+
+                            <div class="d-flex justify-content-end align-items-center mt-3 p-2">
+                                <div id="pagination-container" class="pagination-buttons"></div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

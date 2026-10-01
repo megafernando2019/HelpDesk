@@ -101,30 +101,32 @@
             <li class="nav-item dropdown has-arrow main-drop profile-nav">
                 <a href="javascript:void(0);" class="nav-link userset" data-bs-toggle="dropdown">
                     <span class="user-info p-0">
-                        <span class="user-img">
-                            <img src="{{Storage::url('default/default_avatar.jpg')}}" alt="Img" class="img-fluid">
-                        </span>
+                        <img width="40" style="height: 40px;" src="{{asset('build/img/icons/default-avatar.png')}}" alt="Img">
                     </span>
                 </a>
                 <div class="dropdown-menu menu-drop-user">
                     <div class="profileset d-flex align-items-center">
-                        <span class="user-img me-2">
-                            <img src="{{Storage::url('default/default_avatar.jpg')}}" alt="Img">
-                        </span>
-                        <div>
+                        <img width="40" style="height: 40px;" src="{{asset('build/img/icons/default-avatar.png')}}" alt="Img">
+                        <div class="ml-1">
                             <h6 class="fw-medium">{{ Auth::user()->first_name ?? 'Dato no disponible' }} {{ Auth::user()->last_name ?? 'Dato no disponible' }}</h6>
-                            <p>Admin</p>
+                            <p> {{ Auth::user()->email ?? 'Correo no disponible' }}</p>
                         </div>
                     </div>
-                    <a class="dropdown-item" href="{{route('profile')}}"><i class="ti ti-user-circle me-2"></i>My
-                        Profile</a>
-                    <a class="dropdown-item" href="{{route('sales-report')}}"><i
-                            class="ti ti-file-text me-2"></i>Reports</a>
-                    <a class="dropdown-item" href="{{route('general-settings')}}"><i
-                            class="ti ti-settings-2 me-2"></i>Settings</a>
-                    <hr class="my-2">
-                    <a class="dropdown-item logout" href="{{route('signin')}}"><i
-                            class="ti ti-logout me-2"></i>Logout</a>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <i class="ti ti-user"></i> Rol: No asignado
+                        </div>
+                        <div class="col-md-12">
+                            <i class="ti ti-brand-asana"></i> Equipo: 
+                            {{ Auth::user()->teams?->first()?->name ?? 'Sin equipo por mostrar' }}
+                        </div>
+                        <div class="col-md-12 mt-2 pb-2">
+                            <button class="btn btn-info w-100 change-rol-action">
+                                <i class="ti ti-hammer"></i>
+                                Herramientas de sistemas
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </li>
         </ul>
@@ -135,7 +137,7 @@
             <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                 aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
             <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="{{route('profile')}}">My Profile</a>
+                <a class="dropdown-item" href="{{route('profile')}}">M</a>
                 <a class="dropdown-item" href="{{route('general-settings')}}">Settings</a>
                 <a class="dropdown-item" href="{{route('signin')}}">Logout</a>
             </div>

@@ -307,7 +307,7 @@
     <script src="{{URL::asset('build/js/theme-colorpicker.js')}}"></script>
 @endif    
 
-@if(Route::is(['tickets.index', 'tickets.my.daily.job', 'tickets.my.team']))     
+@if(Route::is(['tickets.index', 'tickets.my.daily.job', 'tickets.my.team', 'reports.index']))     
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 @endif
@@ -324,6 +324,17 @@
     <!-- Chart Apex JS -->
     <script src="{{URL::asset('build/plugins/apexchart/apexcharts.min.js')}}"></script>
     <script src="{{URL::asset('build/plugins/apexchart/chart-data.js')}}"></script>
+@endif
+
+@if (Route::is('reports.index'))
+<!-- Dependencias para generar archivos Excel y PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<!-- Modulo DataTables Buttons -->
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 @endif
     
     @vite('resources/js/helpers/helper.js')

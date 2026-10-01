@@ -14,8 +14,11 @@ use App\Http\Controllers\CustomAuthController;
 |
 */
 
+Route::get('/login', function () {
+    return redirect()->away(env('SSO_LOGIN_URL'));
+})->name('login');
+
 Route::get('/', function () {
-    // return view('demo.demo_index');
     return redirect(route('tickets.index'));
 });
 

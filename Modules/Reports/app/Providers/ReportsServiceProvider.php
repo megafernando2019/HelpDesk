@@ -4,6 +4,9 @@ namespace Modules\Reports\Providers;
 
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Modules\Reports\Repositories\Interfaces\IReportRepository;
+use Modules\Reports\Repositories\ReportRepository;
+use Modules\Reports\Services\ReportService;
 
 class ReportsServiceProvider extends ModuleServiceProvider
 {
@@ -33,6 +36,23 @@ class ReportsServiceProvider extends ModuleServiceProvider
         EventServiceProvider::class,
         RouteServiceProvider::class,
     ];
+
+    /**
+     * Register the service provider.
+     */
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->bind(
+            IReportRepository::class,
+            ReportRepository::class
+        );
+
+        $this->app->bind(
+            ReportService::class
+        );
+    }
 
     /**
      * Define module schedules.
