@@ -465,7 +465,7 @@ $(document).ready(function () {
         const ticketIndex = sourceArray.findIndex(t => t.uid === uid);
 
         // console.log('ticket index', ticketIndex)
-        debugger;
+        
         if (ticketIndex === -1) return;
 
         // Extraer el ticket del origen e insertarlo en el destino
