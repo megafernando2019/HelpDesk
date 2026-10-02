@@ -9,6 +9,35 @@ use Modules\User\app\Models\Team;
 
 class UserRepo implements IUserRepo
 {
+
+    public function existsRol($record)
+    {
+       return DB::table('model_has_roles')
+        ->where('model_id', $record['model_id'])
+        ->where('model_type', $record['model_type'])
+        ->exists();
+    }
+
+    public function getAllRoles()
+    {
+        return DB::table('roles')->get();
+    }
+
+    public function createRol($record)
+    {
+        return DB::table('model_has_roles')->insert($record);
+    }
+
+    public function updateRol($record)
+    {
+       return DB::table('model_has_roles')
+        ->where('model_id', $record['model_id'])
+        ->where('model_type', $record['model_type'])
+        ->update([
+            'role_id' => $record['role_id'],
+        ]);
+    }
+
     public function getUserByDepartmentId($department_id)
     {
         return User::where('department_id', $department_id)

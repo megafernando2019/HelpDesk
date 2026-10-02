@@ -33,8 +33,11 @@ export default defineConfig({
             'Modules/Tickets/resources/assets/css/my_daily_job.css',
             'Modules/Tickets/resources/assets/css/my_team.css',
             'Modules/Reports/resources/assets/css/reports_category.css',
+            'Modules/Reports/resources/assets/css/reports_service.css',
+            'Modules/Reports/resources/assets/css/reports_user_assing.css',
             'resources/js/script.js',
             'resources/js/helpers/helper.js',
+            'resources/js/change_rol.js',
             'Modules/Tickets/resources/assets/js/index.js',
             'Modules/Tickets/resources/assets/js/create.js',
             'Modules/Tickets/resources/assets/js/show.js',
@@ -43,7 +46,9 @@ export default defineConfig({
             'Modules/Tickets/resources/assets/js/archive.js',
             'Modules/Tickets/resources/assets/js/my_daily_job.js',
             'Modules/Tickets/resources/assets/js/my_team.js',
-            'Modules/Reports/resources/assets/js/reports_category.js'
+            'Modules/Reports/resources/assets/js/reports_category.js',
+            'Modules/Reports/resources/assets/js/reports_service.js',
+            'Modules/Reports/resources/assets/js/reports_user_assing.js'
             ],
             refresh: true,
         }),

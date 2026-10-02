@@ -13,6 +13,16 @@
     color: #fff !important;
 }
 
+.btn-mega:hover {
+    box-shadow: rgba(21, 94, 239, 0.5) 0px 3px 10px !important;
+    background-color: rgb(14, 80, 210) !important;
+    color: rgb(255, 255, 255) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: rgb(14, 80, 210) !important;
+    border-image: none !important;
+}
+
 .btn-outline-mega {
     border: 1px solid #0049fc !important;
     color: #0049fc !important;

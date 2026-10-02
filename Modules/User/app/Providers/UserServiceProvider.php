@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Modules\User\app\Repositories\Interfaces\IUserRepo;
 use Modules\User\app\Repositories\UserRepo;
 use Modules\User\app\Services\UserService;
+use Modules\User\app\Console\CreateChangeRolePermission;
 
 class UserServiceProvider extends ModuleServiceProvider
 {
@@ -25,7 +26,10 @@ class UserServiceProvider extends ModuleServiceProvider
      *
      * @var string[]
      */
-    // protected array $commands = [];
+    
+    protected array $commands = [
+        CreateChangeRolePermission::class,
+    ];
 
     /**
      * Provider classes to register.

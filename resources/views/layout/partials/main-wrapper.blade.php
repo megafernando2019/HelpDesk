@@ -10,4 +10,8 @@
     <div class="main-wrapper pos-three pos-four">
 @else
     <div class="main-wrapper">
+        @can('manage-user-roles')
+
+            @include('layout.partials.modal-change-rol')
+        @endcan
 @endif

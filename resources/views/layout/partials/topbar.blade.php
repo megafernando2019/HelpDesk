@@ -105,7 +105,7 @@
                     </span>
                 </a>
                 <div class="dropdown-menu menu-drop-user">
-                    <div class="profileset d-flex align-items-center">
+                    <div class="profileset d-flex align-items-center gap-2">
                         <img width="40" style="height: 40px;" src="{{asset('build/img/icons/default-avatar.png')}}" alt="Img">
                         <div class="ml-1">
                             <h6 class="fw-medium">{{ Auth::user()->first_name ?? 'Dato no disponible' }} {{ Auth::user()->last_name ?? 'Dato no disponible' }}</h6>
@@ -114,17 +114,22 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <i class="ti ti-user"></i> Rol: No asignado
+                            <i class="ti ti-user"></i> Rol: {{Auth::user()->roles?->first()?->name ?? 'No asignado'}}
                         </div>
                         <div class="col-md-12">
                             <i class="ti ti-brand-asana"></i> Equipo: 
                             {{ Auth::user()->teams?->first()?->name ?? 'Sin equipo por mostrar' }}
                         </div>
                         <div class="col-md-12 mt-2 pb-2">
-                            <button class="btn btn-info w-100 change-rol-action">
-                                <i class="ti ti-hammer"></i>
-                                Herramientas de sistemas
-                            </button>
+                            @can('manage-user-roles')
+                                
+                                <button class="btn btn-mega w-100 change-rol-action">
+                                    <i class="ti ti-hammer"></i>
+                                    Herramientas de sistemas
+                                </button>
+
+                                @include('layout.partials.modal-change-rol')
+                            @endcan
                         </div>
                     </div>
                 </div>

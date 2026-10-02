@@ -3,7 +3,10 @@
 namespace Modules\User\app\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Modules\User\app\Services\UserService;
 
 class UserController extends Controller
@@ -13,6 +16,52 @@ class UserController extends Controller
     )
     {
         
+    }
+
+    public function getRoles()
+    {
+        try {
+
+            $roles = $this->service->getRoles();
+
+            return response()->json([
+                'roles' => $roles,
+                'current_rol' => Auth::user()->roles->first()
+            ], 200);
+
+        } catch (\Throwable $th) {
+            \Log::info('Excepción producida: '. $th);
+
+            return response()->json([
+                'message' => 'Ocurrió un error al guardar el rol; prueba más tarde.'
+            ], 500);
+
+        }
+    }
+
+    /**
+     * Actualizar el rol en sesion
+     */
+    public function changeRol(Request $request)
+    {
+       try {
+
+        //Guardar rol nuevo
+        $this->service->changeProcessRole($request);
+        
+        return response()->json([
+            'message' => ' El rol se ha actualizado exitosamente.'
+        ], 201);
+
+       } catch (\Throwable $th) {
+         
+        \Log::info('Excepción producida: '. $th);
+
+        return response()->json([
+            'message' => 'Ocurrió un error al guardar el rol; prueba más tarde.'
+        ], 500);
+
+       }
     }
 
     public function getMembers()

@@ -51,8 +51,13 @@ class ReportService {
                         $membersId,
                         $dateFrom,
                         $dateTo
-            ),
-         'services' => collect(),
+         ),
+         'services' => $this->repo->getServiceSummaryTicket(
+                     $teamId, 
+                     $membersId,
+                     $dateFrom,
+                     $dateTo
+         ),
          default => collect()
       };
    }

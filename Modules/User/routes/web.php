@@ -12,5 +12,10 @@ Route::middleware(['auto_login'])->group(function () {
     Route::get('/users/get_by_team', [UserController::class, 'getUsersByTeam']);
 
     Route::get('/users/get_current_members', [UserController::class, 'getMembers']);
+
+    Route::get('/users/get_current_roles', [UserController::class, 'getRoles']);
+
+    Route::post('/users/update_session_rol', [UserController::class, 'changeRol']);
+
 });
 

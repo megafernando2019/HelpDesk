@@ -17,6 +17,32 @@ class ReportsController extends Controller
         
     }
 
+    /**
+     * Vista para reportes usuarios encargados de los tickets
+     */
+    public function viewReportUserAssing()
+    {
+        $user = User::with('teams')->find(Auth::user()->id);
+        $user_team_id = $user->teams?->first()?->id ?? 0;
+
+        return view('reports::user-assigned-reports', compact(
+            'user_team_id'
+        ));
+    }
+
+    /**
+     * Vista para reportes servicios
+     */
+    public function viewReportService()
+    {
+        $user = User::with('teams')->find(Auth::user()->id);
+        $user_team_id = $user->teams?->first()?->id ?? 0;
+
+        return view('reports::service-reports', compact(
+            'user_team_id'
+        ));
+    }
+
     public function getDataSummaryByModule(
         Request $request
     )

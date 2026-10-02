@@ -10,4 +10,17 @@ interface IReportRepository
         $dateFrom,
         $dateTo
     );
+
+    public function getServiceSummaryTicket(
+        $teamId, 
+        $membersId,
+        $dateFrom,
+        $dateTo
+    );
+
+    public function getUsersAssingsSummaryTicket(
+        $teamId,
+        $dateFrom,
+        $dateTo
+    );
 }

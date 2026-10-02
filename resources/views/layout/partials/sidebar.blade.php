@@ -130,22 +130,33 @@
                         <ul>
                             <li class="submenu">
                                 <a 
-                                   href="javascript:void(0);">
+                                   href="javascript:void(0);"
+                                     class="
+                                    {{ Route::is([
+                                       'reports.index',
+                                       'reports.index.service',
+                                       'reports.index.users_assings',
+                                    ]) 
+                                    ? 'active subdrop' : '' }}"
+                                    >
                                     <i class="ti ti-chart-pie fs-16 me-2"></i>
                                     <span>Reportes</span>
                                     <span class="menu-arrow"></span>
                                 </a>
                                 <ul>
                                     <li><a href="{{route('reports.index')}}"
-                                            class="">Categorías
+                                           class="{{ Route::is('reports.index') ? 'selected_menu' : '' }}"
+                                           >Categorías
                                         </a>
                                     </li>
-                                    <li><a href="#"
-                                            class="">Etiquetas
+                                    <li><a href="{{route('reports.index.service')}}"
+                                           class="{{ Route::is('reports.index.service') ? 'selected_menu' : '' }}"
+                                           >Servicios
                                         </a>
                                     </li>
-                                    <li><a href="#"
-                                            class="">Encargado
+                                    <li><a href="{{route('reports.index.users_assings')}}"
+                                           class="{{ Route::is('reports.index.users_assings') ? 'selected_menu' : '' }}"
+                                           >Encargado
                                         </a>
                                     </li>
                                 </ul>

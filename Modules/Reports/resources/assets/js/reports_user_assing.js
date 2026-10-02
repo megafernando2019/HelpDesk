@@ -45,9 +45,6 @@ $(document).ready(function () {
         prevBtn.onclick = () => loadAndRenderReport(pagination.prev_page_url);
         container.appendChild(prevBtn);
 
-
-         console.log(currentPage, lastPage)
-
         for (let page = 1; page <= lastPage; page++) {
            
             const pageBtn = document.createElement('button');
@@ -95,7 +92,7 @@ $(document).ready(function () {
                 "buttons": [
                     {
                         extend: 'excelHtml5',
-                        title: 'Reporte_Por_Categorias',
+                        title: 'Reporte_Por_Encargados',
                         className: 'buttons-excel d-none',
                         exportOptions: {
                             columns: ':visible'
@@ -103,7 +100,7 @@ $(document).ready(function () {
                     },
                     {
                         extend: 'pdfHtml5',
-                        title: 'Reporte por Categorías',
+                        title: 'Reporte por Encargados',
                         orientation: 'landscape',
                         pageSize: 'A4',
                         className: 'buttons-pdf d-none', 
@@ -124,6 +121,12 @@ $(document).ready(function () {
                         "data": null,
                         "render": function (data, type, row, meta) {
                             return meta.row + 1;
+                        }
+                    },
+                    { 
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            return `<div class="text-start">${row?.service_name ?? '-'}</div>`;
                         }
                     },
                     { 
@@ -238,7 +241,7 @@ $(document).ready(function () {
             const response = await axios.get(url ?? currentUrl, {
                 params: {
                     team_id: [currentTeamId],
-                    module: 'categories',
+                    module: 'services',
                     members_id: currentMembersIds,
                     date_range: $('#flatpickr-range').val() || null,
                 }
@@ -293,12 +296,7 @@ $(document).ready(function () {
         
         if (memberId === 'all') {
             currentMembersIds = [];
-            // $('.team-card').not($card).each(function () {
-            //     const id = $(this).data('member-id');
-            //     if (id && id !== 'all') {
-            //         currentMembersIds.push(id);
-            //     }
-            // });
+            
             $('.all-tugui-option-wave').addClass('member-card active');
         } else if (memberId) {
             currentMembersIds = [memberId];

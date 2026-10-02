@@ -20,5 +20,31 @@ interface IUserRepo
      * @return void
      */
     public function getUsersByTeamId($teamId);
+
+    /**
+     *
+     * @param array $record
+     * @return void
+     */
+    public function updateRol($record);
+
+    /**
+     *
+     * @param array $record
+     * @return void
+     */
+    public function createRol($record);
     
+    /**
+     *
+     * @return void
+     */
+    public function getAllRoles();
+
+    /**
+     *
+     * @param array $record
+     * @return void
+     */
+    public function existsRol($record);
 }

@@ -3,6 +3,7 @@
 namespace Modules\User\app\Services;
 
 use App\Helpers\GetInitials;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Modules\User\app\Repositories\Interfaces\IUserRepo;
 use Modules\User\app\Support\Mappers\MembersMapper;
@@ -15,6 +16,29 @@ class UserService
     )
     {
         
+    }
+
+    public function getRoles()
+    {
+        return $this->repo->getAllRoles();
+    }
+
+    public function changeProcessRole($request)
+    {
+        $record = [
+          'model_id' => Auth::user()->id,
+          'model_type' => User::class,
+          'role_id' => $request?->role ?? 0
+        ];
+
+        //Compruebo si ya existia el rol
+        $rolExist = $this->repo->existsRol($record);
+
+        if ($rolExist) {
+            return $this->repo->updateRol($record);
+        } else {
+            return $this->repo->createRol($record);
+        }
     }
 
     /**

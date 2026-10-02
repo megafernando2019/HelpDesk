@@ -11,11 +11,12 @@ use Illuminate\Notifications\Notifiable;
 use Modules\Departments\Models\Department;
 use Modules\Tickets\Models\Ticket;
 use Modules\User\app\Models\Team;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
