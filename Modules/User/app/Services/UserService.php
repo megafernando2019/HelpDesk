@@ -18,6 +18,31 @@ class UserService
         
     }
 
+    public function permissionListAuthenticatable()
+    {
+        /**
+         * Lista completa de permisos a evaluar para los tickets.
+         */
+        $defaultPermissions = $this->repo->getAllPermissions();
+        $currentPermissions = [];
+
+        if ($defaultPermissions->isNotEmpty()) {
+            $permissionsDbNames = $defaultPermissions->pluck('name')->toArray();
+            
+            foreach ($permissionsDbNames as $value) {
+                
+                // El usuario tiene el permiso
+                $currentPermissions[] = [
+                        'permission' => $value ?? 'Sin permiso asignado',
+                        'apply' => Auth::user()?->can($value ?? 'Sin permiso asignado')
+                ];
+            }
+        }
+
+        return $currentPermissions; 
+    }
+
+
     public function getRoles()
     {
         return $this->repo->getAllRoles();

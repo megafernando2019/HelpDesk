@@ -4,6 +4,8 @@ namespace Modules\User\app\Repositories\Interfaces;
 
 interface IUserRepo
 {
+    public function getAllPermissions();
+
     public function getUserByDepartmentId($department_id);
 
     /**

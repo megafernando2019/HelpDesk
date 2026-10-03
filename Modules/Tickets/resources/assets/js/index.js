@@ -448,8 +448,23 @@ $(document).ready(function () {
             const colorsDefault = ["#fff3cd","#ff66c436", "#33ff572b", "#eee"];
             const colorsPriorityDefault = ["#ffe2e2", "#fff3dd", "#fffdca"];
             const textColorPriorityDefault = ["#ff5757","#fa995c","#eab308"];
+            const permissionsBackend = response.data.current_permissions ?? [];
+            const permissionAssing = permissionsBackend.filter(
+               p => p.permission === 'assign-tickets'
+            );
+            const permissionReAssing = permissionsBackend.filter(
+               p => p.permission === 'reassign-tickets'
+            );
 
-            
+            const applyPermissionAssing = permissionAssing[0]?.apply ?? false;
+            const applyPermissionReAssing = permissionReAssing[0]?.apply ?? false;
+            // Permisos visibles 
+            const applyPermissionMoveWait = permissionsBackend.find(p => p.permission === 'move-ticket-to-wait')?.apply ?? false;
+            const applyPermissionAddObservations = permissionsBackend.find(p => p.permission === 'add-observations')?.apply ?? false;
+            const applyPermissionSolveTicket = permissionsBackend.find(p => p.permission === 'solve-ticket')?.apply ?? false;
+            const applyPermissionCloseTicket = permissionsBackend.find(p => p.permission === 'close-ticket')?.apply ?? false;
+            const applyPermissionCancelTicket = permissionsBackend.find(p => p.permission === 'cancel-ticket')?.apply ?? false;
+
             const priorityConfig = {
                 'baja': {
                     text: '#eab308',
@@ -507,175 +522,119 @@ $(document).ready(function () {
                          <i class="ti ti-eye fs-18"></i>
                     </a>`;
 
+                let actionSolved = applyPermissionSolveTicket ? `
+                <a 
+                        href="javascript:void(0);" 
+                        data-id="${ticket?.id ?? 0}" 
+                        data-status-id="4"  
+                        data-user-id="${ticket?.user_id ?? 0}"
+                        data-uid="${ticket?.uid ?? ''}"
+                        class="text-secondary ticket-status-completed" 
+                        data-bs-toggle="tooltip"
+                        title="Solucionado">
+                        <i class="ti ti-circle-check fs-18"></i>
+                </a>`: ``;
+
+                let actionWaiting = applyPermissionMoveWait ? `
+                <a 
+                        href="javascript:void(0);" 
+                        data-id="${ticket?.id ?? 0}" 
+                        data-status-id="3"  
+                        data-user-id="${ticket?.user_id ?? 0}"
+                        data-uid="${ticket?.uid ?? ''}"
+                        class="text-secondary ticket-status-waiting" 
+                        data-bs-toggle="tooltip"
+                        title="En espera">
+                        <i class="ti ti-clock fs-18"></i>
+                 </a>`:``;
+
+                let actionObservation =  applyPermissionAddObservations ?
+                    `
+                    <a href="javascript:void(0);" 
+                       data-id="${ticket?.id || 0}" 
+                       data-status-id="${ticket?.statusId || 0}"  
+                       data-priority-id="${ticket?.priorityId || 0}"
+                       data-user-id="${ticket?.userId || 0}" 
+                       data-observation="${ticket?.observation || ''}"
+                       data-bs-toggle="tooltip" 
+                       class="text-secondary ticket-add-observation" 
+                       title="Agregar observación">
+                        <i class="ti ti-edit-circle fs-18"></i>
+                    </a>` : ``;
+
+                let actionCancel = applyPermissionCancelTicket ? 
+                `<a 
+                        href="javascript:void(0);" 
+                        data-id="${ticket?.id ?? 0}" 
+                        data-status-id="6"  
+                        data-user-id="${ticket?.userId ?? 0}" 
+                        data-uid="${ticket?.uid ?? ''}"
+                        class="text-secondary ticket-status-cancel" 
+                        data-bs-toggle="tooltip"
+                        title="Cancelar">
+                        <i class="ti ti-cancel fs-18"></i>
+                 </a>
+                ` : ``;
+
+                let actionReAssing = applyPermissionReAssing ?
+                   `
+                    <a  href="javascript:void(0);"
+                        data-id="${ticket?.id || 0}"
+                        data-user-assing-id="${ticket?.userAssingId || ''}"
+                        data-status-id="${ticket?.statusId || 0}" 
+                        data-bs-toggle="tooltip" 
+                        class="btn-assing-user"
+                        title="Reasignar">
+                        <i class="ti ti-replace-user fs-18"></i>
+                    </a>
+                   ` : ``;
+
+                let actionAssing = applyPermissionAssing ?
+                    `
+                    <a href="javascript:void(0);"
+                      data-id="${ticket?.id || 0}"
+                      data-user-assing-id="${ticket?.userAssingId || ''}"
+                      data-status-id="${ticket?.statusId || 0}" 
+                      data-bs-toggle="tooltip" 
+                      class="btn-assing-user"
+                      title="Asignar">
+                        <i class="ti ti-user-check fs-18"></i>
+                    </a>` : ``;
 
                 switch (ticket?.statusId || 0) {
                     case 1:
                         actionsHtml += ` 
-                            <a href="javascript:void(0);" 
-                               data-id="${ticket?.id || 0}" 
-                               data-status-id="${ticket?.statusId || 0}"  
-                               data-priority-id="${ticket?.priorityId || 0}"
-                               data-user-id="${ticket?.userId || 0}" 
-                               data-observation="${ticket?.observation || ''}"
-                               data-bs-toggle="tooltip" 
-                               class="text-secondary ticket-add-observation" 
-                               title="Agregar observación">
-                                <i class="ti ti-edit-circle fs-18"></i>
-                            </a>
-                            <a href="javascript:void(0);"
-                              data-id="${ticket?.id || 0}"
-                              data-user-assing-id="${ticket?.userAssingId || ''}"
-                              data-status-id="${ticket?.statusId || 0}" 
-                              data-bs-toggle="tooltip" 
-                              class="btn-assing-user"
-                              title="Asignar">
-                                <i class="ti ti-user-check fs-18"></i>
-                            </a>`;
-
+                            ${actionObservation}
+                            ${actionAssing}
+                        `;
                         break;
                     case 2:
-                         actionsHtml += `
-                             <a  href="javascript:void(0);"
-                                data-id="${ticket?.id || 0}"
-                                data-user-assing-id="${ticket?.userAssingId || ''}"
-                                data-status-id="${ticket?.statusId || 0}" 
-                                data-bs-toggle="tooltip" 
-                                class="btn-assing-user"
-                                title="Reasignar">
-                                 <i class="ti ti-replace-user fs-18"></i>
-                             </a>
-                             <a 
-                                    href="javascript:void(0);" 
-                                    data-id="${ticket?.id ?? 0}" 
-                                    data-status-id="6"  
-                                    data-user-id="${ticket?.userId ?? 0}" 
-                                    data-uid="${ticket?.uid ?? ''}"
-                                    class="text-secondary ticket-status-cancel" 
-                                    data-bs-toggle="tooltip"
-                                    title="Cancelar">
-                                    <i class="ti ti-cancel fs-18"></i>
-                             </a>
-                             <a 
-                                    href="javascript:void(0);" 
-                                    data-id="${ticket?.id ?? 0}" 
-                                    data-status-id="3"  
-                                    data-user-id="${ticket?.user_id ?? 0}"
-                                    data-uid="${ticket?.uid ?? ''}"
-                                    class="text-secondary ticket-status-waiting" 
-                                    data-bs-toggle="tooltip"
-                                    title="En espera">
-                                    <i class="ti ti-clock fs-18"></i>
-                             </a>
-                            <a 
-                                    href="javascript:void(0);" 
-                                    data-id="${ticket?.id ?? 0}" 
-                                    data-status-id="4"  
-                                    data-user-id="${ticket?.user_id ?? 0}"
-                                    data-uid="${ticket?.uid ?? ''}"
-                                    class="text-secondary ticket-status-completed" 
-                                    data-bs-toggle="tooltip"
-                                    title="Solucionado">
-                                    <i class="ti ti-circle-check fs-18"></i>
-                            </a>
-                            <a      href="javascript:void(0);" 
-                                    data-id="${ticket?.id || 0}" 
-                                    data-status-id="${ticket?.statusId || 0}"  
-                                    data-priority-id="${ticket?.priorityId || 0}"
-                                    data-user-id="${ticket?.userId || 0}" 
-                                    data-observation="${ticket?.observation || ''}"
-                                    data-bs-toggle="tooltip" 
-                                    class="text-secondary ticket-add-observation" 
-                                    title="Agregar observación">
-                                <i class="ti ti-edit-circle fs-18"></i>
-                            </a>`;
-                             
+                        actionsHtml += `
+                            ${actionReAssing}
+                             ${actionCancel}
+                             ${actionWaiting}
+                             ${actionSolved}
+                             ${actionObservation}
+                        `;
                         break;
                     case 3:
                         actionsHtml = `
-                            <a  href="javascript:void(0);"
-                                data-id="${ticket?.id || 0}"
-                                data-user-assing-id="${ticket?.userAssingId || ''}"
-                                data-status-id="${ticket?.statusId || 0}" 
-                                data-bs-toggle="tooltip" 
-                                class="btn-assing-user"
-                                title="Reasignar">
-                                <i class="ti ti-replace-user fs-18"></i>
-                            </a>
-                            <a 
-                                    href="javascript:void(0);" 
-                                    data-id="${ticket?.id ?? 0}" 
-                                    data-status-id="6"  
-                                    data-user-id="${ticket?.userId ?? 0}" 
-                                    data-uid="${ticket?.uid ?? ''}"
-                                    class="text-secondary ticket-status-cancel" 
-                                    data-bs-toggle="tooltip"
-                                    title="Cancelar">
-                                    <i class="ti ti-cancel fs-18"></i>
-                            </a>
-                            <a 
-                                    href="javascript:void(0);" 
-                                    data-id="${ticket?.id ?? 0}" 
-                                    data-status-id="4"  
-                                    data-user-id="${ticket?.user_id ?? 0}"
-                                    data-uid="${ticket?.uid ?? ''}"
-                                    class="text-secondary ticket-status-completed" 
-                                    data-bs-toggle="tooltip"
-                                    title="Solucionado">
-                                    <i class="ti ti-circle-check fs-18"></i>
-                            </a>
-                            <a      href="javascript:void(0);" 
-                                    data-id="${ticket?.id || 0}" 
-                                    data-status-id="${ticket?.statusId || 0}"  
-                                    data-priority-id="${ticket?.priorityId || 0}"
-                                    data-user-id="${ticket?.userId || 0}" 
-                                    data-observation="${ticket?.observation || ''}"
-                                    data-bs-toggle="tooltip" 
-                                    class="text-secondary ticket-add-observation" 
-                                    title="Agregar observación">
-                                <i class="ti ti-edit-circle fs-18"></i>
-                            </a>
+                            ${actionReAssing}
+                            ${actionSolved}
+                            ${actionCancel}
+                            ${actionObservation}
                         `;
                         break;
                     case 4:
                         actionsHtml = `
-                            <a 
-                                    href="javascript:void(0);" 
-                                    data-id="${ticket?.id ?? 0}" 
-                                    data-status-id="6"  
-                                    data-user-id="${ticket?.userId ?? 0}" 
-                                    data-uid="${ticket?.uid ?? ''}"
-                                    class="text-secondary ticket-status-cancel" 
-                                    data-bs-toggle="tooltip"
-                                    title="Cancelar">
-                                    <i class="ti ti-cancel fs-18"></i>
-                            </a>
-                            <a      href="javascript:void(0);" 
-                                    data-id="${ticket?.id || 0}" 
-                                    data-status-id="${ticket?.statusId || 0}"  
-                                    data-priority-id="${ticket?.priorityId || 0}"
-                                    data-user-id="${ticket?.userId || 0}" 
-                                    data-observation="${ticket?.observation || ''}"
-                                    data-bs-toggle="tooltip" 
-                                    class="text-secondary ticket-add-observation" 
-                                    title="Agregar observación">
-                                <i class="ti ti-edit-circle fs-18"></i>
-                            </a>
+                            ${actionCancel}
+                            ${actionObservation}
                         `;
-                    break;
+                         break;
                     case 5:
                     case 6:
                         actionsHtml = `
-                            <a      href="javascript:void(0);" 
-                                    data-id="${ticket?.id || 0}" 
-                                    data-status-id="${ticket?.statusId || 0}"  
-                                    data-priority-id="${ticket?.priorityId || 0}"
-                                    data-user-id="${ticket?.userId || 0}" 
-                                    data-observation="${ticket?.observation || ''}"
-                                    data-bs-toggle="tooltip" 
-                                    class="text-secondary ticket-add-observation" 
-                                    title="Agregar observación">
-                                <i class="ti ti-edit-circle fs-18"></i>
-                            </a>
+                            ${actionObservation}
                         `;
                     break;
                 

@@ -216,7 +216,8 @@ class TicketsController extends Controller
             $data = $this->service->getDataIndexCard($request);
 
             return response()->json([
-                'data' => $data
+                'data' => $data,
+                'current_permissions' => $this->userService->permissionListAuthenticatable(),
             ], 200);
 
         } catch (\Throwable $th) {
@@ -378,6 +379,8 @@ class TicketsController extends Controller
 
         $bgColor = TicketStatus::getBadgeClass($ticket?->status?->name);
 
+        $current_permissions = $this->userService->permissionListAuthenticatable();
+
         return view('tickets::show', compact(
         'user', 
         'initials', 
@@ -392,7 +395,8 @@ class TicketsController extends Controller
         'icon',
         'status',
         'bgColor',
-        'teamIds'
+        'teamIds',
+        'current_permissions'
         ));
     }
 

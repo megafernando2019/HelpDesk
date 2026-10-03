@@ -892,6 +892,7 @@ class TicketService {
 
     public function getDataIndexCard($request)
     {
+
         $user_id = Auth::user()->id;
         $ticket_status = (int) $request->ticket_status ?? 1;
         $priority = (int) $request->priority ?? 0;

@@ -10,6 +10,11 @@ use Modules\User\app\Models\Team;
 class UserRepo implements IUserRepo
 {
 
+    public function getAllPermissions()
+    {
+        return DB::table('permissions')->get();
+    }
+
     public function existsRol($record)
     {
        return DB::table('model_has_roles')

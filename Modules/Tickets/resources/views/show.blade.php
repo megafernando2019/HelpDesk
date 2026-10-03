@@ -228,28 +228,29 @@
                                                 </div>
                                                 <!-- etiquetas -->
                                                 <!-- observaciones -->
-                                                <div class="col-md-3">
-                                                    <i class="ti ti-edit"></i>
-                                                    Observaciones
-                                                </div>
-                                                <div class="col-md-9">
-                                                    <button class="action-save-observation btn btn-mega btn-sm float-right">
-                                                         <i class="ti ti-edit"></i>
-                                                        Guardar observación
-                                                    </button>
-                                                </div>
-                                                <div class="col-md-12 mt-2 focus-area">
-                                                    <textarea 
-                                                     class="form-control observation_d"
-                                                     name="observation_d" 
-                                                     id="" 
-                                                     rows="3" 
-                                                     placeholder="Agregar observación"></textarea>
-                                                    <div class="mb-3 text-danger error-invalid-observation"></div>
-                                                </div>
+                                                @can('add-observations')
+                                                    <div class="col-md-3">
+                                                        <i class="ti ti-edit"></i>
+                                                        Observaciones
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        <button class="action-save-observation btn btn-mega btn-sm float-right">
+                                                            <i class="ti ti-edit"></i>
+                                                            Guardar observación
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-12 mt-2 focus-area">
+                                                        <textarea 
+                                                        class="form-control observation_d"
+                                                        name="observation_d" 
+                                                        id="" 
+                                                        rows="3" 
+                                                        placeholder="Agregar observación"></textarea>
+                                                        <div class="mb-3 text-danger error-invalid-observation"></div>
+                                                    </div>
+                                                @endcan
 
-                                                <!-- ultima observacion registro -->
-                                                
+                                                <!-- ultima observacion registro -->                                       
                                                 <div class="col-md-12 mt-3 container-current-observation">
                                                     @if ($observation)
                                                         <div class="card">
@@ -312,15 +313,17 @@
                                     Encargado
                                 </h3>
 
-                                <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
-                                        class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
-                                        data-exist-user-assing='@json($UserAssignEntity)'
-                                        >
-                                    <i 
-                                      class="{{$currentUserAssing === 0 ? 'ti ti-user-check' 
-                                                                       : 'ti ti-replace-user'}}"></i>
-                                    {{$currentUserAssing === 0 ? 'Confirmar asignación' : 'Confirmar reasignación'}}
-                                </button>
+                                @canany(['assign-tickets', 'reassign-tickets'])
+                                    <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
+                                            class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
+                                            data-exist-user-assing='@json($UserAssignEntity)'
+                                            >
+                                        <i 
+                                        class="{{$currentUserAssing === 0 ? 'ti ti-user-check' 
+                                                                        : 'ti ti-replace-user'}}"></i>
+                                        {{$currentUserAssing === 0 ? 'Confirmar asignación' : 'Confirmar reasignación'}}
+                                    </button>
+                                @endcanany
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -328,19 +331,23 @@
                                         @if ($ticket)
                                             @if ($ticket->status_id === 5 || $ticket->status_id === 4)
                                                 @include('tickets::partials.show.view-user-default-assign',
-                                                    [
-                                                        'supportUsers' => $supportUsers,
-                                                        'currentUserAssing' => $currentUserAssing
-                                                    ]
+                                                        [
+                                                            'supportUsers' => $supportUsers,
+                                                            'currentUserAssing' => $currentUserAssing
+                                                        ]
                                                 )
+                                                 
                                             @else
-                                                @include(
+                                                @canany(['assign-tickets', 'reassign-tickets'])
+                                                    @include(
                                                     'tickets::partials.show.view-user-permision-action',
                                                         [
                                                             'supportUsers' => $supportUsers,
                                                             'currentUserAssing' => $currentUserAssing
                                                         ]
                                                     )
+                                                @endcanany
+                                                
                                             @endif
                                         @endif
                                     </div>
@@ -357,132 +364,156 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex gap-2 icons-group-actions">
-                                    @switch($ticket?->status_id ?? 0)
+                                
+                                     @switch($ticket?->status_id ?? 0)
                                         @case(1)
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="6"
-                                                    data-name="Cancelado"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Cancelar ticket">
-                                                <i class="ti ti-cancel"></i>
-                                            </button>
-
-                                            <button type="button" 
-                                                    class="btn btn-status-observation"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Agregar observación">
-                                                <i class="ti ti-edit-circle"></i>
-                                            </button>
+                                            @can('cancel-ticket')
+                                                <button type="button" 
+                                                        class="btn btn-status-action"
+                                                        data-status="6"
+                                                        data-name="Cancelado"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Cancelar ticket">
+                                                    <i class="ti ti-cancel"></i>
+                                                </button>
+                                            @endcan
+                                            @can('add-observations')
+                                                <button type="button" 
+                                                            class="btn btn-status-observation"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Agregar observación">
+                                                        <i class="ti ti-edit-circle"></i>
+                                                </button>
+                                            @endcan
+                                            
                                             @break
 
                                         @case(2)
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="4"
-                                                    data-name="Solucionado"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Marcar como Solucionado">
-                                                <i class="ti ti-circle-check"></i>
-                                            </button>
+                                            @can('solve-ticket')
+                                                <button type="button" 
+                                                        class="btn btn-status-action"
+                                                        data-status="4"
+                                                        data-name="Solucionado"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Marcar como Solucionado">
+                                                    <i class="ti ti-circle-check"></i>
+                                                </button>
+                                            @endcan
 
-                                            <button
-                                                 type="button" 
-                                                 class="btn btn-status-action"
-                                                 data-status="3"
-                                                 data-name="En espera"
-                                                 data-bs-toggle="tooltip"
-                                                 data-bs-placement="top"
-                                                 title="Enviar a en espera"
-                                            >
-                                                <i class="ti ti-clock"></i>
-                                            </button>
-                                            <button type="button" 
+                                            @can('move-ticket-to-wait')
+                                                <button
+                                                    type="button" 
                                                     class="btn btn-status-action"
-                                                    data-status="6"
-                                                    data-name="Cancelado"
+                                                    data-status="3"
+                                                    data-name="En espera"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="top"
-                                                    data-bs-title="Cancelar ticket">
-                                                <i class="ti ti-cancel"></i>
-                                            </button>
+                                                    title="Enviar a en espera"
+                                                >
+                                                    <i class="ti ti-clock"></i>
+                                                </button>
+                                            @endcan
+                                            @can('cancel-ticket')
+                                                <button type="button" 
+                                                        class="btn btn-status-action"
+                                                        data-status="6"
+                                                        data-name="Cancelado"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Cancelar ticket">
+                                                    <i class="ti ti-cancel"></i>
+                                                </button>
+                                            @endcan
 
-                                            <button type="button" 
-                                                    class="btn btn-status-observation"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Agregar observación">
-                                                <i class="ti ti-edit-circle"></i>
-                                            </button>
+                                            @can('add-observations')
+                                                <button type="button" 
+                                                            class="btn btn-status-observation"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Agregar observación">
+                                                        <i class="ti ti-edit-circle"></i>
+                                                </button>
+                                            @endcan
                                             @break
 
                                         @case(3)
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="4"
-                                                    data-name="Solucionado"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Marcar como Solucionado">
-                                                <i class="ti ti-circle-check"></i>
-                                            </button>
+                                            @can('solve-ticket')
+                                                <button type="button" 
+                                                        class="btn btn-status-action"
+                                                        data-status="4"
+                                                        data-name="Solucionado"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Marcar como Solucionado">
+                                                    <i class="ti ti-circle-check"></i>
+                                                </button>
+                                            @endcan
 
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="6"
-                                                    data-name="Cancelado"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Cancelar ticket">
-                                                <i class="ti ti-cancel"></i>
-                                            </button>
+                                             @can('cancel-ticket')
+                                                <button type="button" 
+                                                        class="btn btn-status-action"
+                                                        data-status="6"
+                                                        data-name="Cancelado"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Cancelar ticket">
+                                                    <i class="ti ti-cancel"></i>
+                                                </button>
+                                            @endcan
 
-                                            <button type="button" 
-                                                    class="btn btn-status-observation"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Agregar observación">
-                                                <i class="ti ti-edit-circle"></i>
-                                            </button>
+                                            @can('add-observations')
+                                                <button type="button" 
+                                                            class="btn btn-status-observation"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Agregar observación">
+                                                        <i class="ti ti-edit-circle"></i>
+                                                </button>
+                                            @endcan
                                             @break
 
                                         @case(4)
-                                            <button type="button" 
-                                                    class="btn btn-status-action"
-                                                    data-status="5"
-                                                    data-name="Cerrado"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Cerrar ticket">
-                                                <i class="ti ti-lock-check"></i>
-                                            </button>
+                                            @can('close-ticket')
+                                                <button type="button" 
+                                                        class="btn btn-status-action"
+                                                        data-status="5"
+                                                        data-name="Cerrado"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Cerrar ticket">
+                                                    <i class="ti ti-lock-check"></i>
+                                                </button>
+                                            @endcan
 
-                                            <button type="button" 
-                                                    class="btn btn-status-observation"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Agregar observación">
-                                                <i class="ti ti-edit-circle"></i>
-                                            </button>
+                                            @can('add-observations')
+                                                <button type="button" 
+                                                            class="btn btn-status-observation"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Agregar observación">
+                                                        <i class="ti ti-edit-circle"></i>
+                                                </button>
+                                            @endcan
                                             @break
 
                                         @case(5)
                                         @case(6)
-                                            <button type="button" 
-                                                    class="btn btn-status-observation"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-title="Agregar observación">
-                                                <i class="ti ti-edit-circle"></i>
-                                            </button>
+                                            @can('add-observations')
+                                                <button type="button" 
+                                                            class="btn btn-status-observation"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Agregar observación">
+                                                        <i class="ti ti-edit-circle"></i>
+                                                </button>
+                                            @endcan
                                             @break
 
                                         @default
                                     @endswitch
-                                    
                                 </div>
                             </div>
                             <div style="border: none;" 
@@ -504,6 +535,7 @@
 
             </div>
         </div>
-@include('tickets::partials.modal-add-reason-cancelled')
-@include('tickets::partials.modal-add-reason-completed')
+
+        @include('tickets::partials.modal-add-reason-cancelled')
+        @include('tickets::partials.modal-add-reason-completed')
 @endsection

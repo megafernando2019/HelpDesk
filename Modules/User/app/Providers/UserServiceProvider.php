@@ -8,6 +8,8 @@ use Modules\User\app\Repositories\Interfaces\IUserRepo;
 use Modules\User\app\Repositories\UserRepo;
 use Modules\User\app\Services\UserService;
 use Modules\User\app\Console\CreateChangeRolePermission;
+use Modules\User\app\Console\CreateRolesInit;
+use Modules\User\app\Console\SeedPermissions;
 
 class UserServiceProvider extends ModuleServiceProvider
 {
@@ -29,6 +31,7 @@ class UserServiceProvider extends ModuleServiceProvider
     
     protected array $commands = [
         CreateChangeRolePermission::class,
+        SeedPermissions::class
     ];
 
     /**
