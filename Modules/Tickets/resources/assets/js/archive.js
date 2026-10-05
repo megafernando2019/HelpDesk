@@ -236,6 +236,10 @@ $(document).ready(function () {
             });
 
 
+            const permissionsBackend = response.data.current_permissions ?? [];
+
+            const applyPermissionAddObservations = permissionsBackend.find(p => p.permission === 'add-observations')?.apply ?? false;
+
             if (ticketsCompleted.length === 0) {
                 $containerSucess.html('<div class="col-12 text-center text-muted py-4">No se encontraron tickets</div>');
                 
@@ -244,6 +248,22 @@ $(document).ready(function () {
 
 
                  ticketsCompleted.forEach((ticket, index) => {
+
+                    let actionAddObservation = applyPermissionAddObservations ?
+                    `
+                     <a 
+                            href="javascript:void(0);" 
+                            data-id="${ticket?.id ?? 0}" 
+                            data-status-id="${ticket?.status_id ?? 0}"  
+                            data-priority-id="${ticket?.ticket_priority_id ?? 0}"
+                            data-user-id="${ticket?.user_id ?? 0}" 
+                            data-observation="${ticket?.observation ?? ''}"
+                            class="text-secondary ticket-add-observation" 
+                            data-bs-toggle="tooltip"
+                            title="Agregar observación">
+                        <i class="ti ti-edit-circle fs-18"></i>
+                    </a>
+                    ` : ``;
 
                     const currentColor = colorsDefault[index % colorsDefault.length];
                     const randomColor = bgColors[ticket.id % bgColors.length];
@@ -303,18 +323,7 @@ $(document).ready(function () {
                                               title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
-                                            <a 
-                                                    href="javascript:void(0);" 
-                                                    data-id="${ticket?.id ?? 0}" 
-                                                    data-status-id="${ticket?.status_id ?? 0}"  
-                                                    data-priority-id="${ticket?.ticket_priority_id ?? 0}"
-                                                    data-user-id="${ticket?.user_id ?? 0}" 
-                                                    data-observation="${ticket?.observation ?? ''}"
-                                                    class="text-secondary ticket-add-observation"
-                                                    data-bs-toggle="tooltip" 
-                                                    title="Agregar observación">
-                                                <i class="ti ti-edit-circle fs-18"></i>
-                                            </a>
+                                           ${actionAddObservation}
                                         </div>
                                     </div>
 
@@ -344,6 +353,22 @@ $(document).ready(function () {
                  countTicketsCancel = ticketsCancel.length;
 
                  ticketsCancel.forEach((ticket, index) => {
+
+                    let actionAddObservation = applyPermissionAddObservations ?
+                    `
+                     <a 
+                            href="javascript:void(0);" 
+                            data-id="${ticket?.id ?? 0}" 
+                            data-status-id="${ticket?.status_id ?? 0}"  
+                            data-priority-id="${ticket?.ticket_priority_id ?? 0}"
+                            data-user-id="${ticket?.user_id ?? 0}" 
+                            data-observation="${ticket?.observation ?? ''}"
+                            class="text-secondary ticket-add-observation" 
+                            data-bs-toggle="tooltip"
+                            title="Agregar observación">
+                        <i class="ti ti-edit-circle fs-18"></i>
+                    </a>
+                    ` : ``;
 
                     const currentColor = colorsDefault[index % colorsDefault.length];
                     const randomColor = bgColors[ticket.id % bgColors.length];
@@ -404,18 +429,7 @@ $(document).ready(function () {
                                                title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
-                                            <a 
-                                                    href="javascript:void(0);" 
-                                                    data-id="${ticket?.id ?? 0}" 
-                                                    data-status-id="${ticket?.status_id ?? 0}"  
-                                                    data-priority-id="${ticket?.ticket_priority_id ?? 0}"
-                                                    data-user-id="${ticket?.user_id ?? 0}" 
-                                                    data-observation="${ticket?.observation ?? ''}"
-                                                    class="text-secondary ticket-add-observation" 
-                                                    data-bs-toggle="tooltip"
-                                                    title="Agregar observación">
-                                                <i class="ti ti-edit-circle fs-18"></i>
-                                            </a>
+                                            ${actionAddObservation}
                                         </div>
                                     </div>
 
@@ -446,6 +460,22 @@ $(document).ready(function () {
                  
 
                 ticketsClose.forEach((ticket, index) => {
+
+                    let actionAddObservation = applyPermissionAddObservations ?
+                    `
+                     <a 
+                            href="javascript:void(0);" 
+                            data-id="${ticket?.id ?? 0}" 
+                            data-status-id="${ticket?.status_id ?? 0}"  
+                            data-priority-id="${ticket?.ticket_priority_id ?? 0}"
+                            data-user-id="${ticket?.user_id ?? 0}" 
+                            data-observation="${ticket?.observation ?? ''}"
+                            class="text-secondary ticket-add-observation" 
+                            data-bs-toggle="tooltip"
+                            title="Agregar observación">
+                        <i class="ti ti-edit-circle fs-18"></i>
+                    </a>
+                    ` : ``;
 
                     const currentColor = colorsDefault[index % colorsDefault.length];
                     let assigned_name = (ticket?.assigned_first_name ?? '')+ ' ' +(ticket?.assigned_last_name ?? '');
@@ -501,17 +531,7 @@ $(document).ready(function () {
                                             <a href="/tickets/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
-                                            <a 
-                                                    href="javascript:void(0);" 
-                                                    data-id="${ticket?.id ?? 0}" 
-                                                    data-status-id="${ticket?.status_id ?? 0}"  
-                                                    data-priority-id="${ticket?.ticket_priority_id ?? 0}"
-                                                    data-user-id="${ticket?.user_id ?? 0}" 
-                                                    data-observation="${ticket?.observation ?? ''}"
-                                                    class="text-secondary ticket-add-observation"
-                                                    data-bs-toggle="tooltip" 
-                                                    title="Agregar observación">
-                                                <i class="ti ti-edit-circle fs-18"></i>
+                                            ${actionAddObservation}
                                             </a>
                                         </div>
                                     </div>
