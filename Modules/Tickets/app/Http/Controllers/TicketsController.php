@@ -235,7 +235,8 @@ class TicketsController extends Controller
             $data = $this->service->getToStatusesUserAssing($request);
 
             return response()->json([
-                'data' => $data
+                'data' => $data,
+                'current_permissions' => $this->userService->permissionListAuthenticatable()
             ], 200);
 
         } catch (\Throwable $th) {
