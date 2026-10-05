@@ -88,7 +88,7 @@ class UserService
         $user->unsetRelation('roles');
 
         // Obtengo el rol actual ya con la actualizacion
-        $currentRolName = $user->getRoleNames()->first();
+        $currentRolName = $user?->getRoleNames()?->first() ?? '';
 
         // Verifico al final si ya tiene los permisos especificados para su rol, si no lo tiene se los añadimos a ese usuario
         $rolePermissionsMap = [
