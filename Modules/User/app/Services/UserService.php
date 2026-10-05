@@ -5,8 +5,11 @@ namespace Modules\User\app\Services;
 use App\Helpers\GetInitials;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Modules\User\app\Repositories\Interfaces\IUserRepo;
 use Modules\User\app\Support\Mappers\MembersMapper;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class UserService
 {
@@ -48,21 +51,115 @@ class UserService
         return $this->repo->getAllRoles();
     }
 
+    /**
+     * Recupera los ids de cada permiso asignado al usuario en sesion
+     *
+     * @return array
+     */
+    public function getCurrentPermissionsOnlyIds()
+    {
+        return Auth::user()
+           ->getAllPermissions()
+           ->pluck('id')
+           ->toArray();
+    }
+
     public function changeProcessRole($request)
     {
+        $roleId =  $request?->role ?? 0;
+        $user = Auth::user();
+
         $record = [
-          'model_id' => Auth::user()->id,
+          'model_id' => $user->id,
           'model_type' => User::class,
-          'role_id' => $request?->role ?? 0
+          'role_id' => $roleId
         ];
 
         //Compruebo si ya existia el rol
         $rolExist = $this->repo->existsRol($record);
 
         if ($rolExist) {
-            return $this->repo->updateRol($record);
+           $this->repo->updateRol($record);
         } else {
-            return $this->repo->createRol($record);
+           $this->repo->createRol($record);
+        }
+
+        // Forzar a Eloquent a olvidar la relación en memoria para que obtenga el ROL NUEVO de la BD
+        $user->unsetRelation('roles');
+
+        // Obtengo el rol actual ya con la actualizacion
+        $currentRolName = $user->getRoleNames()->first();
+
+        // Verifico al final si ya tiene los permisos especificados para su rol, si no lo tiene se los añadimos a ese usuario
+        $rolePermissionsMap = [
+            'Jefe de equipo' => [
+                'create-ticket',
+                'view-tickets',
+                'assign-tickets',
+                'reassign-tickets',
+                'move-ticket-to-wait',
+                'add-observations',
+                'solve-ticket',
+                'close-ticket',
+                'cancel-ticket',
+                'view-statistics'
+            ],
+            'Encargado' => [
+                'create-ticket',
+                'view-tickets',
+                'view-statistics',
+                'move-ticket-to-wait',
+                'add-observations',
+                'solve-ticket'
+            ],
+            'Usuario' => [
+                'create-ticket',
+                'view-tickets',
+                'close-ticket',
+                'cancel-ticket'
+            ],
+            'Sistemas' => [
+                'create-ticket',
+                'view-tickets',
+                'add-observations',
+                'create-team'
+            ]
+        ];
+
+        // Obtener los nombres de permisos para el rol asignado
+        $defaultPermissionNames = $rolePermissionsMap[$currentRolName] ?? [];
+
+        if (!empty($defaultPermissionNames)) {
+            // Obtener los modelos de Permiso por su campo 'name'
+            $permissions = $this->repo->getPermissionsIdsByName($defaultPermissionNames);
+           
+            $NewpermissionsIds = [];
+            $rows = [];
+
+            if ($permissions->isNotEmpty()) {
+                $NewpermissionsIds = $permissions->toArray();
+
+                foreach ($NewpermissionsIds as $value) {
+                    $rows[] = [
+                        'permission_id' => (int) $value,
+                        'model_type'    =>  User::class,
+                        'model_id'      =>  $user->id
+                    ];
+                }
+            }
+
+            //Obtener los permisos actuales con solo sus ids
+            $directPermissionIds = $this->getCurrentPermissionsOnlyIds();
+
+            // Borrar los permisos actuales del usuario y despues añadirlo de nuevo
+            $this->repo->syncUserHasPermissions(
+                $directPermissionIds,
+                $rows,
+                $user->id
+            );
+
+            // Limpiar la caché de permisos de Spatie para que se apliquen inmediatamente
+            app()[PermissionRegistrar::class]->forgetCachedPermissions();
         }
     }
 

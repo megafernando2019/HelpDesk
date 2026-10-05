@@ -10,6 +10,36 @@ use Modules\User\app\Models\Team;
 class UserRepo implements IUserRepo
 {
 
+    public function syncUserHasPermissions(
+        $currentPermissionsIds,
+        $newPermissions,
+        $userId
+    )
+    {
+        // Borrar los permisos actuales del usuario y despues añadirlo de nuevo
+        DB::table('model_has_permissions')
+          ->where('model_id', $userId)
+          ->where('model_type', User::class)
+          ->whereIn('permission_id', $currentPermissionsIds)
+          ->whereNotIn('permission_id', function ($q) {
+                $q->select('id')
+                    ->from('permissions')
+                    ->whereIn('name', ['manage-user-roles']);
+          })
+          ->delete();
+
+        //Filas a añadir
+        DB::table('model_has_permissions')
+          ->insert($newPermissions);
+    }
+
+    public function getPermissionsIdsByName($args)
+    {
+        return DB::table('permissions')
+         ->whereIn('name', $args)
+         ->pluck('id');
+    }
+  
     public function getAllPermissions()
     {
         return DB::table('permissions')->get();

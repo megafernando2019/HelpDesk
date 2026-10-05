@@ -4,8 +4,38 @@ namespace Modules\User\app\Repositories\Interfaces;
 
 interface IUserRepo
 {
+    /**
+     *
+     * @param array $currentPermissionsIds
+     * @param array $newPermissions
+     * @return void
+     */
+    public function syncUserHasPermissions(
+        $currentPermissionsIds,
+        $newPermissions,
+        $userId
+    );
+
+    /**
+     *
+     * @param array $args
+     * @return void
+     */
+    public function getPermissionsIdsByName(
+        $args
+    );
+    
+    /**
+     *
+     * @return void
+     */
     public function getAllPermissions();
 
+    /**
+     *
+     * @param int $department_id
+     * @return void
+     */
     public function getUserByDepartmentId($department_id);
 
     /**
