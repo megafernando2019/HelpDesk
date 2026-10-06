@@ -74,6 +74,8 @@ $(document).ready(function () {
     async function getRoles() {
         const endpoint = '/users/get_current_roles';
 
+        $('.default-picture-tugui-roles').addClass('d-none ');
+
         $('.loading-roles-panel').removeClass('d-none ');
         rolSelectNew.empty().prop('disabled', true);
 
@@ -99,6 +101,8 @@ $(document).ready(function () {
         } catch (error) {
             console.error('Hubo un error al obtener los roles:', error);
         } finally {
+             $('.default-picture-tugui-roles').removeClass('d-none ');
+
              $('.loading-roles-panel').addClass('d-none ');
              rolSelectNew.prop('disabled', false);
         }

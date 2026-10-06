@@ -28,26 +28,11 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <!--listado de roles 
-                    <div class="col-md-12">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-mega rounded-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Roles
-                            </button>
-                            <ul class="dropdown-menu" style="">
-                                <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">Separated link</a></li>
-                            </ul>
-                        </div>
-                    </div> -->
                     <div class="col-md-12">
                         Cambia tu rol en el sistema
                     </div>
                     <div class="col-md-12 d-flex justify-content-center mt-2">
-                        <picture>
+                        <picture class="default-picture-tugui-roles">
                             <img width="140px" height="140" src="{{asset('build/img/icons/tugui_en_computadora.png')}}" alt="Tugui">
                         </picture>
                     </div>
@@ -55,8 +40,8 @@
                 <div class="row mt-2">
                     <div class="col-md-12">
                         <div class="d-flex justify-content-center loading-roles-panel gap-2 d-none" style="align-items: center;">
-                            <div class="spinner-border" role="status"></div>
-                            <p> Cargando roles...</p>
+                            <img src="{{asset('build/img/icons/gif_tugui_en_computadora_sin_fondo.gif')}}"
+                                 width="95" height="95" alt="gif tugui">
                         </div>
                     </div>
                     <div class="mb-3 col-md-6">

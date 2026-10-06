@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="d-flex align-items-center justify-content-between gap-2">
             @forelse ($dto->statuses as $item)
                    <div 
