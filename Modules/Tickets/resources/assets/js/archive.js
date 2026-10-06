@@ -293,7 +293,7 @@ $(document).ready(function () {
                                         </div>
                                         <div class="d-flex" style="flex-direction: column;">
                                             <!-- Título -->
-                                            <h6 class="text-mega fw-bold mb-0 text-truncate">
+                                            <h6 class="text-mega fw-bold mb-0 text-wrap">
                                                 ${ticket?.uid} - ${ticket?.title}
                                             </h6>
 
@@ -398,7 +398,7 @@ $(document).ready(function () {
                                         </div>
                                         <div class="d-flex" style="flex-direction: column;">
                                             <!-- Título -->
-                                            <h6 class="text-mega fw-bold mb-0 text-truncate">
+                                            <h6 class="text-mega fw-bold mb-0 text-wrap">
                                                 ${ticket?.uid} - ${ticket?.title}
                                             </h6>
 
@@ -505,7 +505,7 @@ $(document).ready(function () {
                                         </div>
                                         <div class="d-flex" style="flex-direction: column;">
                                             <!-- Título -->
-                                            <h6 class="text-mega fw-bold mb-0 text-truncate">
+                                            <h6 class="text-mega fw-bold mb-0 text-wrap">
                                                 ${ticket?.uid} - ${ticket?.title}
                                             </h6>
 
