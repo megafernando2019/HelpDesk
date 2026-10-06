@@ -374,17 +374,7 @@
                                 
                                      @switch($ticket?->status_id ?? 0)
                                         @case(1)
-                                            @can('cancel-ticket')
-                                                <button type="button" 
-                                                        class="btn btn-status-action"
-                                                        data-status="6"
-                                                        data-name="Cancelado"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-placement="top"
-                                                        data-bs-title="Cancelar ticket">
-                                                    <i class="ti ti-cancel"></i>
-                                                </button>
-                                            @endcan
+                                           
                                             @can('add-observations')
                                                 <button type="button" 
                                                             class="btn btn-status-observation"
