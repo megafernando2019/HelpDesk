@@ -601,46 +601,48 @@ $(document).ready(function () {
                         <i class="ti ti-user-check fs-18"></i>
                     </a>` : ``;
 
-                switch (ticket?.statusId || 0) {
-                    case 1:
-                        actionsHtml += ` 
-                            ${actionObservation}
-                            ${actionAssing}
-                        `;
-                        break;
-                    case 2:
-                        actionsHtml += `
-                            ${actionReAssing}
-                             ${actionCancel}
-                             ${actionWaiting}
-                             ${actionSolved}
-                             ${actionObservation}
-                        `;
-                        break;
-                    case 3:
-                        actionsHtml = `
-                            ${actionReAssing}
-                            ${actionSolved}
-                            ${actionCancel}
-                            ${actionObservation}
-                        `;
-                        break;
-                    case 4:
-                        actionsHtml = `
-                            ${actionCancel}
-                            ${actionObservation}
-                        `;
-                         break;
-                    case 5:
-                    case 6:
-                        actionsHtml = `
-                            ${actionObservation}
-                        `;
-                    break;
+                actionsHtml += `${actionObservation}`;
+
+                // switch (ticket?.statusId || 0) {
+                //     case 1:
+                //         actionsHtml += ` 
+                //             ${actionObservation}
+                //             ${actionAssing}
+                //         `;
+                //         break;
+                //     case 2:
+                //         actionsHtml += `
+                //              ${actionReAssing}
+                //              ${actionCancel}
+                //              ${actionWaiting}
+                //              ${actionSolved}
+                //              ${actionObservation}
+                //         `;
+                //         break;
+                //     case 3:
+                //         actionsHtml = `
+                //             ${actionReAssing}
+                //             ${actionSolved}
+                //             ${actionCancel}
+                //             ${actionObservation}
+                //         `;
+                //         break;
+                //     case 4:
+                //         actionsHtml = `
+                //             ${actionCancel}
+                //             ${actionObservation}
+                //         `;
+                //          break;
+                //     case 5:
+                //     case 6:
+                //         actionsHtml = `
+                //             ${actionObservation}
+                //         `;
+                //     break;
                 
-                    default:
-                        break;
-                }
+                //     default:
+                //         break;
+                // }
 
                 let card = templateHtml
                     .replace(/{id}/g, ticket?.id || 0)
