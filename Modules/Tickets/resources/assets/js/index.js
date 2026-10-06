@@ -601,7 +601,7 @@ $(document).ready(function () {
                         <i class="ti ti-user-check fs-18"></i>
                     </a>` : ``;
 
-                actionsHtml += `${actionObservation}`;
+                actionsHtml += `${actionObservation}${actionCancel}`;
 
                 // switch (ticket?.statusId || 0) {
                 //     case 1:
