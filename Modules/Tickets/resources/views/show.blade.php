@@ -49,7 +49,12 @@
                                         <div class="info-user-auth-heldesk">
                                                 <p class="p-0 m-0 fw-bold text-dark lh-1 text-truncate">
                                                     {{$full_name}} <i class="ti ti-point"></i>
-                                                    {{ $user?->teams?->first()?->name ?? 'Equipo no disponible' }}
+                                                    
+                                                    @role(App\Supports\Enums\RoleEnum::USUARIO->value)
+                                                      {{$user?->department?->name ?? 'Departamento no disponible'}}
+                                                    @else
+                                                      {{ $user?->teams?->first()?->name ?? 'Equipo no disponible' }}
+                                                    @endrole
                                                 </p>
                                                 <small style="font-size: 11px;" class="text-muted">{{$user?->email}}</small>
                                         </div>

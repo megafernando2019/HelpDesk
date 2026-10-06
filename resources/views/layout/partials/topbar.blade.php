@@ -117,8 +117,20 @@
                             <i class="ti ti-user"></i> Rol: {{Auth::user()->roles?->first()?->name ?? 'No asignado'}}
                         </div>
                         <div class="col-md-12">
-                            <i class="ti ti-brand-asana"></i> Equipo: 
-                            {{ Auth::user()->teams?->first()?->name ?? 'Sin equipo por mostrar' }}
+                            {{-- Si es rol usuario, mostrar solo su departamento --}}
+                            @role(App\Supports\Enums\RoleEnum::USUARIO->value)
+                                @php
+                                 Auth::user()->loadMissing(['department']);
+                                @endphp
+                                <i class="ti ti-building"></i> Departamento: 
+                                {{ Auth::user()->department?->name ?? 'Sin departamento por mostrar' }}
+                            @else
+                                @php
+                                  Auth::user()->loadMissing(['teams']);
+                                @endphp
+                                <i class="ti ti-brand-asana"></i> Equipo: 
+                                {{ Auth::user()->teams?->first()?->name ?? 'Sin equipo por mostrar' }}
+                            @endrole
                         </div>
                         <div class="col-md-12 mt-2 pb-2">
                             @can('manage-user-roles')
