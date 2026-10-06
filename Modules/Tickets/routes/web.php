@@ -15,24 +15,33 @@ Route::middleware(['auto_login'])->group(function () {
     Route::post('/get_ticket_logs_by_id', [TicketsController::class, 'getLogsByTicketId']); 
     //Asignar ticket
     Route::get('/assing_tickets', [TicketsController::class, 'viewAssingTickets'])
-         ->name('tickets.assing');
+         ->name('tickets.assing')
+         ->middleware('can:asignar');
     Route::get('/count_ticket_to_user_team', [TicketsController::class, 'countTicketToTeamAssing']);
     Route::get('/tickets/get_tickets_status_assgin', [TicketsController::class, 'getTicketsPendingAssing']); 
     // bulk assing tickets user
     Route::post('/tickets/assign_bulk', [TicketsController::class, 'assignBulkTickets']);
     //Reasignar tickets
     Route::get('/reassing_tickets', [TicketsController::class, 'viewReAssingTickets'])
-     ->name('tickets.reassing');
+         ->name('tickets.reassing')
+         ->middleware('can:reasignar');
     Route::get('/get_tickets_to_user_assing', [TicketsController::class, 'getTicketsAssignedToUser']);
     Route::post('/tickets/many_to_users/assign_bulk', [TicketsController::class, 'reassignManyBulkTicketsUser']);
     // Archivo 
-    Route::get('/tickets/archive', [TicketsController::class, 'viewArchive'])->name('tickets.archive');
+    Route::get('/tickets/archive', [TicketsController::class, 'viewArchive'])
+         ->name('tickets.archive')
+         ->middleware('can:archivo');
     Route::get('/tickets/get_any_statuses', [TicketsController::class, 'getAnyStatusesByUserAssing'])->name('tickets.any.statuses');
     //Mi trabajo diario
-    Route::get('/tickets/my_daily_job', [TicketsController::class, 'viewMyDailyJob'])->name('tickets.my.daily.job');
+    Route::get('/tickets/my_daily_job', [TicketsController::class, 'viewMyDailyJob'])
+         ->name('tickets.my.daily.job')
+         ->middleware('can:mi_trabajo_diario');
     Route::resource('tickets', TicketsController::class)->names('tickets');
     //Mi equipo
-    Route::get('/tickets/job/my_team', [TicketsController::class, 'viewMyTeam'])->name('tickets.my.team');
+    Route::get('/tickets/job/my_team', [TicketsController::class, 'viewMyTeam'])
+         ->name('tickets.my.team')
+         ->middleware('can:mi_equipo');
+
     Route::get('/tickets/my_team/apply_filters_charts', [TicketsController::class, 'getDataChartsMyTeam']);
     
 });

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Reports\Http\Controllers\ReportsController;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified' ,'can:reportes'])->group(function () {
     Route::prefix('reports')->group(function () {
         //Para categoria en modulo reportes y sus detalles
         Route::get('/get_summary', [ReportsController::class, 'getDataSummaryByModule']); 
@@ -17,7 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //Prefijo para rutas del submodulo de usuarios encargados
         Route::prefix('users_assings')->group(function() {
            Route::get('/', [ReportsController::class, 'viewReportUserAssing'])
-                 ->name('reports.index.users_assings');
+                ->name('reports.index.users_assings');
         });
     });
     

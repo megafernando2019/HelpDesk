@@ -118,105 +118,131 @@
                                             $roleId = auth()?->user()?->roles?->first()?->id ?? 0;
                                         @endphp
 
-                                        @if(in_array($roleId, [1, 4]))
+                                        @hasanyrole([
+                                            App\Supports\Enums\RoleEnum::SISTEMAS->value,
+                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value
+                                        ])
                                             <li>
                                                 <a href="{{ route('tickets.assing') }}" 
-                                                   class="{{ Route::is('tickets.assing') ? 'selected_menu' : '' }}">
+                                                class="{{ Route::is('tickets.assing') ? 'selected_menu' : '' }}">
                                                     Asignar
                                                 </a>
                                             </li>
-                                        @endif
-
-                                        @if(in_array($roleId, [1, 4]))
+                                        @endhasanyrole
+                
+                                        @hasanyrole([
+                                            App\Supports\Enums\RoleEnum::SISTEMAS->value,
+                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value
+                                        ])
                                             <li>
                                                 <a href="{{ route('tickets.reassing') }}" 
-                                                   class="{{ Route::is('tickets.reassing') ? 'selected_menu' : '' }}">
+                                                class="{{ Route::is('tickets.reassing') ? 'selected_menu' : '' }}">
                                                     Reasignar
                                                 </a>
                                             </li>
-                                        @endif
+                                        @endhasanyrole
 
-                                        @if(in_array($roleId, [1, 2, 4]))
+                                        @hasanyrole([
+                                            App\Supports\Enums\RoleEnum::SISTEMAS->value,
+                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
+                                            App\Supports\Enums\RoleEnum::ENCARGADO->value
+                                        ])
                                             <li>
                                                 <a href="{{ route('tickets.my.daily.job') }}" 
-                                                   class="{{ Route::is('tickets.my.daily.job') ? 'selected_menu' : '' }}">
+                                                class="{{ Route::is('tickets.my.daily.job') ? 'selected_menu' : '' }}">
                                                     Mi trabajo diario
                                                 </a>
                                             </li>
-                                        @endif
-
-                                        @if(in_array($roleId, [1, 2, 4]))
+                                        @endhasanyrole
+                                        
+                                        @hasanyrole([
+                                            App\Supports\Enums\RoleEnum::SISTEMAS->value,
+                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
+                                            App\Supports\Enums\RoleEnum::ENCARGADO->value
+                                        ])
                                             <li>
                                                 <a href="{{ route('tickets.archive') }}" 
-                                                   class="{{ Route::is('tickets.archive') ? 'selected_menu' : '' }}">
+                                                class="{{ Route::is('tickets.archive') ? 'selected_menu' : '' }}">
                                                     Archivo
                                                 </a>
                                             </li>
-                                        @endif
+                                        @endhasanyrole
                                     @endif
                                 </ul>
                             </li>
                         </ul>
                     </li>
 
-                    @if(auth()->check() && in_array($roleId, [1, 2, 4]))
-                        <li class="submenu-open">
-                            <ul>
-                                <li class="submenu">
-                                    <a href="javascript:void(0);"
-                                       class="{{ Route::is([
-                                           'reports.index',
-                                           'reports.index.service',
-                                           'reports.index.users_assings',
-                                       ]) ? 'active subdrop' : '' }}">
-                                        <i class="ti ti-chart-pie fs-16 me-2"></i>
-                                        <span>Reportes</span>
-                                        <span class="menu-arrow"></span>
-                                    </a>
-                                    <ul>
-                                        <li>
-                                            <a href="{{ route('reports.index') }}"
-                                               class="{{ Route::is('reports.index') ? 'selected_menu' : '' }}">Categorías</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('reports.index.service') }}"
-                                               class="{{ Route::is('reports.index.service') ? 'selected_menu' : '' }}">Servicios</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('reports.index.users_assings') }}"
-                                               class="{{ Route::is('reports.index.users_assings') ? 'selected_menu' : '' }}">Encargado</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
-                                    <a href="{{ route('tickets.my.team') }}">
-                                        <i class="ti ti-users fs-16 me-2"></i>
-                                        <span>Mi equipo</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                    @if(auth()->check())
+                        @hasanyrole([
+                            App\Supports\Enums\RoleEnum::SISTEMAS->value,
+                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
+                            App\Supports\Enums\RoleEnum::ENCARGADO->value
+                        ])
+                            <li class="submenu-open">
+                                <ul>
+                                    <li class="submenu">
+                                        <a href="javascript:void(0);"
+                                        class="{{ Route::is([
+                                            'reports.index',
+                                            'reports.index.service',
+                                            'reports.index.users_assings',
+                                        ]) ? 'active subdrop' : '' }}">
+                                            <i class="ti ti-chart-pie fs-16 me-2"></i>
+                                            <span>Reportes</span>
+                                            <span class="menu-arrow"></span>
+                                        </a>
+                                        <ul>
+                                            <li>
+                                                <a href="{{ route('reports.index') }}"
+                                                class="{{ Route::is('reports.index') ? 'selected_menu' : '' }}">Categorías</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('reports.index.service') }}"
+                                                class="{{ Route::is('reports.index.service') ? 'selected_menu' : '' }}">Servicios</a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('reports.index.users_assings') }}"
+                                                class="{{ Route::is('reports.index.users_assings') ? 'selected_menu' : '' }}">Encargado</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
+                                        <a href="{{ route('tickets.my.team') }}">
+                                            <i class="ti ti-users fs-16 me-2"></i>
+                                            <span>Mi equipo</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endhasanyrole
                     @endif
 
-                    @if(auth()->check() && $roleId === 4)
-                        <li class="submenu-open">
+                    @if(auth()->check())
+                        @hasanyrole([
+                            App\Supports\Enums\RoleEnum::SISTEMAS->value,
+                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
+                            App\Supports\Enums\RoleEnum::ENCARGADO->value
+                        ])
+                         <li class="submenu-open">
                             <ul>
                                 <li class="submenu">
                                     <a href="javascript:void(0);"
-                                       class="{{ Request::is('online-orders', 'pos-orders') ? 'active subdrop' : '' }}">
+                                       class="">
                                         <i class="ti ti-archive fs-16 me-2"></i>
                                         <span>Catálogos</span>
                                         <span class="menu-arrow"></span>
                                     </a>
                                     <ul>
-                                        <li><a href="{{ route('tickets.index') }}">Categorías</a></li>
-                                        <li><a href="{{ route('pos-orders') }}">Etiquetas</a></li>
-                                        <li><a href="{{ route('pos-orders') }}">Servicios</a></li>
-                                        <li><a href="{{ route('pos-orders') }}">Operadores</a></li>
+                                        <li><a href="#">Categorías</a></li>
+                                        <li><a href="#">Etiquetas</a></li>
+                                        <li><a href="#">Servicios</a></li>
+                                        <li><a href="#">Operadores</a></li>
                                     </ul>
                                 </li>
                             </ul>
-                        </li>
+                         </li>
+                        @endhasanyrole
                     @endif
                 </ul>
                 <!-- end menu -->
