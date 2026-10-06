@@ -108,19 +108,19 @@
                     <div class="profileset d-flex align-items-center gap-2">
                         <img width="40" style="height: 40px;" src="{{asset('build/img/icons/default-avatar.png')}}" alt="Img">
                         <div class="ml-1">
-                            <h6 class="fw-medium">{{ Auth::user()->first_name ?? 'Dato no disponible' }} {{ Auth::user()->last_name ?? 'Dato no disponible' }}</h6>
-                            <p> {{ Auth::user()->email ?? 'Correo no disponible' }}</p>
+                            <h6 class="fw-medium text-wrap">{{ Auth::user()->first_name ?? 'Dato no disponible' }} {{ Auth::user()->last_name ?? 'Dato no disponible' }}</h6>
+                            <p class="text-wrap"> {{ Auth::user()->email ?? 'Correo no disponible' }}</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <i class="ti ti-user"></i> Rol: {{Auth::user()->roles?->first()?->name ?? 'No asignado'}}
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 text-wrap">
                             {{-- Si es rol usuario, mostrar solo su departamento --}}
                             @role(App\Supports\Enums\RoleEnum::USUARIO->value)
                                 @php
-                                 Auth::user()->loadMissing(['department']);
+                                  Auth::user()->loadMissing(['department']);
                                 @endphp
                                 <i class="ti ti-building"></i> Departamento: 
                                 {{ Auth::user()->department?->name ?? 'Sin departamento por mostrar' }}
