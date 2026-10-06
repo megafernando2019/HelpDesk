@@ -8,18 +8,19 @@
     <div class="sidebar d-none" id="sidebar">
         @endif
         <!-- Logo -->
-        <div class="sidebar-logo">
+        <div class="sidebar-logo justify-content-center">
             <a href="{{route('tickets.index')}}" class="logo logo-normal">
-                <img src="{{URL::asset('build/img/logo.svg')}}" alt="Img">
+                <img 
+                    style="width: 50px;
+                           height: 50px;"
+                    src="{{URL::asset('build/img/icons/helpdesk_img.png')}}" 
+                    alt="Helpdesk logo">
             </a>
-            <a href="{{route('tickets.index')}}" class="logo logo-white">
-                <img src="{{URL::asset('build/img/logo-white.svg')}}" alt="Img">
-            </a>
-            <a href="{{route('tickets.index')}}" class="logo-small">
-                <img src="{{URL::asset('build/img/logo-small.png')}}" alt="Img">
-            </a>
-            <a href="{{route('tickets.index')}}" class="logo-small-white">
-                <img src="{{URL::asset('build/img/logo-small-white.png')}}" alt="Img">
+            <a href="{{route('tickets.index')}}" 
+                class="logo logo-small">
+                <img 
+                    src="{{URL::asset('build/img/icons/helpdesk_img.png')}}" 
+                    alt="Helpdesk logo">
             </a>
             <a id="toggle_btn" class="bg-mega" href="javascript:void(0);">
                 <i data-feather="chevrons-left" class="feather-16"></i>

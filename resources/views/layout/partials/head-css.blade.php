@@ -1,5 +1,7 @@
 	<!-- Favicon -->
-	<link rel="shortcut icon" type="image/x-icon" href="{{URL::asset('build/img/icons/mt-diamante.svg')}}">
+	<link rel="shortcut icon" 
+          type="image/x-icon"
+          href="{{URL::asset('build/img/icons/helpdesk_img.png')}}">
 
 	<!-- Apple Touch Icon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="{{URL::asset('build/img/apple-touch-icon.png')}}">
