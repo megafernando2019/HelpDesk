@@ -49,6 +49,12 @@
                         </div>
                     </div>
                     <!-- reasignacion body -->
+                    <div class="col-md-12 mb-2">
+                        <button id="btnSaveAssignments" type="button" class="btn btn-mega float-right rounded-pill">
+                             <i class="ti ti-replace-user me-1"></i>
+                             Confirmar reasignación
+                        </button>
+                    </div>
                     <div class="col-md-6">
                         <div class="card" style="height: calc(100vh - 80px) !important;">
                             <div class="card-header" style="border: none;">
@@ -94,13 +100,6 @@
                             </div>
                             <div class="card-footer text-body-secondary" style="border: none;"></div>
                         </div>
-                        
-                    </div>
-                    <div class="col-md-12 mb-2">
-                        <button id="btnSaveAssignments" type="button" class="btn btn-mega float-right rounded-pill">
-                             <i class="ti ti-replace-user me-1"></i>
-                             Confirmar reasignación
-                        </button>
                     </div>
                 </div>
             </div>
