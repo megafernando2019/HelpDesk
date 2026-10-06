@@ -96,6 +96,10 @@ class TicketService {
                 'end_date'   => $previousEnd->format('Y-m-d')
             ]);
 
+        } else {
+            //Fechas de un mes por defecto
+            $dateFrom = now()->subMonth()->startOfDay()->format('Y-m-d H:i:s');
+            $dateTo   = now()->endOfDay()->format('Y-m-d H:i:s');
         }
 
         // Estructuramos los filtros limpios para el Repositorio
@@ -426,6 +430,10 @@ class TicketService {
                 'end_date'   => $previousEnd->format('Y-m-d')
             ]);
 
+        } else {
+            //Fechas de un mes por defecto
+            $dateFrom = now()->subMonth()->startOfDay()->format('Y-m-d H:i:s');
+            $dateTo   = now()->endOfDay()->format('Y-m-d H:i:s');
         }
         
         // Estructuramos los filtros limpios para el Repositorio
@@ -676,7 +684,7 @@ class TicketService {
         $user = Auth::user();
         $user->load('teams');
         $teamsIds = $user?->teams?->pluck('id')->toArray() ?? [];
-       
+        $applyDateDefault = false;
         $ticket_statuses_param = $request->ticket_status ?? [];
         $priority = (int) ($request->priority ?? 0);
         $startDate = $request->start_date ?? null;
@@ -698,10 +706,12 @@ class TicketService {
 
         if ($startDate === "null") {
             $startDate = null;
+            $applyDateDefault = true;
         }
 
         if ($endDate === "null") {
             $endDate = null;
+            $applyDateDefault = true;
         }
 
         $query = $this->repo->findByStatusesIdsByTeamId(
@@ -709,7 +719,8 @@ class TicketService {
             $ticket_statuses,
             $priority,
             $startDate,
-            $endDate
+            $endDate,
+            $applyDateDefault
         );
 
         $tickets = $query->map(function($q) {

@@ -57,6 +57,7 @@ interface ITicketRepo {
      * @param int $priority
      * @param string $startDate
      * @param string $endDate
+     * @param bool $applyDateDefault
      * @return void
      */
     public function findByStatusesIdsByTeamId(
@@ -64,7 +65,8 @@ interface ITicketRepo {
         $ticket_statuses,
         $priority = 0,
         $startDate = null,
-        $endDate =null
+        $endDate =null,
+        $applyDateDefault = false
     );
 
     /**

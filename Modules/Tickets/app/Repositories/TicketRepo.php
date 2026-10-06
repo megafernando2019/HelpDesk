@@ -177,7 +177,8 @@ class TicketRepo implements ITicketRepo {
         $ticket_statuses,
         $priority = 0,
         $startDate = null,
-        $endDate =null
+        $endDate = null,
+        $applyDateDefault = false
     )
     {
         $q = DB::table('tickets as t')
@@ -212,6 +213,10 @@ class TicketRepo implements ITicketRepo {
                 $startDate . ' 00:00:00',
                 $endDate . ' 23:59:59'
             ]);
+        })
+        //Fecha inicial
+        ->when($applyDateDefault, function($q) {
+            $q->where('t.created_at', '>=', now()->subMonth()->startOfDay());
         })
         ->leftJoin('tickets_services as ts', 'ts.id', '=', 't.ticket_service_id')
         ->leftJoin('tickets_priorities as tp', 'tp.id', '=', 't.ticket_priority_id')
