@@ -196,14 +196,27 @@ class TicketService {
         ];
 
         // total de tickets cerrados / total de tickets recibidos por el equipo x 100
-        $percentageClousure = $totalNonCanceled > 0 
-            ? round(($closedRate / $totalNonCanceled) * 100) 
-            : 0;
-
+        $percentageClousure = $completedRate > 0 
+        ? round(($closedRate / $completedRate) * 100) 
+        : 0;
+            
         // TARJETA DONA CANCELACIÓN
+        // $percentageCancellation = $totalTickets > 0 
+        //     ? round(($cancelledRate / $totalTickets) * 100) 
+        //     : 0;
+
         $percentageCancellation = $totalTickets > 0 
             ? round(($cancelledRate / $totalTickets) * 100) 
             : 0;
+
+        // 4. Objeto de respuesta para el frontend
+        $cardMetricsCancellation = [
+            'percentage' => $percentageCancellation,
+            'series'     => [(int) $cancelledRate, (int) ($totalTickets - $cancelledRate)],
+            'labels'     => ['Cancelados', 'Otros'],
+            'diff'       => $absDiffCancellation,
+            'trend'      => $trendCancellation
+        ];
 
 
         if (!empty($previousArgs)) {
@@ -214,7 +227,7 @@ class TicketService {
             foreach ($byStatusCtxPrevious as $item) {
                 $current_status_name = $item?->status_name ?? '';
                 $current_total = (int) $item?->total ?? 0;
-                $totalTicketsPrev += (int) $item->total;
+                $totalTicketsPrev += (int) $item?->total;
 
                 match ($current_status_name) {
                     'Cancelado' => $cancelledRatePrev += $current_total,
@@ -224,6 +237,7 @@ class TicketService {
                
             }
 
+
             // Tasa de Cancelación del período anterior: (Cancelados / total asigandos del equipo) * 100
             $percentageCancellationPrev = $totalTicketsPrev > 0 
                 ? round(($cancelledRatePrev / $totalTicketsPrev) * 100) 
@@ -231,7 +245,7 @@ class TicketService {
 
             // Variación contra el período actual
             $diffCancellation    = $percentageCancellation - $percentageCancellationPrev;
-            $trendCancellation   = $diffCancellation > $percentageCancellation ? 'up' : 'down';
+            $trendCancellation   = $diffCancellation >= 0 ? 'up' : 'down';
             $absDiffCancellation = abs($diffCancellation);
 
              // Tasa de Cerrados del período anterior: (Cerrados / total asigandos del equipo) * 100
@@ -241,7 +255,7 @@ class TicketService {
 
               // Variación contra el período actual
             $diffClosure    = $percentageClousure - $percentageClosurePrev;
-            $trendClosure   = $diffClosure > $percentageClousure ? 'up' : 'down';
+            $trendClosure = $diffClosure >= 0 ? 'up' : 'down';
             $absDiffClosure = abs($diffClosure);
 
              //Grafica fechas tickets cerrados vs los que se reciben
@@ -511,9 +525,9 @@ class TicketService {
             ? round(($cancelledRate / $totalTickets) * 100) 
             : 0;
 
-        $percentageClousure =  $totalNonCanceled > 0 
-            ? round(($closedRate /  $totalNonCanceled) * 100) 
-            : 0;
+        $percentageClousure = $completedRate > 0 
+        ? round(($closedRate / $completedRate) * 100) 
+        : 0;
 
 
         if (!empty($previousArgs)) {

@@ -96,5 +96,5 @@
         </div>
     </div>
 
-@vite('Modules/Reports/resources/assets/js/reports_service.js')
+@vite('Modules/Reports/resources/assets/js/reports_user_assing.js')
 @endsection

@@ -93,7 +93,7 @@
                          Cargando...
                     </h3>
                     <span>
-                        Cancelados
+                         Cancelados
                     </span>
                 </div>
             </div>

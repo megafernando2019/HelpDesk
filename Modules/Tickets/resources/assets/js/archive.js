@@ -153,28 +153,27 @@ $(document).ready(function () {
     });
     
    
-
-    // if($('#flatpickr-range-tickets').length > 0 ){
+    if($('#flatpickr-range-tickets').length > 0 ){
         
-    //     dateRangePicker = flatpickr("#flatpickr-range-tickets", {
-    //         mode: "range",
-    //         dateFormat: "d-m-Y",
-    //         locale: "es", 
-    //         onChange: function(selectedDates, dateStr, instance) {
+        dateRangePicker = flatpickr("#flatpickr-range-tickets", {
+            mode: "range",
+            dateFormat: "d-m-Y",
+            locale: "es", 
+            onChange: function(selectedDates, dateStr, instance) {
                 
-    //             if (selectedDates.length === 2) {
-    //                 const $container = $('#tickets-container');
-    //                 const currentStatus = $container.attr('data-current-status') || null;
-    //                 const priority = $('[data-action=filter-by-priority]').val() || 0;
+                if (selectedDates.length === 2) {
+                    const $container = $('#tickets-container');
+                    const currentStatus = $container.attr('data-current-status') || null;
+                    const priority = $('[data-action=filter-by-priority]').val() || 0;
                     
-    //                 getTicketsDataKanban(currentStatus, null, priority);
-    //             }
-    //         },
-    //         onClose: function(selectedDates, dateStr, instance) {
+                    getTicketsDataKanban(currentStatus, null, priority);
+                }
+            },
+            onClose: function(selectedDates, dateStr, instance) {
                
-    //         }
-    //     });
-    // }
+            }
+        });
+    }
 
     function getTicketsDataKanban(
                                   status = null, 

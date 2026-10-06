@@ -310,7 +310,8 @@
 @if(Route::is([
                'tickets.index', 
                'tickets.my.daily.job', 
-               'tickets.my.team', 
+               'tickets.my.team',
+               'tickets.archive',
                'reports.index',
                'reports.index.service',
                 'reports.index.users_assings'

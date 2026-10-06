@@ -85,115 +85,141 @@
         </div>
         <div class="sidebar-inner slimscroll">
             <div id="sidebar-menu" class="sidebar-menu">
+                <!-- inicio del menu -->
                 <ul>
                     <li class="submenu-open">
                         <h6 class="submenu-hdr">Menú</h6>
                         <ul>
                             <li class="submenu">
                                 <a href="javascript:void(0);"
-                                class="
-                                {{ Route::is([
-                                'tickets.index', 
-                                'tickets.create', 
-                                'tickets.archive', 
-                                'tickets.assing', 
-                                'tickets.show',
-                                'tickets.my.daily.job',
-                                'tickets.reassing']) 
-                                ? 'active subdrop' : '' }}">
-                                        <span><i class="ti ti-ticket mr-1"></i> Tickets</span>
-                                        <span class="menu-arrow"></span>
-                                </a>
-                                <ul>
-                                   <li><a href="{{route('tickets.create')}}" class="{{ Route::is('tickets.create') ? 'selected_menu' : '' }}">Crear</a></li>
-                                   <li><a href="{{route('tickets.index')}}" class="{{Route::is('tickets.index') ? 'selected_menu' : ''}}">Mis tickets</a></li>
-                                   <li>
-                                        <a href="{{route('tickets.assing')}}" 
-                                          class="{{Route::is('tickets.assing') ? 'selected_menu' : ''}}">
-                                          Asignar
-                                        </a>
-                                    </li>
-                                <li>
-                                    <a href="{{route('tickets.reassing')}}" 
-                                      class="{{Route::is('tickets.reassing') ? 'selected_menu' : ''}}">
-                                      Reasignar
-                                    </a>
-                                </li>
-                                <li><a href="{{route('tickets.my.daily.job')}}" class="{{Route::is('tickets.my.daily.job') ? 'selected_menu' : ''}}">Mi trabajo diario</a></li>
-                                   <li><a href="{{route('tickets.archive')}}" class="{{Route::is('tickets.archive') ? 'selected_menu' : ''}}">Archivo</a></li>
-                                </ul>
-                            </li>
-                            
-                        </ul>
-                    </li>
-                    <li class="submenu-open">
-                        <ul>
-                            <li class="submenu">
-                                <a 
-                                   href="javascript:void(0);"
-                                     class="
-                                    {{ Route::is([
-                                       'reports.index',
-                                       'reports.index.service',
-                                       'reports.index.users_assings',
-                                    ]) 
-                                    ? 'active subdrop' : '' }}"
-                                    >
-                                    <i class="ti ti-chart-pie fs-16 me-2"></i>
-                                    <span>Reportes</span>
+                                   class="{{ Route::is([
+                                       'tickets.index', 
+                                       'tickets.create', 
+                                       'tickets.archive', 
+                                       'tickets.assing', 
+                                       'tickets.show',
+                                       'tickets.my.daily.job',
+                                       'tickets.reassing'
+                                   ]) ? 'active subdrop' : '' }}">
+                                    <span><i class="ti ti-ticket mr-1"></i> Tickets</span>
                                     <span class="menu-arrow"></span>
                                 </a>
                                 <ul>
-                                    <li><a href="{{route('reports.index')}}"
-                                           class="{{ Route::is('reports.index') ? 'selected_menu' : '' }}"
-                                           >Categorías
-                                        </a>
+                                    {{-- Accesibles para todos los usuarios --}}
+                                    <li>
+                                        <a href="{{ route('tickets.create') }}" class="{{ Route::is('tickets.create') ? 'selected_menu' : '' }}">Crear</a>
                                     </li>
-                                    <li><a href="{{route('reports.index.service')}}"
-                                           class="{{ Route::is('reports.index.service') ? 'selected_menu' : '' }}"
-                                           >Servicios
-                                        </a>
+                                    <li>
+                                        <a href="{{ route('tickets.index') }}" class="{{ Route::is('tickets.index') ? 'selected_menu' : '' }}">Mis tickets</a>
                                     </li>
-                                    <li><a href="{{route('reports.index.users_assings')}}"
-                                           class="{{ Route::is('reports.index.users_assings') ? 'selected_menu' : '' }}"
-                                           >Encargado
-                                        </a>
-                                    </li>
+                    
+                                    @if(auth()->check())
+                                        @php
+                                            $roleId = auth()?->user()?->roles?->first()?->id ?? 0;
+                                        @endphp
+
+                                        @if(in_array($roleId, [1, 4]))
+                                            <li>
+                                                <a href="{{ route('tickets.assing') }}" 
+                                                   class="{{ Route::is('tickets.assing') ? 'selected_menu' : '' }}">
+                                                    Asignar
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(in_array($roleId, [1, 4]))
+                                            <li>
+                                                <a href="{{ route('tickets.reassing') }}" 
+                                                   class="{{ Route::is('tickets.reassing') ? 'selected_menu' : '' }}">
+                                                    Reasignar
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(in_array($roleId, [1, 2, 4]))
+                                            <li>
+                                                <a href="{{ route('tickets.my.daily.job') }}" 
+                                                   class="{{ Route::is('tickets.my.daily.job') ? 'selected_menu' : '' }}">
+                                                    Mi trabajo diario
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(in_array($roleId, [1, 2, 4]))
+                                            <li>
+                                                <a href="{{ route('tickets.archive') }}" 
+                                                   class="{{ Route::is('tickets.archive') ? 'selected_menu' : '' }}">
+                                                    Archivo
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @endif
                                 </ul>
-                            </li>
-                            <li
-                                class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
-                                <a 
-                                href="{{route('tickets.my.team')}}">
-                                <i class="ti ti-users fs-16 me-2"></i>
-                                <span>Mi equipo</span>
-                                </a>
                             </li>
                         </ul>
                     </li>
-                    <li class="submenu-open">
-                        <ul>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"
-                                    class="{{ Request::is('online-orders', 'pos-orders') ? 'active subdrop' : '' }}">
-                                    <i class="ti ti-archive fs-16 me-2"></i>
-                                    <span>Catálogos</span>
-                                    <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="{{route('tickets.index')}}"
-                                            class="">Categorías</a>
-                                    </li>
-                                    <li><a href="{{route('pos-orders')}}"
-                                            class="">Etiquetas</a></li>
-                                    <li><a href="{{route('pos-orders')}}"
-                                            class="">Servicios</a></li>
-                                    <li><a href="{{route('pos-orders')}}"
-                                            class="">Operadores</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
+
+                    @if(auth()->check() && in_array($roleId, [1, 2, 4]))
+                        <li class="submenu-open">
+                            <ul>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"
+                                       class="{{ Route::is([
+                                           'reports.index',
+                                           'reports.index.service',
+                                           'reports.index.users_assings',
+                                       ]) ? 'active subdrop' : '' }}">
+                                        <i class="ti ti-chart-pie fs-16 me-2"></i>
+                                        <span>Reportes</span>
+                                        <span class="menu-arrow"></span>
+                                    </a>
+                                    <ul>
+                                        <li>
+                                            <a href="{{ route('reports.index') }}"
+                                               class="{{ Route::is('reports.index') ? 'selected_menu' : '' }}">Categorías</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('reports.index.service') }}"
+                                               class="{{ Route::is('reports.index.service') ? 'selected_menu' : '' }}">Servicios</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('reports.index.users_assings') }}"
+                                               class="{{ Route::is('reports.index.users_assings') ? 'selected_menu' : '' }}">Encargado</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
+                                    <a href="{{ route('tickets.my.team') }}">
+                                        <i class="ti ti-users fs-16 me-2"></i>
+                                        <span>Mi equipo</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+
+                    @if(auth()->check() && $roleId === 4)
+                        <li class="submenu-open">
+                            <ul>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"
+                                       class="{{ Request::is('online-orders', 'pos-orders') ? 'active subdrop' : '' }}">
+                                        <i class="ti ti-archive fs-16 me-2"></i>
+                                        <span>Catálogos</span>
+                                        <span class="menu-arrow"></span>
+                                    </a>
+                                    <ul>
+                                        <li><a href="{{ route('tickets.index') }}">Categorías</a></li>
+                                        <li><a href="{{ route('pos-orders') }}">Etiquetas</a></li>
+                                        <li><a href="{{ route('pos-orders') }}">Servicios</a></li>
+                                        <li><a href="{{ route('pos-orders') }}">Operadores</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
                 </ul>
+                <!-- end menu -->
             </div>
         </div>
     </div>
