@@ -7,6 +7,59 @@ use Modules\Reports\Repositories\Interfaces\IReportRepository;
 
 class ReportRepository implements IReportRepository {
 
+    public function getSummaryReportUsersAssing(
+        $teamId,
+        $dateFrom = null,
+        $dateTo = null
+    ) {
+        // Normalizar a array si viene un valor único
+        $teamIds = is_array($teamId) ? $teamId : [$teamId];
+
+        // Subconsulta para obtener el total global de tickets asignados en el rango/equipo
+        $totalPlatformTicketsSubquery = DB::table('tickets_users_assignations as us_sub')
+            ->join('tickets as t_sub', 't_sub.id', '=', 'us_sub.ticket_id')
+            ->whereIn('t_sub.team_id', $teamIds)
+            ->when($dateFrom && $dateTo, function ($q) use ($dateFrom, $dateTo) {
+                $q->whereBetween('us_sub.created_at', [$dateFrom, $dateTo]);
+            })
+            ->selectRaw('COUNT(DISTINCT t_sub.id)');
+
+        return DB::table('users as u')
+            ->join('tickets_users_assignations as us', 'us.user_id', '=', 'u.id')
+            ->join('tickets as t', function ($join) use ($teamIds) {
+                $join->on('t.id', '=', 'us.ticket_id')
+                     ->whereIn('t.team_id', $teamIds);
+            })
+            ->when($dateFrom && $dateTo, function ($query) use ($dateFrom, $dateTo) {
+                $query->whereBetween('us.created_at', [$dateFrom, $dateTo]);
+            })
+            ->select(
+                'u.id as user_id',
+                'u.first_name as user_first_name',
+                'u.last_name as user_last_name',
+                DB::raw('COUNT(DISTINCT t.id) as total_tickets'),
+                // Subconsulta integrada para obtener el total de asignados
+                DB::raw('(' . $totalPlatformTicketsSubquery->toSql() . ') as total_platform_tickets'),
+                // Desglose de estatus
+                DB::raw('SUM(CASE WHEN t.status_id = 2 THEN 1 ELSE 0 END) as en_proceso'),
+                DB::raw('SUM(CASE WHEN t.status_id = 3 THEN 1 ELSE 0 END) as en_espera'),
+                DB::raw('SUM(CASE WHEN t.status_id = 4 THEN 1 ELSE 0 END) as solucionados'),
+                DB::raw('SUM(CASE WHEN t.status_id = 5 THEN 1 ELSE 0 END) as cerrados'),
+                DB::raw('SUM(CASE WHEN t.status_id = 6 THEN 1 ELSE 0 END) as cancelados'),
+                // Cumplimiento = (Solucionados / Asignados al usuario) * 100
+                DB::raw('ROUND((SUM(CASE WHEN t.status_id = 4 THEN 1 ELSE 0 END) / NULLIF(COUNT(DISTINCT t.id), 0)) * 100, 2) as compliance'),
+                // TPS (Tiempo Promedio de Solución en Días)
+                DB::raw('ROUND(AVG(CASE WHEN t.status_id = 4 THEN TIMESTAMPDIFF(HOUR, t.created_at, t.updated_at) / 24.0 ELSE NULL END), 1) as tps_dias'),
+                // TC (Tasa de Cierre = Cerrados / Solucionados * 100)
+                DB::raw('ROUND((SUM(CASE WHEN t.status_id = 5 THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN t.status_id = 4 THEN 1 ELSE 0 END), 0)) * 100, 2) as tasa_cierre')
+            )
+            // Pasamos los bindings de la subconsulta
+            ->mergeBindings($totalPlatformTicketsSubquery)
+            ->groupBy('u.id', 'u.first_name', 'u.last_name')
+            ->havingRaw('COUNT(DISTINCT t.id) > 0')
+            ->simplePaginate(5);
+    }
+
     public function getCategorySummaryTicket(
         $teamId, 
         $membersId,

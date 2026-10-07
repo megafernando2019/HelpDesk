@@ -66,9 +66,8 @@
                                     <thead class="table-light text-secondary">
                                         <tr>
                                             <th class="py-3 fw-bold">No.</th>
-                                            <th class="py-3 fw-bold text-start">Servicio</th>
-                                            <th class="py-3 fw-bold">Categoría</th>
-                                            <th class="py-3 fw-bold">Total Recibidos</th>
+                                            <th class="py-3 fw-bold text-start">Encargado</th>
+                                            <th class="py-3 fw-bold">Carga actual</th>
                                             <th class="py-3 fw-bold">Por Asignar</th>
                                             <th class="py-3 fw-bold">En proceso</th>
                                             <th class="py-3 fw-bold">En espera</th>
@@ -77,6 +76,7 @@
                                             <th class="py-3 fw-bold">Cancelados</th>
                                             <th class="py-3 fw-bold">Cumplimiento</th>
                                             <th class="py-3 fw-bold">TPS</th>
+                                            <th class="py-3 fw-bold">TC</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-secondary fs-14">

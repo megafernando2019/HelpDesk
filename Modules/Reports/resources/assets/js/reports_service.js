@@ -10,7 +10,7 @@ $(document).ready(function () {
         { color: '#cb9b7a', waveClass: 'aletory-wave-5' }
     ];
     let currentMembersIds = [];
-    let currentUrl = '/reports/get_summary?page=2';
+    let currentUrl = '/reports/get_summary?page=1';
 
      // Rango de fechas
     $("#flatpickr-range").flatpickr({

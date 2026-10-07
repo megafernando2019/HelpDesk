@@ -202,10 +202,10 @@
                                                 <a href="{{ route('reports.index.service') }}"
                                                 class="{{ Route::is('reports.index.service') ? 'selected_menu' : '' }}">Servicios</a>
                                             </li>
-                                            {{-- <li>
+                                            <li>
                                                 <a href="{{ route('reports.index.users_assings') }}"
                                                 class="{{ Route::is('reports.index.users_assings') ? 'selected_menu' : '' }}">Encargado</a>
-                                            </li> --}}
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">

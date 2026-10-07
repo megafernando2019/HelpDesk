@@ -23,4 +23,10 @@ interface IReportRepository
         $dateFrom,
         $dateTo
     );
+
+    public function getSummaryReportUsersAssing(
+        $teamId,
+        $dateFrom,
+        $dateTo
+    );
 }

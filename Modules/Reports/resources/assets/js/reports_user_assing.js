@@ -4,7 +4,7 @@ $(document).ready(function () {
     
     const currentTeamId = $('.metadata-page-index').data('teamId');
     let currentMembersIds = [];
-    let currentUrl = '/reports/get_summary?page=2';
+    let currentUrl = '/reports/get_summary?page=1';
 
      // Rango de fechas
     $("#flatpickr-range").flatpickr({
@@ -120,16 +120,19 @@ $(document).ready(function () {
                     { 
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            return `<div class="text-start">${row?.service_name ?? '-'}</div>`;
+                            return `<div class="text-start">${row?.user_first_name ?? '-'} ${row?.user_last_name ?? '-'}</div>`;
                         }
                     },
                     { 
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            return `<div class="text-start">${row?.category_name ?? '-'}</div>`;
+                            return `<div class="text-start">
+                                  <span class="text-mega p-1 rounded fs-12 fw-bold" style="background-color:#e5edff !important;">
+                                    ${row?.total_tickets ?? '0'} / ${row?.total_platform_tickets ?? '0'} tickets
+                                  </span>
+                            </div>`;
                         }
                     },
-                    { "data": "total_tickets", "defaultContent": "0" },
                     { "data": "por_asignar", "defaultContent": "0" },
                     { "data": "en_proceso", "defaultContent": "0" },
                     { "data": "en_espera", "defaultContent": "0" },
@@ -137,7 +140,13 @@ $(document).ready(function () {
                     { "data": "cerrados", "defaultContent": "0" },
                     { "data": "cancelados", "defaultContent": "0" },
                     { "data": "compliance", "defaultContent": "0%" },
-                    { "data": "tps", "defaultContent": "0 hrs" }
+                    { "data": "tps_dias", "defaultContent": "0 hrs" },
+                    { 
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            return `<div class="text-start">${row?.tasa_cierre ?? '0'}%</div>`;
+                        }
+                    },
                 ]
             });
         }
@@ -232,10 +241,10 @@ $(document).ready(function () {
         
            $('.set-loading').addClass('item-disabled');
         try {
-            const response = await axios.get(url ?? currentUrl, {
+            const response = await axios.get(currentUrl, {
                 params: {
                     team_id: [currentTeamId],
-                    module: 'services',
+                    module: 'users_assing',
                     members_id: currentMembersIds,
                     date_range: $('#flatpickr-range').val() || null,
                 }
@@ -302,5 +311,7 @@ $(document).ready(function () {
         currentUrl = '/reports/get_summary?page=1';
         await loadAndRenderReport(currentUrl);
     });
+
+    loadAndRenderReport();
 
 });

@@ -43,6 +43,10 @@ class ReportService {
             // Fechas formateadas para la consulta actual
             $dateFrom = $currentStart->format('Y-m-d 00:00:00');
             $dateTo   = $currentEnd->format('Y-m-d 23:59:59');
+        } else {
+            //Fechas de un mes por defecto
+            $dateFrom = now()->subMonth()->startOfDay()->format('Y-m-d H:i:s');
+            $dateTo   = now()->endOfDay()->format('Y-m-d H:i:s');
         }
          
       return match ($module) {
@@ -58,6 +62,12 @@ class ReportService {
                      $dateFrom,
                      $dateTo
          ),
+         'users_assing' => $this->repo->getSummaryReportUsersAssing(
+                    $teamId,
+                    $dateFrom,
+                    $dateTo
+         ), 
+
          default => collect()
       };
    }
