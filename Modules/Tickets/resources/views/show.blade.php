@@ -386,7 +386,6 @@
                                             @endcan
 
                                             @if (auth()->user()->hasAnyRole(
-                                                 App\Supports\Enums\RoleEnum::USUARIO->value,
                                                  App\Supports\Enums\RoleEnum::ENCARGADO->value
                                                 ))
                                                 @can('cancel-ticket')
