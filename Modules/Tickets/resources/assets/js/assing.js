@@ -483,9 +483,10 @@ $(document).ready(function () {
             })
             .finally(() => {
                
-                console.log(selectedTickets)
-                $btn.prop('disabled', false).html('Confirmar Asignación');
-                checkConfirmButton();
+                if (selectedTickets.length === 0) {
+                    $btn.prop('disabled', true).html(' <i class="ti ti-user-check me-1"></i> Confirmar Asignación');
+                }
+                
             });
         });
 
@@ -497,11 +498,17 @@ $(document).ready(function () {
                         No hay tickets arrastrados aún.
                     </div>
                 `);
+
+                 console.log('array vacio')
+                $('#btn-confirm-assign').prop('disabled', true);
             } else {
                
+                console.log('tiene algo deberia habilitarse el boton')
+                $('#btn-confirm-assign').prop('disabled', false);
+
                 const html = selectedTickets.map(t => {
-                    // Usar el color de texto de la prioridad o un fallback por defecto
-                    const priorityBorderColor = t?.colorText || '#eab308';
+                // Usar el color de texto de la prioridad o un fallback por defecto
+                const priorityBorderColor = t?.colorText || '#eab308';
 
                     return `
                         <div class="card border border-primary-subtle shadow-sm p-2 d-flex flex-row align-items-center justify-content-between rounded-3 gap-2 mb-2" 
@@ -550,8 +557,6 @@ $(document).ready(function () {
 
                 $('.event-reload-count').text(data.tickets_count);
             }
-
-            checkConfirmButton();
         }
 
 
