@@ -601,48 +601,31 @@ $(document).ready(function () {
                         <i class="ti ti-user-check fs-18"></i>
                     </a>` : ``;
 
-                actionsHtml += `${actionObservation}${actionCancel}`;
+                let actionOnlyUserCancel = '';
 
-                // switch (ticket?.statusId || 0) {
-                //     case 1:
-                //         actionsHtml += ` 
-                //             ${actionObservation}
-                //             ${actionAssing}
-                //         `;
-                //         break;
-                //     case 2:
-                //         actionsHtml += `
-                //              ${actionReAssing}
-                //              ${actionCancel}
-                //              ${actionWaiting}
-                //              ${actionSolved}
-                //              ${actionObservation}
-                //         `;
-                //         break;
-                //     case 3:
-                //         actionsHtml = `
-                //             ${actionReAssing}
-                //             ${actionSolved}
-                //             ${actionCancel}
-                //             ${actionObservation}
-                //         `;
-                //         break;
-                //     case 4:
-                //         actionsHtml = `
-                //             ${actionCancel}
-                //             ${actionObservation}
-                //         `;
-                //          break;
-                //     case 5:
-                //     case 6:
-                //         actionsHtml = `
-                //             ${actionObservation}
-                //         `;
-                //     break;
-                
-                //     default:
-                //         break;
-                // }
+                switch (ticket?.statusId || 0) {
+                    case 1:
+                        actionsHtml += ` 
+                            ${actionObservation}
+                            ${actionAssing}
+                        `;
+
+                        actionOnlyUserCancel += actionCancel;
+
+                        break;
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        actionsHtml += ` 
+                            ${actionObservation}
+                            ${actionAssing}
+                        `;
+                        break;
+                    default:
+                        break;
+                }
 
                 let card = templateHtml
                     .replace(/{id}/g, ticket?.id || 0)
@@ -662,6 +645,7 @@ $(document).ready(function () {
                     .replace(/{userAssingId}/g, ticket?.userAssingId || '')
                     .replace(/{txt_current_color_priority}/g, priorityStyles.text || '#eee')
                     .replace(/{actions_buttons}/g, actionsHtml)
+                    .replace(/{actionOnlyUserCancel}/g, actionOnlyUserCancel)
                     .replace(/{showBtn}/g, showBtn);
 
                 $container.append(card);

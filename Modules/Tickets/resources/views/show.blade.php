@@ -384,6 +384,20 @@
                                                         <i class="ti ti-edit-circle"></i>
                                                 </button>
                                             @endcan
+
+                                            @if (auth()->user()->hasRole(App\Supports\Enums\RoleEnum::USUARIO->value))
+                                                @can('cancel-ticket')
+                                                    <button type="button" 
+                                                            class="btn btn-status-action"
+                                                            data-status="6"
+                                                            data-name="Cancelado"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Cancelar ticket">
+                                                        <i class="ti ti-cancel"></i>
+                                                    </button>
+                                                @endcan
+                                            @endif
                                             
                                             @break
 
@@ -413,18 +427,28 @@
                                                     <i class="ti ti-clock"></i>
                                                 </button>
                                             @endcan
-                                            @can('cancel-ticket')
-                                                <button type="button" 
-                                                        class="btn btn-status-action"
-                                                        data-status="6"
-                                                        data-name="Cancelado"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-placement="top"
-                                                        data-bs-title="Cancelar ticket">
-                                                    <i class="ti ti-cancel"></i>
-                                                </button>
-                                            @endcan
 
+                                            @if (
+                                                  auth()->check() &&
+                                                  auth()->user()->hasAnyRole([
+                                                    App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
+                                                    App\Supports\Enums\RoleEnum::ENCARGADO->value,
+                                                    App\Supports\Enums\RoleEnum::SISTEMAS->value
+                                                  ])
+                                                 )
+                                                @can('cancel-ticket')
+                                                    <button type="button" 
+                                                            class="btn btn-status-action"
+                                                            data-status="6"
+                                                            data-name="Cancelado"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Cancelar ticket">
+                                                        <i class="ti ti-cancel"></i>
+                                                    </button>
+                                                @endcan
+                                            @endif
+                                            
                                             @can('add-observations')
                                                 <button type="button" 
                                                             class="btn btn-status-observation"
@@ -449,17 +473,26 @@
                                                 </button>
                                             @endcan
 
-                                             @can('cancel-ticket')
-                                                <button type="button" 
-                                                        class="btn btn-status-action"
-                                                        data-status="6"
-                                                        data-name="Cancelado"
-                                                        data-bs-toggle="tooltip"
-                                                        data-bs-placement="top"
-                                                        data-bs-title="Cancelar ticket">
-                                                    <i class="ti ti-cancel"></i>
-                                                </button>
-                                            @endcan
+                                            @if (
+                                                  auth()->check() &&
+                                                  auth()->user()->hasAnyRole([
+                                                    App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
+                                                    App\Supports\Enums\RoleEnum::ENCARGADO->value,
+                                                    App\Supports\Enums\RoleEnum::SISTEMAS->value
+                                                  ])
+                                                 )
+                                                @can('cancel-ticket')
+                                                    <button type="button" 
+                                                            class="btn btn-status-action"
+                                                            data-status="6"
+                                                            data-name="Cancelado"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            data-bs-title="Cancelar ticket">
+                                                        <i class="ti ti-cancel"></i>
+                                                    </button>
+                                                @endcan
+                                            @endif
 
                                             @can('add-observations')
                                                 <button type="button" 

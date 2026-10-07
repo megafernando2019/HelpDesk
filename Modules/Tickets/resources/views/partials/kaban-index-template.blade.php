@@ -37,6 +37,9 @@
                         <div class="d-flex gap-2">
                             {showBtn}
                             {actions_buttons}
+                            @role(App\Supports\Enums\RoleEnum::USUARIO->value)
+                                {actionOnlyUserCancel}
+                            @endrole
                         </div>
                     </div>
 
