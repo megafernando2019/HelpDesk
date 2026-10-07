@@ -121,8 +121,7 @@
 
                                         @hasanyrole([
                                             App\Supports\Enums\RoleEnum::SISTEMAS->value,
-                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
-                                            App\Supports\Enums\RoleEnum::ENCARGADO->value
+                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value
                                         ])
                                             <li>
                                                 <a href="{{ route('tickets.assing') }}" 
@@ -134,8 +133,7 @@
                 
                                         @hasanyrole([
                                             App\Supports\Enums\RoleEnum::SISTEMAS->value,
-                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
-                                             App\Supports\Enums\RoleEnum::ENCARGADO->value
+                                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value
                                         ])
                                             <li>
                                                 <a href="{{ route('tickets.reassing') }}" 

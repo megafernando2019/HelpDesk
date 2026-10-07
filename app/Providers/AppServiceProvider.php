@@ -66,8 +66,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('asignar', function ($user) {
             return $user->hasAnyRole([
                     RoleEnum::SISTEMAS->value,
-                    RoleEnum::JEFE_EQUIPO->value,
-                    RoleEnum::ENCARGADO->value
+                    RoleEnum::JEFE_EQUIPO->value
                 ]);
         });
 
@@ -75,8 +74,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('reasignar', function ($user) {
             return $user->hasAnyRole([
                     RoleEnum::SISTEMAS->value,
-                    RoleEnum::JEFE_EQUIPO->value,
-                    RoleEnum::ENCARGADO->value
+                    RoleEnum::JEFE_EQUIPO->value
                 ]);
         });
     }

@@ -4,6 +4,7 @@ namespace Modules\User\app\Services;
 
 use App\Helpers\GetInitials;
 use App\Models\User;
+use App\Supports\Enums\RoleEnum;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\User\app\Repositories\Interfaces\IUserRepo;
@@ -88,11 +89,12 @@ class UserService
         $user->unsetRelation('roles');
 
         // Obtengo el rol actual ya con la actualizacion
-        $currentRolName = $user?->getRoleNames()?->first() ?? '';
+        $currentRolId = $user?->roles?->first()->id ?? 0;
 
         // Verifico al final si ya tiene los permisos especificados para su rol, si no lo tiene se los añadimos a ese usuario
         $rolePermissionsMap = [
-            'Jefe de equipo' => [
+            RoleEnum::JEFE_EQUIPO->value => 
+            [
                 'create-ticket',
                 'view-tickets',
                 'assign-tickets',
@@ -104,30 +106,39 @@ class UserService
                 'cancel-ticket',
                 'view-statistics'
             ],
-            'Encargado' => [
+            RoleEnum::ENCARGADO->value => 
+            [
                 'create-ticket',
                 'view-tickets',
                 'view-statistics',
                 'move-ticket-to-wait',
                 'add-observations',
-                'solve-ticket'
-            ],
-            'Usuario' => [
-                'create-ticket',
-                'view-tickets',
-                'close-ticket',
+                'solve-ticket',
                 'cancel-ticket'
             ],
-            'Sistemas' => [
+            RoleEnum::USUARIO->value => 
+            [
+                'create-ticket',
+                'view-tickets',
+                'cancel-ticket'
+            ],
+            RoleEnum::SISTEMAS->value => 
+            [
                 'create-ticket',
                 'view-tickets',
                 'add-observations',
-                'create-team'
+                'create-team',
+                'assign-tickets',
+                'reassign-tickets',
+                'move-ticket-to-wait',
+                'solve-ticket',
+                'close-ticket',
+                'cancel-ticket',
             ]
         ];
 
         // Obtener los nombres de permisos para el rol asignado
-        $defaultPermissionNames = $rolePermissionsMap[$currentRolName] ?? [];
+        $defaultPermissionNames = $rolePermissionsMap[$currentRolId] ?? [];
 
         if (!empty($defaultPermissionNames)) {
             // Obtener los modelos de Permiso por su campo 'name'
