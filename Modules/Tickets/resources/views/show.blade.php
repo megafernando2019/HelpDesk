@@ -385,7 +385,10 @@
                                                 </button>
                                             @endcan
 
-                                            @if (auth()->user()->hasRole(App\Supports\Enums\RoleEnum::USUARIO->value))
+                                            @if (auth()->user()->hasAnyRole(
+                                                 App\Supports\Enums\RoleEnum::USUARIO->value,
+                                                 App\Supports\Enums\ENCARGADO::USUARIO->value
+                                                ))
                                                 @can('cancel-ticket')
                                                     <button type="button" 
                                                             class="btn btn-status-action"
