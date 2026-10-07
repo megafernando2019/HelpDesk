@@ -614,13 +614,18 @@ $(document).ready(function () {
 
                         break;
                     case 2:
+                        actionsHtml += `${actionReAssing}${actionWaiting}${actionSolved}${actionObservation}${actionCancel}`;
+                        break;
                     case 3:
+                        actionsHtml += `${actionReAssing}${actionSolved}${actionObservation}${actionCancel}`;
+                        break;
                     case 4:
+                        actionsHtml += `${actionObservation}${actionCancel}`;
+                        break;
                     case 5:
                     case 6:
                         actionsHtml += ` 
                             ${actionObservation}
-                            ${actionAssing}
                         `;
                         break;
                     default:
