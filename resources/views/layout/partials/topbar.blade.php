@@ -104,12 +104,12 @@
                         <img width="40" style="height: 40px;" src="{{asset('build/img/icons/default-avatar.png')}}" alt="Img">
                     </span>
                 </a>
-                <div class="dropdown-menu menu-drop-user">
+                <div style="min-width: 320px;" class="dropdown-menu menu-drop-user shadow-lg">
                     <div class="profileset d-flex align-items-center gap-2">
                         <img width="40" style="height: 40px;" src="{{asset('build/img/icons/default-avatar.png')}}" alt="Img">
                         <div class="ml-1">
                             <h6 class="fw-medium text-wrap">{{ Auth::user()->first_name ?? 'Dato no disponible' }} {{ Auth::user()->last_name ?? 'Dato no disponible' }}</h6>
-                            <p class="text-wrap"> {{ Auth::user()->email ?? 'Correo no disponible' }}</p>
+                            <p class="text-wrap" style="overflow-wrap: break-word;word-break: break-all;"> {{ Auth::user()->email ?? 'Correo no disponible' }}</p>
                         </div>
                     </div>
                     <div class="row">
