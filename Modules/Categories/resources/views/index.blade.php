@@ -4,6 +4,10 @@
 
 @section('content')
 <style>
+    .select-color {
+        border: 3px solid #3e3e3e;
+    }
+
     .bg-light-blue {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
     }
@@ -55,14 +59,14 @@
             <div class="d-flex align-items-center gap-2">
                 <span class="text-muted fs-13">Vista</span>
                 <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-primary active"><i class="ti ti-layout-grid"></i></button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary"><i class="ti ti-list"></i></button>
+                    <button type="button" class="btn btn-sm btn-info active display-kaban"><i class="ti ti-layout-grid"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-info display-table"><i class="ti ti-list"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- GRID DE CATEGORÍAS -->
-        <div class="row g-3">
+        <!-- GRID KABAN DE CATEGORÍAS -->
+        <div class="row g-3" id="kanban-partial">
 
             <!-- TARJETA ESPECIAL: CREAR NUEVA CATEGORÍA -->
 
@@ -83,24 +87,43 @@
                 </div>
             </div>
 
-            <!-- CARDS DE CATEGORÍAS (ITERACIÓN DE LA PAGINACIÓN) -->
+            <!-- CARDS DE CATEGORÍAS -->
             @forelse($categories as $category)
+                @php
+                    $color = $category?->color ?? null;
+                @endphp
                 <div class="col-md-4">
                     <div class="card card-category border shadow-sm rounded-4 p-3 d-flex flex-column justify-content-between h-100">
                         <div>
                             <!-- Header de la Card: Nombre + Icono Editar -->
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="badge badge-soft-purple px-2 py-1 fs-12">
+                                <span 
+                                @if (!$color)
+                                 class="badge px-2 py-1 fs-12"
+                                 style="background-color: #C4C4C4;"
+                                @else
+                                 class="badge px-2 py-1 fs-12"
+                                 style="background-color: {{$color}};"
+                                @endif  
+                                >
                                     {{ $category?->name ?? '' }}
                                 </span>
-                                <a href="javascript:void(0);" class="edit-icon-btn" data-id="{{ $category->id ?? 0 }}" data-uid="{{ $category->uid ?? '' }}" title="Editar Categoría">
+                                <a href="javascript:void(0);" class="edit-icon-btn edit-action-category" 
+                                   data-id="{{ $category?->id ?? 0 }}"
+                                   data-name="{{ $category?->name ?? '' }}" 
+                                   data-description="{{ $category?->description ?? '' }}"
+                                   data-color="{{$color}}"
+                                   data-status="{{$category?->status ?? 0}}"
+                                   data-details="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? '') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                   data-bs-toggle="tooltip"
+                                   title="Editar Categoría">
                                     <i class="ti ti-pencil fs-18"></i>
                                 </a>
                             </div>
 
                             <!-- Descripción -->
                             <p class="text-muted fs-13 mb-0 lh-sm">
-                                {{ $category->description ?? 'Sin descripción disponible.' }}
+                                {{ $category?->description ?? 'Sin descripción disponible.' }}
                             </p>
                         </div>
                     </div>
@@ -113,7 +136,76 @@
 
         </div>
 
-        <!-- CONTROLES DE PAGINACIÓN (simplePaginate renderiza Anterior / Siguiente) -->
+        <!-- TABLA DE CATEGORÍAS -->
+        <div class="row d-none" id="table-partial">
+            <div class="col-md-12 mb-2">
+                <button 
+                    class="float-right btn btn-mega rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-1 shadow-sm"
+                    id="modal-add-category-table-action">
+                    <i class="ti ti-circle-plus fs-18"></i>
+                    <span class="text-light">Agregar categoría</span>
+                </button>
+            </div>
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4 py-3 text-muted fw-semibold fs-13">Nombre</th>
+                                        <th class="py-3 text-muted fw-semibold fs-13">Descripción</th>
+                                        <th class="pe-4 py-3 text-end text-muted fw-semibold fs-13">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($categories as $category)
+                                        <tr>
+                                            <!-- Nombre + Indicador de Color (Opcional) -->
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="rounded-circle" style="width: 10px; height: 10px; background-color: {{ $category->color ?? '#C4C4C4' }}; flex-shrink: 0;"></span>
+                                                    <span class="fw-medium text-dark fs-14">{{ $category->name }}</span>
+                                                </div>
+                                            </td>
+
+                                            <!-- Descripción -->
+                                            <td class="py-3 text-secondary fs-13">
+                                                {{ Str::limit($category->description, 90, '...') }}
+                                            </td>
+
+                                            <!-- Botón de Acción / Editar -->
+                                            <td class="pe-4 py-3 text-end">
+                                                <a href="javascript:void(0);" 
+                                                   class="btn btn-icon btn-sm btn-ghost-secondary edit-action-category rounded-circle" 
+                                                   data-id="{{ $category->id }}"
+                                                   data-name="{{ $category->name }}" 
+                                                   data-description="{{ $category->description }}"
+                                                   data-color="{{ $category->color ?? '#C4C4C4' }}"
+                                                   data-status="{{ $category->status ?? 1 }}"
+                                                   data-details="{{ ($category->first_name ?? '') . ' ' . ($category->last_name ?? '') . ' creó esta categoría el ' . \Carbon\Carbon::parse($category->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a') }}"
+                                                   data-bs-toggle="tooltip"
+                                                   title="Editar Categoría">
+                                                    <i class="ti ti-pencil fs-18 text-muted"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center py-4 text-muted fs-14">
+                                                No se encontraron categorías registradas.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLES DE PAGINACIÓN -->
         <div class="d-flex justify-content-end mt-4">
             {{ $categories->withQueryString()->links() }}
         </div>
@@ -122,6 +214,7 @@
 </div>
 
 @include('categories::partials.modal-create-category')
+@include('categories::partials.modal-update-category')
 
 @vite('Modules/Categories/resources/assets/js/index.js')
 @endsection

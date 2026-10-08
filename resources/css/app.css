@@ -141,7 +141,9 @@
     color: #212b36 !important;
 }
 
-
+.page-wrapper {
+    margin-bottom: 1.5em;
+}
 
 .dropdown-item.active {
     color: #31343b;

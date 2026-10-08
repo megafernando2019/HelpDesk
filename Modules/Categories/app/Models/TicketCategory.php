@@ -17,7 +17,9 @@ class TicketCategory extends Model
         'team_id',
         'name',
         'description',
-       
+        'color',
+        'status',
+        'created_by'
     ];
 
     /**
