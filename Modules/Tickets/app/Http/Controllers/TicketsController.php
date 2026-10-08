@@ -4,6 +4,7 @@ namespace Modules\Tickets\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Supports\Enums\RoleEnum;
 use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
 use Modules\Tickets\Support\Enums\TicketStatus;
 use Modules\User\app\Services\UserService;
-
+use Spatie\Permission\Traits\HasRoles;
 
 class TicketsController extends Controller
 {
@@ -251,10 +252,24 @@ class TicketsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $dto = $this->service->getDetailsIndex();
         $user = Auth::user();
+
+        $isFirstLogin = $request->session()->pull('sso_first_login', false);
+
+        if ($isFirstLogin) {
+            if ($user->hasAnyRole([
+                RoleEnum::SISTEMAS->value,
+                RoleEnum::ENCARGADO->value,
+                RoleEnum::JEFE_EQUIPO->value
+            ])) {
+                return redirect()->route('tickets.my.daily.job');
+            }
+
+        }
+
+        $dto = $this->service->getDetailsIndex();
        
         if ($user) {
             $user->load('teams');

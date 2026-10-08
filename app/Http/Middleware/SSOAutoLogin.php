@@ -21,7 +21,7 @@ class SSOAutoLogin
         $broker = new LaravelSSOBroker();
         $response = $broker->getUserInfo();
         $request->session()->put('umo', $response);
-        // dd($request->session()->get('umo', ['session']));
+        // dd($request->session()->get('umo', ['session']));   
 
         // If client is logged out in SSO server but still logged in broker.
         if (
@@ -51,6 +51,9 @@ class SSOAutoLogin
                     if ($user)
                     {
                         auth()->loginUsingId($user->id);
+
+                        //Crear flag en sesion para saber si inicio primera vez en helpdesk
+                        $request->session()->put('sso_first_login', true);
                     }
                 }
             }
