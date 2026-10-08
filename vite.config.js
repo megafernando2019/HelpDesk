@@ -48,7 +48,8 @@ export default defineConfig({
             'Modules/Tickets/resources/assets/js/my_team.js',
             'Modules/Reports/resources/assets/js/reports_category.js',
             'Modules/Reports/resources/assets/js/reports_service.js',
-            'Modules/Reports/resources/assets/js/reports_user_assing.js'
+            'Modules/Reports/resources/assets/js/reports_user_assing.js',
+            'Modules/Categories/resources/assets/js/index.js',
             ],
             refresh: true,
         }),

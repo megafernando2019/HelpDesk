@@ -196,7 +196,7 @@
                                         <ul>
                                             <li>
                                                 <a href="{{ route('reports.index') }}"
-                                                class="{{ Route::is('reports.index') ? 'selected_menu' : '' }}">Categorías</a>
+                                                   class="{{ Route::is('reports.index') ? 'selected_menu' : '' }}">Categorías</a>
                                             </li>
                                             <li>
                                                 <a href="{{ route('reports.index.service') }}"
@@ -219,7 +219,7 @@
                         @endhasanyrole
                     @endif
 
-                    {{-- @if(auth()->check())
+                    @if(auth()->check())
                         @hasanyrole([
                             App\Supports\Enums\RoleEnum::SISTEMAS->value,
                             App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
@@ -235,7 +235,7 @@
                                         <span class="menu-arrow"></span>
                                     </a>
                                     <ul>
-                                        <li><a href="#">Categorías</a></li>
+                                        <li><a href="{{route('categories.index')}}">Categorías</a></li>
                                         <li><a href="#">Etiquetas</a></li>
                                         <li><a href="#">Servicios</a></li>
                                         <li><a href="#">Operadores</a></li>
@@ -244,7 +244,7 @@
                             </ul>
                          </li>
                         @endhasanyrole
-                    @endif --}}
+                    @endif
                 </ul>
                 <!-- end menu -->
             </div>

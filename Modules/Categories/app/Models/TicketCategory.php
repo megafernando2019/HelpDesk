@@ -11,6 +11,15 @@ class TicketCategory extends Model
 
     protected $table = 'tickets_categories';
 
+    protected $fillable = [
+        'uid',
+        'department_id',
+        'team_id',
+        'name',
+        'description',
+       
+    ];
+
     /**
      * Relations
      */

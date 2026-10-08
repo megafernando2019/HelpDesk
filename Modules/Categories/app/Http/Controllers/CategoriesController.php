@@ -5,6 +5,9 @@ namespace Modules\Categories\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Modules\Categories\Models\TicketCategory;
 use Modules\Categories\Services\TicketCategoryService;
 
 class CategoriesController extends Controller
@@ -40,7 +43,9 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        return view('categories::index');
+        $categories = DB::table('tickets_categories')->simplePaginate(8);
+
+        return view('categories::index', compact('categories'));
     }
 
     /**
@@ -54,7 +59,30 @@ class CategoriesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {}
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'color'       => 'nullable|string|max:20',
+        ]);
+
+        do {
+            $uid = 'CAT' . strtoupper(Str::random(5));
+        } while (TicketCategory::where('uid', $uid)->exists());
+
+        // 3. Asignar campos requeridos por la base de datos
+        $validated['uid']           = $uid;
+        $validated['department_id'] = auth()->user()->department_id; // Ajusta según la relación de tu User/Sesión
+        $validated['team_id']       = auth()->user()->team_id ?? null; // Opcional
+
+        $category = TicketCategory::create($validated);
+
+        return response()->json([
+            'message'  => 'Categoría creada con éxito',
+            'category' => $category
+        ], 201);
+    }
 
     /**
      * Show the specified resource.
