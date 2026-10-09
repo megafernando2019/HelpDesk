@@ -238,7 +238,6 @@
                                         <li><a href="{{route('categories.index')}}">Categorías</a></li>
                                         <li><a href="#">Etiquetas</a></li>
                                         <li><a href="{{route('services.index')}}">Servicios</a></li>
-                                        <li><a href="#">Operadores</a></li>
                                     </ul>
                                 </li>
                             </ul>
