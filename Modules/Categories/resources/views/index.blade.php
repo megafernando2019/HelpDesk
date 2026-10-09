@@ -116,6 +116,7 @@
                                        data-color="{{$color}}"
                                        data-status="{{$category?->status ?? 0}}"
                                        data-logs='@json($category->formatted_logs)'
+                                       data-bs-toggle="tooltip"
                                        title="Editar Categoría">
                                         <i class="ti ti-pencil fs-18"></i>
                                     </a>
