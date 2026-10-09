@@ -22,7 +22,18 @@ class TicketServiceEntity extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'created_by',
+        'uid',
+        'category_id',
+        'department_id',
+        'status_id',
+        'name',
+        'description',
+        'template',
+        'color',
+        'supervisor'
+    ];
 
     /**
      * Relations

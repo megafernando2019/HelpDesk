@@ -71,7 +71,7 @@
             <!-- TARJETA ESPECIAL: CREAR NUEVA CATEGORÍA -->
 
             <div class="col-md-4">
-                <div data-bs-toggle="tooltip" title="Ver todo" class="card border shadow-sm rounded-4 team-card active-team-card overflow-hidden all-tugui-option-wave h-100" 
+                <div data-bs-toggle="tooltip" class="card border shadow-sm rounded-4 team-card active-team-card overflow-hidden all-tugui-option-wave h-100" 
                      data-member-id="all">
                     <div class="card-body p-3 d-flex align-items-center gap-3 h-100">
                         <img src="/build/img/icons/tugui_en_computadora.png" alt="Tugui" style="width: 60px; height: 60px; object-fit: cover;">
