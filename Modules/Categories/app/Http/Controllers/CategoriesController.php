@@ -48,22 +48,19 @@ class CategoriesController extends Controller
         $user = User::with('teams')->find(Auth::user()->id);
         $user_team_id = $user->teams?->first()?->id ?? 0;
 
-        $categories = DB::table('tickets_categories as c')
-                        ->leftJoin('users as u', 'u.id', '=', 'c.created_by')
-                        ->where('c.team_id', $user_team_id)
-                        ->select(
-                            'u.first_name',
-                            'u.last_name',
-                            'c.name',
-                            'c.description',
-                            'c.color',
-                            'c.id',
-                            'c.status',
-                            'c.created_by',
-                            'c.created_at',
-                            )
-                        ->orderByDesc('c.id')
-                        ->simplePaginate(8);
+        $categories = TicketCategory::with(['creator:id,first_name,last_name', 'services:id,category_id,name'])
+            ->where('team_id', $user_team_id)
+            ->orderByDesc('id')
+            ->simplePaginate(8);
+
+        // Transformamos los elementos para aplanar la estructura manteniedo el tipo Paginated
+        $categories->getCollection()->transform(function ($category) {
+            $category->first_name = $category->creator?->first_name;
+            $category->last_name = $category->creator?->last_name;
+            // Creamos la propiedad service_name o una lista formateada
+            $category->service_list = $category->services->pluck('name')->implode(','); 
+            return $category;
+        });
 
         return view('categories::index', compact('categories'));
     }

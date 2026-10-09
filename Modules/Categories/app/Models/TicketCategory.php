@@ -2,9 +2,11 @@
 
 namespace Modules\Categories\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Departments\Models\Department;
+use Modules\Services\Models\TicketServiceEntity;
 
 class TicketCategory extends Model
 {
@@ -28,5 +30,17 @@ class TicketCategory extends Model
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    // Relación con el usuario que creó la categoría
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Relación con los servicios asignados
+    public function services()
+    {
+        return $this->hasMany(TicketServiceEntity::class, 'category_id');
     }
 }

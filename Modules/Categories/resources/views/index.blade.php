@@ -108,17 +108,41 @@
                                 >
                                     {{ $category?->name ?? '' }}
                                 </span>
-                                <a href="javascript:void(0);" class="edit-icon-btn edit-action-category" 
-                                   data-id="{{ $category?->id ?? 0 }}"
-                                   data-name="{{ $category?->name ?? '' }}" 
-                                   data-description="{{ $category?->description ?? '' }}"
-                                   data-color="{{$color}}"
-                                   data-status="{{$category?->status ?? 0}}"
-                                   data-details="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? '') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
-                                   data-bs-toggle="tooltip"
-                                   title="Editar Categoría">
-                                    <i class="ti ti-pencil fs-18"></i>
-                                </a>
+                                <div class="d-flex container justify-content-end">
+                                    <a href="javascript:void(0);" class="edit-icon-btn edit-action-category" 
+                                       data-id="{{ $category?->id ?? 0 }}"
+                                       data-name="{{ $category?->name ?? '' }}" 
+                                       data-description="{{ $category?->description ?? '' }}"
+                                       data-color="{{$color}}"
+                                       data-status="{{$category?->status ?? 0}}"
+                                       data-details="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? '') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                       data-bs-toggle="tooltip"
+                                       title="Editar Categoría">
+                                        <i class="ti ti-pencil fs-18"></i>
+                                    </a>
+
+                                    @php
+                                         $services = $category?->services ?? collect();
+                                         $list = $services->isNotEmpty() ?
+                                         $services :
+                                         collect();
+                                    @endphp
+                                    <!-- btn show -->
+                                    <a href="javascript:void(0);"
+                                           class="btn-show-cat edit-icon-btn"
+                                           data-bs-toggle="tooltip"
+                                           title="Ver Categoría"
+                                           data-id="{{ $category?->id ?? 0 }}"
+                                           data-name="{{ $category?->name ?? '' }}" 
+                                           data-description="{{ $category?->description ?? '' }}"
+                                           data-color="{{$color}}"
+                                           data-status="{{$category?->status ?? 0}}"
+                                           data-created-at="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? 'Un empleado') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                           data-list-service='@json($list)'
+                                    >
+                                        <i class="ti ti-eye fs-18"></i>
+                                    </a>
+                                </div>
                             </div>
 
                             <!-- Descripción -->
@@ -214,6 +238,7 @@
 </div>
 
 @include('categories::partials.modal-create-category')
+@include('categories::partials.modal-show-category')
 @include('categories::partials.modal-update-category')
 
 @vite('Modules/Categories/resources/assets/js/index.js')

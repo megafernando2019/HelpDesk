@@ -5,8 +5,41 @@ $(document).ready(function () {
 
     const addCategoriaModal = $('#addCategoriaModal');
     const updateCategoriaModal = $('#updateCategoriaModal');
+    const showCatModal = $('#showCatModal');
     const kabanPartial = $('#kanban-partial');
     const tablePartial = $('#table-partial');
+
+    $(document).on('click', '.btn-show-cat', function () {
+        showCatModal.modal('show');
+
+        const categoryId   = $(this).data('id');
+        const categoryName  = $(this).data('name');
+        const description  = $(this).data('description');
+        const listService = $(this).data('listService');
+        const createdAt = $(this).data('createdAt');
+        let html = '';
+
+        $('.show-name').text('');
+        $('.show-description').text('');
+        $('.show-created').text('');
+        $('.wrap-container').empty();
+
+        $('.show-name').text(categoryName);
+        $('.show-description').text(description);
+
+
+        if (listService.length > 0) {
+            listService.forEach(element => {
+                 html += `<span class="badge bg-ocean rounded">${element?.name ?? 'Dato no disponible'}</span>`;
+                 
+            });
+
+             $('.wrap-container').append(`${html}`);
+        } else {
+             $('.wrap-container').html(`<span class="badge bg-ocean rounded">Esta categoría aun no cuenta con servicios asociados.</span>`);
+        }
+        $('.show-created').text(createdAt);
+    });
 
     $(document).on('click', '.display-kaban', function () {
         const btn = $(this);
