@@ -100,10 +100,10 @@
                                 <span 
                                 @if (!$color)
                                  class="badge px-2 py-1 fs-12"
-                                 style="background-color: #C4C4C4;"
+                                 style="background-color: #C4C4C44D; color: #c4c4c4;"
                                 @else
                                  class="badge px-2 py-1 fs-12"
-                                 style="background-color: {{$color}};"
+                                 style="background-color: {{$color}}3D; color: {{$color}} !important;"
                                 @endif  
                                 >
                                     {{ $category?->name ?? '' }}
@@ -161,11 +161,11 @@
                                 <tbody>
                                     @forelse($categories as $category)
                                         <tr>
-                                            <!-- Nombre + Indicador de Color (Opcional) -->
+                                            <!-- Nombre -->
                                             <td class="ps-4 py-3">
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <span class="rounded-circle" style="width: 10px; height: 10px; background-color: {{ $category->color ?? '#C4C4C4' }}; flex-shrink: 0;"></span>
-                                                    <span class="fw-medium text-dark fs-14">{{ $category->name }}</span>
+                                                    <span class="rounded-circle" style="width: 10px; height: 10px; background-color: {{ $category->color ?? '#C4C4C4' }}; flex-shrink: 0; opacity: 30%;"></span>
+                                                    <span class="fw-medium fs-14" style="color: {{$category->color ?? '#C4C4C4'}};">{{ $category->name }}</span>
                                                 </div>
                                             </td>
 
