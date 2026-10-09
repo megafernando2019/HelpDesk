@@ -5,10 +5,20 @@
 @section('content')
 <style>
 
-    .option-card-active {
-        box-shadow: 0 .5rem 1.2rem #0e72ff54 !important;
-        border-color: #0e72ff3b !important;
+    .option-card-active,
+    .option-card-active:focus,
+    .option-card-active:active {
+        box-shadow: 0 4px 12px rgba(14, 114, 255, 0.35) !important;
+        border-color: #1556b13b !important;
         transform: translateY(-2px);
+        transition: all 0.2s ease-in-out;
+        outline: none !important;
+    }
+
+    .btn-category-pill:focus,
+    .btn-category-pill:active {
+        box-shadow: none;
+        outline: none !important;
     }
 
     .select-color {
@@ -18,7 +28,7 @@
     .bg-light-blue {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
     }
-    .card-category {
+    /* .card-category {
         border: 1px solid #f1f5f9;
         border-radius: 16px;
         background-color: #ffffff;
@@ -29,7 +39,7 @@
     .card-category:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    }
+    } */
     .badge-soft-purple {
         background-color: #f3e8ff;
         color: #6b21a8;
@@ -70,8 +80,7 @@
 
     /* Máscara cuando está scrolleado al centro (desvanecer izquierda y derecha) */
     .category-pills-container.mask-scroll-both {
-        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-        mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black 5%, black 85%, transparent 100%);
     }
 
     /* Máscara cuando llega al final (desvanecer solo izquierda) */
@@ -105,24 +114,17 @@
 
             <!-- Cabecera de categorias -->
             <div class="col-md-12 mb-3">
-                <div class="d-flex align-items-center gap-2 overflow-auto py-2 category-pills-container mask-scroll-both">
-                    
-                    @php
-                       $loopFirst = 0;
-                    @endphp
-                    <!-- categorías asociadas -->
-                    @foreach ($categorias as $cat)
-                      @php
-                        $loopFirst++;
-                      @endphp 
-                      
+                <div class="d-flex align-items-center gap-2 overflow-auto p-3 py-2 category-pills-container mask-scroll-both">
+                    @forelse ($categorias as $cat)
+                        <!-- categorías asociadas -->
                         <button type="button" 
-                                class="{{$loopFirst === 1 ? 'option-card-active' : ''}} btn btn-sm fs-10 btn-category-pill bg-white border shadow-sm rounded-pill px-3 py-2 fs-13 fw-semibold text-dark text-nowrap" 
-                                data-id="{{ $cat->id }}"
-                                data-color="{{ $cat->color ?? '#C4C4C4' }}">
+                                class="mt-2 mb-2 {{$queryParamCard === $cat->id ? 'option-card-active' : ''}} btn btn-sm fs-10 shadow-sm btn-category-pill bg-white rounded-pill px-3 py-2 fs-13 fw-semibold text-dark text-nowrap" 
+                                data-id="{{ $cat->id }}">
                             {{ $cat->name }}
                         </button>
-                    @endforeach
+                    @empty
+                        
+                    @endforelse
                 </div>
             </div>
 
@@ -199,7 +201,7 @@
 
         <!-- TABLA DE CATEGORÍAS -->
         <div class="row d-none" id="table-partial">
-            <div class="col-md-12 mb-2">
+            <div class="col-md-12 mb-3 gap-2 d-flex" style="justify-content: flex-end;">
                 <button 
                     class="float-right btn btn-mega rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-1 shadow-sm"
                     id="modal-add-service-table-action">
@@ -207,10 +209,12 @@
                     <span class="text-light">Agregar servicio</span>
                 </button>
 
-                <select name="category_query_string" id="category_query_string_select" class="form-select select2-categories">
+                <select style="width: 250px;" name="category_query_string" id="category_query_string_select" class="form-select select2-categories">
                     <option value="" disabled selected hidden>Selecciona una categoría...</option>
                     @forelse ($categorias as $cat)
-                        <option value="{{ $cat->id }}" data-id="{{ $cat->id }}">
+                        <option value="{{ $cat->id }}" 
+                                {{$queryParamCard === $cat->id ? 'selected': ''}}
+                                data-id="{{ $cat->id }}">
                             {{ $cat->name }}
                         </option>
                     @empty
@@ -218,7 +222,7 @@
                     @endforelse
                 </select>
             </div>
-            <div class="col-12">
+            <div class="col-md-12">
                 <div class="card border-0 shadow-sm rounded-3">
                     <div class="card-body p-0">
                         <div class="table-responsive">

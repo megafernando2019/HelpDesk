@@ -8,6 +8,44 @@ $(document).ready(function () {
     const kabanPartial = $('#kanban-partial');
     const tablePartial = $('#table-partial');
 
+    $(document).on('click', '.btn-category-pill', function () {
+        const contextBtn = $(this);
+
+        $('.btn-category-pill').removeClass('option-card-active');
+
+        contextBtn.addClass('option-card-active');
+
+        const categoryId = $(this).data('id');
+
+        // Construir la nueva URL preservando la ruta base
+        const currentUrl = new URL(window.location.href);
+    
+        if (categoryId) {
+            currentUrl.searchParams.set('categoria', categoryId);
+        } else {
+            currentUrl.searchParams.delete('categoria');
+        }
+
+        // Redirigir/Recargar la página con el parámetro en el Query String
+        window.location.href = currentUrl.toString();
+    });
+
+    $('#category_query_string_select').change(function () { 
+        const categoryId = $(this).val();
+
+        // Construir la nueva URL preservando la ruta base
+        const currentUrl = new URL(window.location.href);
+    
+        if (categoryId) {
+            currentUrl.searchParams.set('categoria', categoryId);
+        } else {
+            currentUrl.searchParams.delete('categoria');
+        }
+
+        // Redirigir/Recargar la página con el parámetro en el Query String
+        window.location.href = currentUrl.toString();
+    });
+
     $('.category_id').select2({
         placeholder: 'Seleccionar categoría...',
         dropdownParent: addServiceModal,

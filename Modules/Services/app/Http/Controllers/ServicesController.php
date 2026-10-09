@@ -49,9 +49,12 @@ class ServicesController extends Controller
     {
         $user = User::with('teams')->find(Auth::user()->id);
         $user_team_id = $user->teams?->first()?->id ?? 0;
-        $categoryId = $request?->query('query_string_categoria') ?? 0;
+        $categoryId = $request?->query('categoria') ?? null;
         //Traer todas las categorias del equipo para la asignacion del select
         $categorias = TicketCategory::where('team_id', $user_team_id)->get();
+        $firstCategory = $categorias->isNotEmpty() ? $categorias->first() : null;
+        //Si hay una query string agarra esa, si no toma el primer id de la categoria
+        $queryParamCard = (int) ($categoryId ? $categoryId : $firstCategory?->id ?? null);
 
         $services = DB::table('tickets_services as s')
         ->join('tickets_categories as c', function($join) use ($user_team_id) {
@@ -73,13 +76,13 @@ class ServicesController extends Controller
             'c.id as category_id',
             'c.name as category_name'
         )
-        ->when($categoryId, function ($q, $categoryId) {
-            return $q->where('s.category_id', $categoryId);
+        ->when($queryParamCard, function ($q, $queryParamCard) {
+            return $q->where('s.category_id', $queryParamCard);
         })
         ->orderBy('s.id', 'desc')
         ->get();
 
-        return view('services::index', compact('services', 'categorias'));
+        return view('services::index', compact('services', 'categorias', 'queryParamCard'));
     }
 
     /**
