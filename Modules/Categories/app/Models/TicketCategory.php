@@ -43,4 +43,9 @@ class TicketCategory extends Model
     {
         return $this->hasMany(TicketServiceEntity::class, 'category_id');
     }
+
+    public function logs_actions()
+    {
+        return $this->hasMany(LogActionsCategory::class, 'category_id');
+    }
 }

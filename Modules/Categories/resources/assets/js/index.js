@@ -155,6 +155,7 @@ $(document).ready(function () {
         const categoryName  = $(this).data('name');
         const description  = $(this).data('description');
         const colorValue   = $(this).data('color');
+        let logs = $(this).data('logs') || [];
 
         // Limpiar estados de color anteriores en el modal de edición
         $('#updateCategoriaModal .color-option').removeClass('select-color');
@@ -178,15 +179,24 @@ $(document).ready(function () {
         }
 
         let status = $(this).data('status');
-        let details = $(this).data('details');
 
         // Asignar el estado al Checkbox/Switch
         let isChecked = status == 1 || status === true;
         $('#categoryStatus').prop('checked', isChecked);
         $('#categoryStatusLabel').text(isChecked ? 'Activado' : 'Desactivado');
 
-        // Asignar la información de detalles
-        $('#categoryDetailsText').text(details);
+        if (logs.length > 0) {
+            
+            let logsHtml = logs.map(log => `
+                <div class="mb-1 text-wrap">
+                    <strong class="text-muted">${log.message}</strong>
+                </div>
+            `).join('');
+
+            $('#categoryDetailsText').html(logsHtml);
+        } else {
+            $('#categoryDetailsText').html('<span class="text-muted">Sin historial de cambios</span>');
+        }
 
         // Mostrar el modal
         updateCategoriaModal.modal('show');

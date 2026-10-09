@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Modules\Categories\Models\LogActionsCategory;
 use Modules\Categories\Models\TicketCategory;
 use Modules\Categories\Services\TicketCategoryService;
 
@@ -48,7 +49,11 @@ class CategoriesController extends Controller
         $user = User::with('teams')->find(Auth::user()->id);
         $user_team_id = $user->teams?->first()?->id ?? 0;
 
-        $categories = TicketCategory::with(['creator:id,first_name,last_name', 'services:id,category_id,name'])
+        $categories = TicketCategory::with([
+            'creator:id,first_name,last_name', 
+            'services:id,category_id,name',
+            'logs_actions'
+            ])
             ->where('team_id', $user_team_id)
             ->orderByDesc('id')
             ->simplePaginate(8);
@@ -59,6 +64,25 @@ class CategoriesController extends Controller
             $category->last_name = $category->creator?->last_name;
             // Creamos la propiedad service_name o una lista formateada
             $category->service_list = $category->services->pluck('name')->implode(','); 
+
+            //Mapeo los logs
+            $category->formatted_logs = $category->logs_actions->map(function ($log) {
+                $userName = $log->user 
+                    ? trim("{$log->user->first_name} {$log->user->last_name}")
+                    : 'Usuario';
+
+                // Formato: "Miércoles 04 de Octubre del 2023 a las 12:14 pm"
+                $dateFormatted = ucfirst($log->created_at->locale('es')->isoFormat('dddd DD [de] MMMM [del] YYYY [a las] hh:mm a'));
+
+                $actionText = $log->message ?? 'realizó un cambio en esta categoría';
+
+                return [
+                    'user' => $userName,
+                    'message' => $actionText,
+                    'date' => $dateFormatted,
+                    'full_text' => "{$userName} {$actionText} el {$dateFormatted}"
+                ];
+            });
             return $category;
         });
 
@@ -104,6 +128,21 @@ class CategoriesController extends Controller
 
         $category = TicketCategory::create($record);
 
+        //Si se creo la categoria
+        if ($category) {
+            //Guardar log
+            LogActionsCategory::create([
+                'category_id'   => $category->id,
+                'user_id'       => $user->id,
+                'resource_name' => 'store',
+                'section_name'  => 'Agregar Categoría',
+                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                    . ' creó esta categoría el ' 
+                                    . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')),
+                'values'        => $category->toArray(),
+            ]);
+        }
+
         return response()->json([
             'message'  => 'Categoría creada con éxito',
             'category' => $category
@@ -142,13 +181,54 @@ class CategoriesController extends Controller
         ]);
 
         try {
+            $user = Auth::user();
             $category = TicketCategory::findOrFail($id);
+
+            $oldStatus = (int) $category->status;
 
             $category->name        = $validatedData['name'];
             $category->description = $validatedData['description'];
             $category->color       = $validatedData['color'] ?? '#C4C4C4'; // Valor de resguardo por defecto
             $category->status      = $request?->status ?? 0;
             $category->save();
+
+            $categoryStatus = $category->status;
+
+
+            //Guardar log edicion
+            LogActionsCategory::create([
+                'category_id'   => $category->id,
+                'user_id'       => $user->id,
+                'resource_name' => 'update',
+                'section_name'  => 'Editar Categoría',
+                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                    . ' editó esta categoría el ' 
+                                    . (\Carbon\Carbon::now()->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')),
+                'values'        => $category->toArray(),
+            ]);
+
+            $aditionalAction = $oldStatus !== $categoryStatus;
+
+            if ($aditionalAction) {
+                 //Guardar log activar/desactivar
+                 $action = match ($categoryStatus) {
+                    0 => 'desactivo',
+                    1 => 'activó',
+                 };
+
+                LogActionsCategory::create([
+                    'category_id'   => $category->id,
+                    'user_id'       => $user->id,
+                    'resource_name' => 'update',
+                    'section_name'  => $action,
+                    'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                        .' '. $action .' esta categoría el ' 
+                                        . (\Carbon\Carbon::now()->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')),
+                    'values'        =>  [
+                        'status' => $categoryStatus 
+                    ],
+                ]);
+            }
 
             return response()->json([
                 'success' => true,

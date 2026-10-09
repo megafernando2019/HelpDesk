@@ -106,7 +106,8 @@
                             <label class="form-label text-muted fs-13 mb-1 fw-semibold">Detalles</label>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="badge rounded-circle bg-primary p-1" style="width: 12px; height: 12px;"></span>
-                                <span class="fs-13 text-secondary" id="categoryDetailsText">--</span>
+                                <span style="height: 200px;
+                                overflow-x: auto;" class="fs-13 text-secondary" id="categoryDetailsText">--</span>
                             </div>
                         </div>
 

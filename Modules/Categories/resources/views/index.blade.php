@@ -115,8 +115,7 @@
                                        data-description="{{ $category?->description ?? '' }}"
                                        data-color="{{$color}}"
                                        data-status="{{$category?->status ?? 0}}"
-                                       data-details="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? '') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
-                                       data-bs-toggle="tooltip"
+                                       data-logs='@json($category->formatted_logs)'
                                        title="Editar Categoría">
                                         <i class="ti ti-pencil fs-18"></i>
                                     </a>
@@ -207,7 +206,7 @@
                                                    data-description="{{ $category->description }}"
                                                    data-color="{{ $category->color ?? '#C4C4C4' }}"
                                                    data-status="{{ $category->status ?? 1 }}"
-                                                   data-details="{{ ($category->first_name ?? '') . ' ' . ($category->last_name ?? '') . ' creó esta categoría el ' . \Carbon\Carbon::parse($category->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a') }}"
+                                                   data-logs='@json($category->logs_actions)'
                                                    data-bs-toggle="tooltip"
                                                    title="Editar Categoría">
                                                     <i class="ti ti-pencil fs-18 text-muted"></i>
