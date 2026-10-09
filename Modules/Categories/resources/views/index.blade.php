@@ -199,7 +199,7 @@
                                             </td>
 
                                             <!-- Botón de Acción / Editar -->
-                                            <td class="pe-4 py-3 text-end">
+                                            <td class="pe-4 py-3 d-flex align-items-center">
                                                 <a href="javascript:void(0);" 
                                                    class="btn btn-icon btn-sm btn-ghost-secondary edit-action-category rounded-circle" 
                                                    data-id="{{ $category->id }}"
@@ -211,6 +211,27 @@
                                                    data-bs-toggle="tooltip"
                                                    title="Editar Categoría">
                                                     <i class="ti ti-pencil fs-18 text-muted"></i>
+                                                </a>
+                                                @php
+                                                     $services = $category?->services ?? collect();
+                                                     $list = $services->isNotEmpty() ?
+                                                     $services :
+                                                     collect();
+                                                @endphp
+                                                <!-- btn show -->
+                                                <a href="javascript:void(0);"
+                                                       class="btn-show-cat btn-icon"
+                                                       data-bs-toggle="tooltip"
+                                                       title="Ver Categoría"
+                                                       data-id="{{ $category?->id ?? 0 }}"
+                                                       data-name="{{ $category?->name ?? '' }}" 
+                                                       data-description="{{ $category?->description ?? '' }}"
+                                                       data-color="{{$color}}"
+                                                       data-status="{{$category?->status ?? 0}}"
+                                                       data-created-at="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? 'Un empleado') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                                       data-list-service='@json($list)'
+                                                >
+                                                    <i class="ti ti-eye fs-18 text-muted"></i>
                                                 </a>
                                             </td>
                                         </tr>
