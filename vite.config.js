@@ -50,7 +50,8 @@ export default defineConfig({
             'Modules/Reports/resources/assets/js/reports_service.js',
             'Modules/Reports/resources/assets/js/reports_user_assing.js',
             'Modules/Categories/resources/assets/js/index.js',
-            'Modules/Services/resources/assets/js/index.js'
+            'Modules/Services/resources/assets/js/index.js',
+            'Modules/Tags/resources/assets/js/index.js'
             ],
             refresh: true,
         }),
