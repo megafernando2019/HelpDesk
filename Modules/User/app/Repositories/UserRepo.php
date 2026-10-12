@@ -119,4 +119,8 @@ class UserRepo implements IUserRepo
         return Team::select($fields)->get();
     }
 
+    public function getUserById($id, $relations = [])
+    {
+        return User::with($relations)->find($id);
+    }
 }

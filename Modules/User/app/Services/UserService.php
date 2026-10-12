@@ -22,6 +22,11 @@ class UserService
         
     }
 
+    public function getUser($id, $relations = [])
+    {
+        return $this->repo->getUserById($id, $relations);
+    }
+
     public function permissionListAuthenticatable()
     {
         /**

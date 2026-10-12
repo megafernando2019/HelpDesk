@@ -75,6 +75,10 @@ class Ticket extends Model
         return $this->hasMany(TicketLog::class, 'ticket_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
     // protected static function newFactory(): TicketFactory
     // {
     //     // return TicketFactory::new();

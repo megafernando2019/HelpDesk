@@ -6,6 +6,14 @@ interface IUserRepo
 {
     /**
      *
+     * @param int $id
+     * @param array $relations
+     * @return void
+     */
+    public function getUserById($id, $relations = []);
+
+    /**
+     *
      * @param array $currentPermissionsIds
      * @param array $newPermissions
      * @return void

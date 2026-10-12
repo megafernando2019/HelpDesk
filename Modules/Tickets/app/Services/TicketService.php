@@ -12,9 +12,11 @@ use Modules\Tickets\Support\Mappers\TicketMapper;
 use Modules\Tickets\Support\Mappers\ViewParamsIndexMapper;
 use Illuminate\Support\Str;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
+use Modules\Tickets\Jobs\SendTicketEmailJob;
 use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Support\Enums\TicketAction;
 use Modules\Tickets\Support\Enums\TicketPriorityColor;
+use Modules\User\app\Services\UserService;
 
 class TicketService {
 
@@ -23,6 +25,7 @@ class TicketService {
     public function __construct(
        private readonly ITicketRepo $repo,
        private readonly TicketLogService $log_ticket_service,
+       private readonly UserService $user_service
     ) {
        
     }
@@ -1048,6 +1051,14 @@ class TicketService {
 
        //Si se creo la entidad, guardo su log
        if ($ticket) {
+
+         //Asignacion automatizada
+         $assignedUserId = $this->getNextAssignedUserId($values['team_id']);
+
+        if ($assignedUserId) {
+            $ticket->assignees()->attach($assignedUserId); 
+        }
+
          $enum_action = TicketAction::CREATE_TICKET;
 
          $this->log_ticket_service->logAction(
@@ -1055,6 +1066,23 @@ class TicketService {
             $enum_action,
             'create',
             'tickets/create'
+         );
+
+        $assignedUser = $this->user_service->getUser($assignedUserId);
+
+         //Enviar correo
+        SendTicketEmailJob::dispatch(
+            $ticket,
+            'assigned',
+            $assignedUser->email,  // Destinatario principal
+            'bborja@megatravel.com.mx',    // CC
+            sprintf(
+                '%s %s',
+            $assignedUser->first_name,
+            $assignedUser->last_name
+            ),   
+            null,
+            session('umo.session.token') // Token para el cURL
          );
        }
 
@@ -1167,6 +1195,23 @@ class TicketService {
 
                 }
             }
+
+            //$assignedUser = $this->user_service->getUser($user_id);
+
+             //Enviar correo
+            // SendTicketEmailJob::dispatch(
+            //     $ticket,
+            //     'assigned',
+            //     $assignedUser->email,  // Destinatario principal
+            //     'bborja@megatravel.com.mx',    // CC
+            //     sprintf(
+            //         '%s %s',
+            //     $assignedUser->first_name,
+            //     $assignedUser->last_name
+            //     ),   
+            //     null,
+            //     session('umo.session.token') // Token para el cURL
+            //  );
         });
 
         return true;
@@ -1324,5 +1369,6 @@ class TicketService {
 
         return $uid;
     }
+
 
 }
