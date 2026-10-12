@@ -239,7 +239,7 @@
                                 <p class="label">
                                     @if($type === 'assigned') Fecha de asignación @elseif($type === 'observation') Fecha de observación @else Fecha de solución @endif
                                 </p>
-                                <p class="value">{{ now()->format('d \d\e F Y, H:i') }} h</p>
+                                <p class="value">{{ now()->locale('es')->translatedFormat('d \d\e F Y, H:i') }} h</p>
                             </div>
                         </div>
                     </td>

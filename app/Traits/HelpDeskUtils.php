@@ -29,15 +29,14 @@ trait HelpDeskUtils
       * @param Request $request
       * @param string $token_req
       */
-    public static function send_mail(array $data, $request,  $token_req = null )
+    public static function send_mail(array $data, $request, $token_req = null)
     {
-        if($token_req){
+        if ($token_req) {
             $token = $token_req;
-        }else{
-             $token = $request->session()->get('umo.session.token');
+        } else {
+            $token = $request->session()->get('umo.session.token');
         }
 
-       
         $curl = curl_init();
 
         $body = [
@@ -46,9 +45,23 @@ trait HelpDeskUtils
             'body'    => $data['body'] ?? '',
             'tags'    => json_encode($data['tags'] ?? []),
             'user'    => $data['user'] ?? '',
-            'cc'      =>  $data['cc'] ?? ''
         ];
 
+        // --- MANEJO DE CC (Formato para cURL Multipart) ---
+        if (!empty($data['cc'])) {
+            $ccList = is_array($data['cc']) ? $data['cc'] : explode(',', $data['cc']);
+            $ccList = array_map('trim', array_filter($ccList));
+
+            // Si es más de un correo, desglosamos como cc[0], cc[1] O enviamos como string unificado
+            // Para compatibilidad total con la API, asignamos los índices explícitos
+            foreach (array_values($ccList) as $i => $email) {
+                $body["cc[$i]"] = $email;
+            }
+        } else {
+            $body['cc'] = '';
+        }
+
+        // --- MANEJO DE ARCHIVOS ADJUNTOS ---
         if (!empty($data['attach'])) {
             foreach ((array)$data['attach'] as $i => $pdf) {
                 if (file_exists($pdf)) {
@@ -61,31 +74,28 @@ trait HelpDeskUtils
             }
         }
 
-
-       
-
         $headers = [
             "Authorization: Bearer {$token}",
             "Content-Type: multipart/form-data",
         ];
 
         curl_setopt_array($curl, [
-            CURLOPT_URL => config('mtmail.endpoint'),
+            CURLOPT_URL            => config('mtmail.endpoint'),
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $body,
-            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $body,
+            CURLOPT_HTTPHEADER     => $headers,
         ]);
 
         $response = curl_exec($curl);
-        $err = curl_error($curl);
+        $err      = curl_error($curl);
 
         curl_close($curl);
 
         if ($err) {
             return [
                 'success' => false, 
-                'error' => $err
+                'error'   => $err
             ];
         }
 

@@ -74,6 +74,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Tickets asignados al usuario que se encuentran en estatus 2 o 3
+     */
+    public function active_assigned_tickets()
+    {
+        return $this->belongsToMany(
+            Ticket::class, 
+            'tickets_users_assignations', 
+            'user_id', 
+            'ticket_id'
+        )
+        ->select('tickets.*')
+        ->whereIn('tickets.status_id', [2, 3])
+        ->withTimestamps();
+    }
+
+    /**
      * Tickets del integrante asignados
      */
     public function tickets_assing_team()

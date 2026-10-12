@@ -13,6 +13,7 @@ use Modules\Categories\Services\TicketCategoryService;
 use Modules\Services\Services\CatalogService;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
+use Modules\Tickets\Jobs\SendTicketEmailJob;
 use Modules\Tickets\Services\TicketLogService;
 use Modules\Tickets\Services\TicketService;
 use Modules\Tickets\Support\Enums\TicketAction;
@@ -521,11 +522,15 @@ class TicketsController extends Controller
             $enum_action = TicketAction::OBSERVE_TICKET;
 
              $relations = [
-              'observation.user'
+              'observation.user',
+              'assignees'
               ];
 
 
             $ticket = $this->service->getTicket($entity->ticket_id, $relations);
+
+            // Obtener el último asignado de la colección
+            $currentAssignee = $ticket?->assignees?->last() ?? null;
 
             //guardar logs
             $this->ticketLogService->logAction(
@@ -533,6 +538,17 @@ class TicketsController extends Controller
                 $enum_action,
                 'update',
                 'tickets/show'
+            );
+
+            //Enviar correo
+            SendTicketEmailJob::dispatch(
+                $ticket,
+                'observation',
+                $currentAssignee->email,
+                $ticket->user->email . ',' . $currentAssignee->email, // Múltiples CCs separados por coma
+                null,
+                auth()->user()->email,
+                session('umo.session.token')
             );
 
             return response()->json([

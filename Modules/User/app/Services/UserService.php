@@ -125,6 +125,7 @@ class UserService
             [
                 'create-ticket',
                 'view-tickets',
+                'add-observations',
                 'cancel-ticket'
             ],
             RoleEnum::SISTEMAS->value => 

@@ -35,6 +35,20 @@ class SendTicketEmailJob implements ShouldQueue
     public function handle(): void
     {
             try {
+
+                $ccData = $this->ccEmail ?? '';
+
+                // Limpiar espacios en blanco de cada email al convertir a array
+                if (!empty($ccData) && is_string($ccData)) {
+                    if (str_contains($ccData, ',')) {
+                        $ccData = array_map('trim', explode(',', $ccData));
+                    } else {
+                        $ccData = [trim($ccData)];
+                    }
+                }
+
+                \Log::info($ccData);
+
                 // Asignar asunto dinámico
                 $subject = match ($this->type) {
                     'assigned'    => 'Asignación de Ticket - ' . ($this->ticket->uid ?? 'TKT#' . $this->ticket->id),
@@ -58,8 +72,8 @@ class SendTicketEmailJob implements ShouldQueue
                     'subject' => $subject,
                     'body'    => $htmlBody,
                     'tags'    => ['helpdesk', $this->type],
-                    'user'    => 'nexus@megatravel.com.mx', 
-                    'cc'      => $this->ccEmail ?? ''
+                    'user'    => 'webmaster@megatravel.com.mx', 
+                    'cc'      => $ccData ?? ''
                 ];
 
                 // Consumir el microservicio

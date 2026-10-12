@@ -852,7 +852,8 @@ class TicketService {
 
                 $ticket = $this->getTicket(
                     $ticket_id,
-                    $ticket_uid
+                    $ticket_uid,
+                    ['assignees']
                     );
 
                 //guardar logs
@@ -865,6 +866,27 @@ class TicketService {
                     $cancel_reason,
                     $completed_reason
                 );
+
+                //Solo si el enum action es solucionado
+                if ($enum_action->value === TicketAction::STATUS_SOLVED->value) {
+                   \Log::info('Accion solucionado dectectado');
+
+                    $assignedUser = $ticket?->assignees?->last() ?? null;
+
+                    SendTicketEmailJob::dispatch(
+                        $ticket,
+                        'solved',
+                        $ticket?->user?->email,
+                        $assignedUser->email,
+                        sprintf(
+                            '%s %s',
+                        $ticket?->user?->first_name ?? '',
+                        $ticket?->user?->last_name ?? ''
+                        ),
+                        null,
+                        session('umo.session.token')
+                    );
+                }
             }
        }
 
@@ -1051,13 +1073,12 @@ class TicketService {
 
        //Si se creo la entidad, guardo su log
        if ($ticket) {
+           //Asignacion automatizada
+           $assignedUserId = $this->getNextAssignedUserId($values['team_id']);
 
-         //Asignacion automatizada
-         $assignedUserId = $this->getNextAssignedUserId($values['team_id']);
-
-        if ($assignedUserId) {
-            $ticket->assignees()->attach($assignedUserId); 
-        }
+            if ($assignedUserId) {
+                $ticket->assignees()->attach($assignedUserId); 
+            }
 
          $enum_action = TicketAction::CREATE_TICKET;
 
@@ -1069,6 +1090,37 @@ class TicketService {
          );
 
         $assignedUser = $this->user_service->getUser($assignedUserId);
+        $enum_action = TicketAction::ASSIGN_TICKET;
+
+        // Registrar en los logs
+        $this->log_ticket_service->logAction(
+            $ticket,
+            $enum_action,
+            'update',
+            'tickets/create',
+            sprintf(
+                '%s %s',
+            $assignedUser->first_name,
+            $assignedUser->last_name
+            ),   
+        );
+
+        $this->repo->updateStatus(2, $ticket->id);
+
+        //Se instancia automaticamente a en progreso
+        $enum_action_progress = TicketAction::STATUS_IN_PROGRESS;
+
+        //guardar logs sobre el paso de estatus 1 a 2
+        $this->log_ticket_service->logAction(
+                $ticket,
+                $enum_action_progress,
+                'update',
+                'tickets/create',
+                null,
+                null,
+                null
+        );
+        
 
          //Enviar correo
         SendTicketEmailJob::dispatch(
@@ -1252,6 +1304,22 @@ class TicketService {
                 $userRightId,
                 $userLeftId) {
 
+
+            $assignedUserLeft = $this->user_service->getUser($userLeftId, ['active_assigned_tickets']);
+            $assignedUserRight = $this->user_service->getUser($userRightId, ['active_assigned_tickets']);
+
+            //Tickets ya asignados para el usuario de la izquierda
+            $currentTicktesUserLeftsAssing = $assignedUserLeft 
+            ? ($assignedUserLeft->active_assigned_tickets?->pluck('uid')?->toArray() ?? [])
+            : [];
+
+             $currentTicktesUserRightAssing = $assignedUserRight 
+            ? ($assignedUserRight->active_assigned_tickets?->pluck('uid')?->toArray() ?? [])
+            : [];
+
+            $sendTicketsNewLeft = array_diff($uidsUserToAssingLeft, $currentTicktesUserLeftsAssing);
+            $sendTicketsNewRight = array_diff($uidsUserToAssingRight, $currentTicktesUserRightAssing);
+
             // Asignar tickets al usuario de la izquierda
             foreach ($uidsUserToAssingLeft as $uid) {
                 
@@ -1269,8 +1337,30 @@ class TicketService {
                         $selectedNameUserLeft
                     );
 
-                    $ticket->status_id;
+                    //Por cada reasignacion de ticket, les mando el correo
+                    if (!empty($sendTicketsNewLeft)) {
+                         
+                        foreach ($sendTicketsNewLeft as $value) {
+                            if ($value === $ticket?->uid ?? 'Dato no disponible') {
+                                SendTicketEmailJob::dispatch(
+                                    $ticket,
+                                    'assigned',
+                                    $assignedUserLeft->email,  // Destinatario principal
+                                    'bborja@megatravel.com.mx',    // CC
+                                    sprintf(
+                                        '%s %s',
+                                    $assignedUserLeft->first_name,
+                                    $assignedUserLeft->last_name
+                                    ),   
+                                    null,
+                                    session('umo.session.token') // Token para el cURL
+                                 );
+                            }
+                        }
+                    }
+                   
                 }
+
             }
 
              // Asignar tickets al usuario de la derecha
@@ -1289,6 +1379,28 @@ class TicketService {
                         'tickets/reassing_tickets',
                         $selectedNameUserRight
                     );
+
+                     //Por cada reasignacion de ticket, les mando el correo
+                    if (!empty($sendTicketsNewRight)) {
+                         
+                        foreach ($sendTicketsNewRight as $value) {
+                            if ($value === $ticket?->uid ?? 'Dato no disponible') {
+                                SendTicketEmailJob::dispatch(
+                                    $ticket,
+                                    'assigned',
+                                    $assignedUserRight->email,  // Destinatario principal
+                                    'bborja@megatravel.com.mx',    // CC
+                                    sprintf(
+                                        '%s %s',
+                                    $assignedUserRight->first_name,
+                                    $assignedUserRight->last_name
+                                    ),   
+                                    null,
+                                    session('umo.session.token') // Token para el cURL
+                                 );
+                            }
+                        }
+                    }
                 }
             }
 
