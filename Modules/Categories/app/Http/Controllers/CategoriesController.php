@@ -51,7 +51,7 @@ class CategoriesController extends Controller
 
         $categories = TicketCategory::with([
             'creator:id,first_name,last_name', 
-            'services:id,category_id,name',
+            'services:id,category_id,name,color',
             'logs_actions'
             ])
             ->where('team_id', $user_team_id)

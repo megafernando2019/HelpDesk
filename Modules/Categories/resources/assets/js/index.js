@@ -30,7 +30,9 @@ $(document).ready(function () {
 
         if (listService.length > 0) {
             listService.forEach(element => {
-                 html += `<span class="badge bg-ocean rounded">${element?.name ?? 'Dato no disponible'}</span>`;
+                let color = element?.color ?? null;
+                console.log(element)
+                 html += `<span ${color ? `style="background-color: ${element.color}3D !important; color: ${element.color} !important;"` : ''} class="badge ${color ? '' : 'bg-ocean' } rounded">${element?.name ?? 'Dato no disponible'}</span>`;
                  
             });
 
