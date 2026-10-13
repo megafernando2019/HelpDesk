@@ -185,27 +185,93 @@ class CategoriesController extends Controller
             $category = TicketCategory::findOrFail($id);
 
             $oldStatus = (int) $category->status;
+            $oldCategory = clone $category;
+            $validatedData['status'] = $request?->status ?? 0;
 
             $category->name        = $validatedData['name'];
             $category->description = $validatedData['description'];
             $category->color       = $validatedData['color'] ?? '#C4C4C4'; // Valor de resguardo por defecto
-            $category->status      = $request?->status ?? 0;
+            $category->status      = $validatedData['status'];
             $category->save();
 
             $categoryStatus = $category->status;
 
 
             //Guardar log edicion
-            LogActionsCategory::create([
-                'category_id'   => $category->id,
-                'user_id'       => $user->id,
-                'resource_name' => 'update',
-                'section_name'  => 'Editar Categoría',
-                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
-                                    . ' editó esta categoría el ' 
-                                    . (\Carbon\Carbon::now()->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')),
-                'values'        => $category->toArray(),
-            ]);
+             foreach ($validatedData as $key => $value) {
+                      
+                   switch ($key) {
+                    case 'name':
+
+                         if ($value !== $oldCategory->name) {
+                            $details = sprintf(
+                                'Detalle: Cambio el nombre [%s] por [%s]',
+                                $oldCategory->name,
+                                $value
+                            );
+
+                            LogActionsCategory::create([
+                                'category_id'   => $category->id,
+                                'user_id'       => $user->id,
+                                'resource_name' => 'update',
+                                'section_name'  => 'Editar Categoría',
+                                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                    . ' editó esta categoría el ' 
+                                                    . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' '.
+                                                    $details,
+                                'values'        => $category->toArray(),
+                            ]);
+                         }
+                            
+                        break;
+                    case 'description':
+                        if ($value !== $oldCategory->description) {
+                            $details = sprintf(
+                                'Detalle: Cambio la descripción [%s] por [%s]',
+                                $oldCategory->description ?? 'Sin descripción',
+                                $value
+                            );
+
+                            LogActionsCategory::create([
+                                'category_id'   => $category->id,
+                                'user_id'       => $user->id,
+                                'resource_name' => 'update',
+                                'section_name'  => 'Editar Categoría',
+                                'message'       => ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                    . ' editó esta categoría el ' 
+                                                    . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' ' 
+                                                    . $details,
+                                'values'        => $category->toArray(),
+                            ]);
+                        }
+                    break;
+                    case 'color':
+                        if ($value !== $oldCategory->color) {
+                            $details = sprintf(
+                                'Detalle: Cambio el color [%s] por [%s]',
+                                $oldCategory->color ?? 'Sin color',
+                                $value
+                            );
+
+                            LogActionsCategory::create([
+                                'category_id'   => $category->id,
+                                'user_id'       => $user->id,
+                                'resource_name' => 'update',
+                                'section_name'  => 'Editar Categoría',
+                                'message'       => ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                    . ' editó esta categoría el ' 
+                                                    . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' ' 
+                                                    . $details,
+                                'values'        => $category->toArray(),
+                            ]);
+                        }
+                    break;
+                        
+                    default:
+                        # code...
+                        break;
+                   }
+            }
 
             $aditionalAction = $oldStatus !== $categoryStatus;
 
@@ -223,7 +289,7 @@ class CategoriesController extends Controller
                     'section_name'  => $action,
                     'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
                                         .' '. $action .' esta categoría el ' 
-                                        . (\Carbon\Carbon::now()->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')),
+                                        . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')),
                     'values'        =>  [
                         'status' => $categoryStatus 
                     ],

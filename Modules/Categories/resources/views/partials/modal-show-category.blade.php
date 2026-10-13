@@ -20,22 +20,22 @@
             <!-- Body -->
             <div class="modal-body py-3">
                 <!-- los detalles -->
-                <div class="row">
-                    <div class="mb-3">
+                <div class="row w-100">
+                    <div class="mb-3 d-flex align-items-center">
                          <div class="col-md-3">Nombre</div>
                          <div class="col-md-9 show-name"></div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 d-flex align-items-center">
                         <div class="col-md-3">Descripción</div>
                         <div class="col-md-9 show-description"></div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 d-flex align-items-center">
                         <div class="col-md-3">Servicios</div>
                         <div class="col-md-9 show-services">
                             <div class="wrap-container d-flex flex-wrap gap-2"></div>
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 d-flex align-items-center">
                         <div class="col-md-3">Creado</div>
                         <div class="col-md-9 show-created"></div>
                     </div>

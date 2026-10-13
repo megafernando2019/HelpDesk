@@ -189,7 +189,7 @@ $(document).ready(function () {
             
             let logsHtml = logs.map(log => `
                 <div class="mb-1 text-wrap">
-                    <strong class="text-muted">${log.message}</strong>
+                    <small class="text-muted">* ${log.message}</small>
                 </div>
             `).join('');
 
