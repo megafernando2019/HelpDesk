@@ -28,7 +28,7 @@
     .bg-light-blue {
         background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
     }
-    /* .card-category {
+    .card-category {
         border: 1px solid #f1f5f9;
         border-radius: 16px;
         background-color: #ffffff;
@@ -39,7 +39,7 @@
     .card-category:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    } */
+    }
     .badge-soft-purple {
         background-color: #f3e8ff;
         color: #6b21a8;
@@ -131,7 +131,7 @@
             <!-- TARJETA ESPECIAL: CREAR NUEVA CATEGORÍA -->
 
             <div class="col-md-4">
-                <div data-bs-toggle="tooltip" class="card border shadow-sm rounded-4 team-card active-team-card overflow-hidden all-tugui-option-wave h-100" 
+                <div data-bs-toggle="tooltip" class="card border card-category shadow-sm rounded-4 team-card active-team-card overflow-hidden all-tugui-option-wave h-100" 
                      data-member-id="all">
                     <div class="card-body p-3 d-flex align-items-center gap-3 h-100">
                         <img src="/build/img/icons/tugui_en_computadora.png" alt="Tugui" style="width: 60px; height: 60px; object-fit: cover;">
@@ -153,7 +153,7 @@
                     $color = $service?->color_service ?? null;
                 @endphp
                 <div class="col-md-4">
-                    <div class="card card-service border shadow-sm rounded-4 p-3 d-flex flex-column justify-content-between h-100">
+                    <div class="card card-category card-service border shadow-sm rounded-4 p-3 d-flex flex-column justify-content-between h-100">
                         <div>
                             <!-- Header de la Card: Nombre + Icono Editar -->
                             <div class="d-flex align-items-center justify-content-between mb-2">
@@ -163,25 +163,45 @@
                                  style="background-color: #C4C4C4; text-wrap: wrap;"
                                 @else
                                  class="badge px-2 py-1 fs-12"
-                                 style="background-color: {{$color}}; text-wrap: wrap;"
+                                 style="background-color: {{$color}}3D; color: {{$color}} !important; text-wrap: wrap;"
                                 @endif  
                                 >
-                                    {{ $service?->service_name ?? '' }}
+                                     {{$service?->service_name ?? ''}}
                                 </span>
-                                <a href="javascript:void(0);" 
-                                   class="edit-icon-btn edit-action-service" 
-                                   data-id="{{ $service?->service_id ?? 0 }}"
-                                   data-name="{{ $service?->service_name ?? '' }}" 
-                                   data-description="{{ $service?->service_description ?? '' }}"
-                                   data-category-id="{{ $service?->category_id ?? 0 }}"
-                                   data-color="{{ $color ?? '#C4C4C4' }}"
-                                   data-template="{{ $service?->service_template ?? '' }}"
-                                   data-status="{{ $service?->service_status ?? 1 }}"
-                                   data-details="{{ ($service?->first_name ?? '') . ' ' . ($service?->last_name ?? 'Un empleado') . ' creó este servicio el ' . \Carbon\Carbon::parse($service?->service_created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a') }}"
-                                   data-bs-toggle="tooltip"
-                                   title="Editar Servicio">
-                                    <i class="ti ti-pencil fs-18"></i>
-                                </a>
+                                <div class="d-flex justify-content-end align-items-center">
+                                    <a href="javascript:void(0);" 
+                                       class="edit-icon-btn edit-action-service" 
+                                       data-id="{{ $service?->service_id ?? 0 }}"
+                                       data-name="{{ $service?->service_name ?? '' }}" 
+                                       data-description="{{ $service?->service_description ?? '' }}"
+                                       data-category-id="{{ $service?->category_id ?? 0 }}"
+                                       data-color="{{ $color ?? '#C4C4C4' }}"
+                                       data-template="{{ $service?->service_template ?? '' }}"
+                                       data-status="{{ $service?->service_status ?? 1 }}"
+                                       data-logs='@json($service?->logs)'
+                                       data-details="{{ ($service?->first_name ?? '') . ' ' . ($service?->last_name ?? 'Un empleado') . ' creó este servicio el ' . \Carbon\Carbon::parse($service?->service_created_at)->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a') }}"
+                                       data-bs-toggle="tooltip"
+                                       title="Editar Servicio">
+                                        <i class="ti ti-pencil fs-18"></i>
+                                    </a>   
+                                    <!-- btn show -->
+                                    <a href="javascript:void(0);"
+                                           class="btn-show-service edit-icon-btn"
+                                           data-bs-toggle="tooltip"
+                                           title="Ver servicio"
+                                           data-id="{{ $service?->id ?? 0 }}"
+                                           data-name="{{ $service?->service_name ?? '' }}" 
+                                           data-description="{{ $service?->service_description ?? '' }}"
+                                           data-color="{{ $color ?? null }}"
+                                           data-template="{{ $service?->service_template ?? '' }}"
+                                           data-status="{{ $service?->service_status ?? 1 }}"
+                                           data-category-color="{{$service?->category_color ?? null}}"
+                                           data-category="{{$service?->category_name ?? ''}}"
+                                           data-created-at="{{ ($service?->first_name ?? '') . ' ' . ($service?->last_name ?? 'Un empleado') . ' creó este servicio el ' . (\Carbon\Carbon::parse($service?->service_created_at)->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                    >
+                                        <i class="ti ti-eye fs-18"></i>
+                                    </a>
+                                </div>
                             </div>
 
                             <!-- Descripción -->
@@ -199,7 +219,7 @@
 
         </div>
 
-        <!-- TABLA DE CATEGORÍAS -->
+        <!-- TABLA DE servicios -->
         <div class="row d-none" id="table-partial">
             <div class="col-md-12 mb-3 gap-2 d-flex" style="justify-content: flex-end;">
                 <button 
@@ -268,10 +288,28 @@
                                                    data-color="{{ $color ?? '#C4C4C4' }}"
                                                    data-template="{{ $service?->service_template ?? '' }}"
                                                    data-status="{{ $service?->service_status ?? 1 }}"
-                                                   data-details="{{ ($service?->first_name ?? '') . ' ' . ($service?->last_name ?? 'Un empleado') . ' creó este servicio el ' . \Carbon\Carbon::parse($service?->service_created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a') }}"
+                                                   data-logs='@json($service?->logs)'
+                                                   data-details="{{ ($service?->first_name ?? '') . ' ' . ($service?->last_name ?? 'Un empleado') . ' creó este servicio el ' . \Carbon\Carbon::parse($service?->service_created_at)->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a') }}"
                                                    data-bs-toggle="tooltip"
                                                    title="Editar Servicio">
                                                     <i class="ti ti-pencil fs-18"></i>
+                                                </a>
+                                                <!-- btn show -->
+                                                <a href="javascript:void(0);"
+                                                       class="btn-show-service edit-icon-btn"
+                                                       data-bs-toggle="tooltip"
+                                                       title="Ver servicio"
+                                                       data-id="{{ $service?->id ?? 0 }}"
+                                                       data-name="{{ $service?->service_name ?? '' }}" 
+                                                       data-description="{{ $service?->service_description ?? '' }}"
+                                                       data-color="{{ $color ?? null }}"
+                                                       data-template="{{ $service?->service_template ?? '' }}"
+                                                       data-status="{{ $service?->service_status ?? 1 }}"
+                                                       data-category-color="{{$service?->category_color ?? null}}"
+                                                       data-category="{{$service?->category_name ?? ''}}"
+                                                       data-created-at="{{ ($service?->first_name ?? '') . ' ' . ($service?->last_name ?? 'Un empleado') . ' creó este servicio el ' . (\Carbon\Carbon::parse($service?->service_created_at)->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                                >
+                                                    <i class="ti ti-eye fs-18"></i>
                                                 </a>
                                             </td>
                                         </tr>
@@ -298,6 +336,7 @@
     </div>
 </div>
 
+@include('services::partials.modal-show-service')
 @include('services::partials.modal-create-service')
 @include('services::partials.modal-update-service')
 

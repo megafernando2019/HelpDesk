@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 
 $(document).ready(function () {
 
+    const showModal = $('#showServiceModal');
     const addServiceModal = $('#addServiceModal');
     const updateServiceModal = $('#editServiceModal');
     const kabanPartial = $('#kanban-partial');
@@ -176,6 +177,44 @@ $(document).ready(function () {
         }
     }
 
+    $(document).on('click', '.btn-show-service', function () {
+        showModal.modal('show');
+
+        const ServiceId   = $(this).data('id');
+        const categoryName  = $(this).data('category');
+        const description  = $(this).data('description');
+        const serviceName = $(this).data('name');
+        const createdAt = $(this).data('createdAt');
+        const template = $(this).data('template');
+        const categoryColor = $(this).data('categoryColor');
+
+        let html = '';
+
+        $('.show-name').text('');
+        $('.show-description').text('');
+        $('.show-created').text('');
+        $('.show-template').text('');
+        $('.show-category').text('');
+        $('.wrap-container').empty();
+
+        $('.show-name').text(serviceName);
+        $('.show-description').text(description);
+        $('.show-template').text(template);
+        $('.show-created').text(createdAt);
+
+        if (categoryColor !== undefined || categoryColor !== null) {
+           
+            $('.show-category').html(`<span 
+                                      style="background-color: ${categoryColor}3D;
+                                      color: ${categoryColor} !important;"
+                                      class="bg rounded p-2">${categoryName}</span>`);
+        } else {
+            $('.show-category').html(`<span
+              class="bg rounded p-2 bg-ocean">${categoryName}</span>`);
+        }
+       
+    });
+
     // Escuchar Click para Abrir Modal y Pintar Datos
     $(document).on('click', '.edit-action-service', function () {
         const id = $(this).data('id');
@@ -186,13 +225,13 @@ $(document).ready(function () {
         const color = $(this).data('color');
         const status = $(this).data('status');
         const details = $(this).data('details');
+         let logs = $(this).data('logs') || [];
 
         // Setear campos
         $('#edit_service_id').val(id);
         $('#edit_service_name').val(name);
         $('#edit_service_description').val(description);
         $('#edit_category_id').val(categoryId).trigger('change');
-        $('#edit_serviceDetailsText').text(details);
         $('#editServiceModal .color-option').removeClass('select-color');
         $('#editServiceModal input[name="edit_color"]').prop('checked', false);
 
@@ -232,6 +271,20 @@ $(document).ready(function () {
         } else if (isNotChecked) {
              $('#edit_serviceStatus').prop('checked', false);
              $('#edit_serviceStatusLabel').text('Desactivado');
+        }
+
+        if (logs.length > 0) {
+            
+            let logsHtml = logs.map(log => `
+                <div class="mb-1 text-wrap">
+                    <small class="text-muted">* ${log.message}</small>
+                </div>
+            `).join('');
+
+            $('#edit_serviceDetailsText').html(logsHtml);
+            
+        } else {
+            $('#edit_serviceDetailsText').html('<span class="text-muted">Sin historial de cambios</span>');
         }
 
         // Abrir Modal

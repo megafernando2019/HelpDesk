@@ -228,7 +228,7 @@
                                                        data-description="{{ $category?->description ?? '' }}"
                                                        data-color="{{$color}}"
                                                        data-status="{{$category?->status ?? 0}}"
-                                                       data-created-at="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? 'Un empleado') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                                       data-created-at="{{ ($category?->first_name ?? '') . ' ' . ($category?->last_name ?? 'Un empleado') . ' creó esta categoría el ' . (\Carbon\Carbon::parse($category?->created_at)->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
                                                        data-list-service='@json($list)'
                                                 >
                                                     <i class="ti ti-eye fs-18 text-muted"></i>

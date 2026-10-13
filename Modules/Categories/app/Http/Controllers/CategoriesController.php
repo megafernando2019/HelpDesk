@@ -198,7 +198,7 @@ class CategoriesController extends Controller
 
 
             //Guardar log edicion
-             foreach ($validatedData as $key => $value) {
+            foreach ($validatedData as $key => $value) {
                       
                    switch ($key) {
                     case 'name':

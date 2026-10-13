@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Modules\Categories\Models\TicketCategory;
+use Modules\Services\Models\LogActionsService;
 use Modules\Services\Models\TicketServiceEntity;
 use Modules\Services\Services\CatalogService;
 use Modules\Services\Services\GetServices;
@@ -74,13 +75,26 @@ class ServicesController extends Controller
             's.color as color_service',
             's.created_at as service_created_at',
             'c.id as category_id',
-            'c.name as category_name'
+            'c.name as category_name',
+            'c.color as category_color'
         )
         ->when($queryParamCard, function ($q, $queryParamCard) {
             return $q->where('s.category_id', $queryParamCard);
-        })
+        })  
         ->orderBy('s.id', 'desc')
         ->get();
+
+        $serviceIds = $services->pluck('service_id');
+        $logs = DB::table('log_actions_services')
+            ->whereIn('service_id', $serviceIds)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->groupBy('service_id');
+
+        $services->transform(function ($service) use ($logs) {
+            $service->logs = $logs->get($service->service_id, collect());
+            return $service;
+        });
 
         return view('services::index', compact('services', 'categorias', 'queryParamCard'));
     }
@@ -110,6 +124,8 @@ class ServicesController extends Controller
             'category_id.exists'    => 'La categoría seleccionada no existe.',
         ]);
 
+        $user = Auth::user();
+
         try {
 
              do {
@@ -129,6 +145,19 @@ class ServicesController extends Controller
                 'color'         => $validated['color'] ?? '#C4C4C4',
                 'supervisor'    => 0,
             ]);
+
+            if ($record) {
+                LogActionsService::create([
+                    'service_id'    => $record->id,
+                    'user_id'       => $user->id,
+                    'resource_name' => 'store',
+                    'section_name'  => 'Crear Servicio',
+                    'message'       => ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                        . ' creó este servicio el ' 
+                                        . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\s h:i a')),
+                    'values'        => $record->toArray(),
+                ]);
+            }
 
             return response()->json([
                 'status'  => 'success',
@@ -180,8 +209,12 @@ class ServicesController extends Controller
             'category_id.required'=> 'Selecciona una categoría válida.',
         ]);
 
+        $user = Auth::user();
+
         try {
-            $service = TicketServiceEntity::findOrFail($id);
+            $service = TicketServiceEntity::with('category')->findOrFail($id);
+            $oldService = clone $service;
+            $oldCategory = $oldService?->category?->name ?? '';
 
             $status = match ($validated['status_id']) {
                 1 => (int) 1,
@@ -189,14 +222,159 @@ class ServicesController extends Controller
                 default => (int) 1
             };
 
-            $service->update([
-                'name'        => $validated['name'],
-                'description' => $validated['description'],
-                'category_id' => $validated['category_id'],
-                'template'    => $validated['template'] ?? null,
-                'color'       => $validated['color'] ?? '#C4C4C4',
-                'status_id'   => $status,
-            ]);
+            $service->name        = $validated['name'];
+            $service->description = $validated['description'];
+            $service->category_id = $validated['category_id'];
+            $service->template    = $validated['template'] ?? null;
+            $service->color       = $validated['color'] ?? '#C4C4C4';
+            $service->status_id   = $status;
+            $service->save();
+
+            $serviceFresh = $service->fresh('category');
+            $categoryNew = $serviceFresh?->category?->name;
+
+            foreach ($validated as $key => $value) {
+                      
+                   switch ($key) {
+                    case 'name':
+
+                         if ($value !== $oldService->name) {
+                            $details = sprintf(
+                                'Detalle: Cambio el nombre [%s] por [%s]',
+                                $oldService->name,
+                                $value
+                            );
+
+                            LogActionsService::create([
+                                'service_id'   => $service->id,
+                                'user_id'       => $user->id,
+                                'resource_name' => 'update',
+                                'section_name'  => 'Editar Servicio',
+                                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                    . ' editó este servicio el ' 
+                                                    . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' '.
+                                                    $details,
+                                'values'        => $service->toArray(),
+                            ]);
+                         }
+                            
+                        break;
+                    case 'description':
+                        if ($value !== $oldService->description) {
+                            $details = sprintf(
+                                'Detalle: Cambio la descripción [%s] por [%s]',
+                                $oldService->description ?? 'Sin descripción',
+                                $value
+                            );
+
+                            LogActionsService::create([
+                                'service_id'   => $service->id,
+                                'user_id'       => $user->id,
+                                'resource_name' => 'update',
+                                'section_name'  => 'Editar Servicio',
+                                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                    . ' editó este servicio el ' 
+                                                    . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' '.
+                                                    $details,
+                                'values'        => $service->toArray(),
+                            ]);
+                        }
+                    break;
+                    case 'color':
+                        if ($value !== $oldService->color) {
+                            $details = sprintf(
+                                'Detalle: Cambio el color [%s] por [%s]',
+                                $oldService->color ?? 'Sin color',
+                                $value
+                            );
+
+                            LogActionsService::create([
+                                'service_id'   => $service->id,
+                                'user_id'       => $user->id,
+                                'resource_name' => 'update',
+                                'section_name'  => 'Editar Servicio',
+                                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                    . ' editó este servicio el ' 
+                                                    . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' '.
+                                                    $details,
+                                'values'        => $service->toArray(),
+                            ]);
+                        }
+                    break;
+                    case 'category_id':
+                        $categoryId = (int) $value;
+                        if ($categoryId !== $oldService->category_id) {
+                            
+                            $details = sprintf(
+                                'Detalle: Cambio la categoria [%s] por [%s]',
+                                $oldCategory,
+                                $categoryNew,
+                            );
+
+                            LogActionsService::create([
+                                'service_id'   => $service->id,
+                                'user_id'       => $user->id,
+                                'resource_name' => 'update',
+                                'section_name'  => 'Editar Servicio',
+                                'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                    . ' editó este servicio el ' 
+                                                    . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' '.
+                                                    $details,
+                                'values'        => $service->toArray(),
+                            ]);
+                        }
+                        break;
+                        case 'template':
+                            if ($value !== $oldService->template) {
+                            
+                                $details = sprintf(
+                                    'Detalle: Cambio la plantilla [%s] por [%s]',
+                                    $oldService->template,
+                                    $value,
+                                );
+
+                                LogActionsService::create([
+                                    'service_id'   => $service->id,
+                                    'user_id'       => $user->id,
+                                    'resource_name' => 'update',
+                                    'section_name'  => 'Editar Servicio',
+                                    'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                                        . ' editó este servicio el ' 
+                                                        . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) . ' '.
+                                                        $details,
+                                    'values'        => $service->toArray(),
+                                ]);
+                            }
+                        break;
+                        
+                    default:
+                        break;
+                   }
+            }
+
+             $aditionalAction = $oldService->status_id !== $status;
+
+            if ($aditionalAction) {
+                 //Guardar log activar/desactivar
+                 $action = match ($status) {
+                    2 => 'desactivo',
+                    1 => 'activó',
+                    default => ''
+                 };
+
+                LogActionsService::create([
+                    'service_id'   => $service->id,
+                    'user_id'       => $user->id,
+                    'resource_name' => 'update',
+                    'section_name'  => $action,
+                    'message'       =>  ($user->first_name ?? '') . ' ' . ($user->last_name ?? 'Un empleado') 
+                                        .' '. $action .' este servicio el ' 
+                                        . (\Carbon\Carbon::now()->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')),
+                    'values'        =>  [
+                        'status' => $status 
+                    ],
+                ]);
+            }
 
             return response()->json([
                 'status'  => 'success',
