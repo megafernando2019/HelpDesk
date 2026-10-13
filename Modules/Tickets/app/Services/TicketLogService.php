@@ -22,14 +22,24 @@ class TicketLogService
         $selectedName = null,
         $cancel_reason = null,
         $completed_reason = null,
+        $alternameName = null,
+        $alternateParamId = null
     )
     {
+        $displayName = Auth::user() ?
+                        sprintf(
+                            '%s %s',
+                            Auth::user()->first_name,
+                            Auth::user()->last_name
+                        ) :
+                        $alternameName;
+
+        $paramUserId = Auth::user() ?
+                       Auth::user()->id :
+                       $alternateParamId;
+
         $data = [
-            'user_name' => sprintf(
-                '%s %s',
-                Auth::user()->first_name,
-                Auth::user()->last_name
-            ),
+            'user_name' => $displayName,
             'assigned_to' => $selectedName,
             'ticket_code' => $ticket?->uid ?? '',
             'observation' => $ticket?->observation?->description ?? '',
@@ -39,7 +49,7 @@ class TicketLogService
 
         $record = [
             'ticket_id' => $ticket?->id,
-            'user_id' => Auth::user()->id,
+            'user_id' => $paramUserId,
             'event_type' => $enum_action->value,
             'message' => $enum_action->formatDescription($data),
             'resource_name' => $resource_name,

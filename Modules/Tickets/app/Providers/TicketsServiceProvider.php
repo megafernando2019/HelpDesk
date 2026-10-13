@@ -7,6 +7,7 @@ use Modules\Tickets\Repositories\TicketRepo;
 
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Modules\Tickets\Console\AutoCloseTicketsCommand;
 use Modules\Tickets\Console\MigrateLegacyTicketLogs;
 use Modules\Tickets\Services\TicketService;
 
@@ -50,6 +51,7 @@ class TicketsServiceProvider extends ModuleServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MigrateLegacyTicketLogs::class,
+                AutoCloseTicketsCommand::class
             ]);
         }
 
@@ -68,8 +70,11 @@ class TicketsServiceProvider extends ModuleServiceProvider
      * 
      * @param $schedule
      */
-    // protected function configureSchedules(Schedule $schedule): void
-    // {
-    //     $schedule->command('inspire')->hourly();
-    // }
+    protected function configureSchedules(Schedule $schedule): void
+    {
+        $schedule->command('tickets:auto-close')
+        ->weekdays()
+        ->at('23:59') 
+        ->withoutOverlapping();
+    }
 }
