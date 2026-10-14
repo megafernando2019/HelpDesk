@@ -91,6 +91,13 @@
             @forelse($tags as $tag)
                 @php
                     $color = $tag?->color ?? null;
+                    $dateTimeFormat = sprintf(
+                        '%s por %s %s',
+                    \Carbon\Carbon::parse($tag?->created_at)->locale('es')
+                       ->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a'),
+                    ($tag?->first_name ?? ''),
+                    ($tag?->last_name ?? '')
+                    );
                 @endphp
                 <div class="col-md-4">
                     <div class="card card-category border shadow-sm rounded-4 p-3 d-flex flex-column justify-content-between h-100">
@@ -133,9 +140,7 @@
                                            data-description="{{ $tag?->description ?? '' }}"
                                            data-color="{{$color}}"
                                            data-status="{{$tag?->status ?? 0}}"
-                                           data-created-at="{{ ($tag?->first_name ?? '') . ' ' . ($tag?->last_name ?? 'Un empleado') 
-                                           . ' creó esta etiqueta el ' . (\Carbon\Carbon::parse($tag?->created_at)->locale('es')
-                                           ->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"               
+                                           data-created-at="{{$dateTimeFormat}}"               
                                     >
                                         <i class="ti ti-eye fs-18"></i>
                                     </a>
@@ -181,6 +186,15 @@
                                 </thead>
                                 <tbody>
                                     @forelse($tags as $tag)
+                                        @php
+                                        $dateTimeFormat = sprintf(
+                                            '%s por %s %s',
+                                        \Carbon\Carbon::parse($tag?->created_at)->locale('es')
+                                           ->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a'),
+                                        ($tag?->first_name ?? ''),
+                                        ($tag?->last_name ?? '')
+                                        );
+                                        @endphp
                                         <tr>
                                             <!-- Nombre -->
                                             <td class="ps-4 py-3">
@@ -220,8 +234,7 @@
                                                        data-description="{{ $tag?->description ?? '' }}"
                                                        data-color="{{$color}}"
                                                        data-status="{{$tag?->status ?? 0}}"
-                                                       data-created-at="{{ ($tag?->first_name ?? '') . ' ' . ($tag?->last_name ?? 'Un empleado') . ' creó esta etiqueta el ' 
-                                                       . (\Carbon\Carbon::parse($tag?->created_at)->locale('es')->translatedFormat('l d \d\e F \d\e\l Y \a \l\a\s h:i a')) }}"
+                                                       data-created-at="{{ $dateTimeFormat }}"
                                                        
                                                 >
                                                     <i class="ti ti-eye fs-18 text-muted"></i>
