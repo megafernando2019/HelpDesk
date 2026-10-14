@@ -860,8 +860,7 @@ $(document).ready(function () {
             ui.showToast('success', `Se ha actualizado a estatus (Solucionado).`);
             reasonCompletedModal.modal('hide');
 
-            console.log(currentIdStatus)
-            debugger;
+           
             getTicketsDataKanban(
                 currentIdStatus,
                 null,
