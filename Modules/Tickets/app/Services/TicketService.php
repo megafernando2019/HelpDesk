@@ -877,7 +877,7 @@ class TicketService {
                         $ticket,
                         'solved',
                         $ticket?->user?->email,
-                        $assignedUser->email,
+                        $assignedUser->email.','.'bborja@megatravel.com.mx',
                         sprintf(
                             '%s %s',
                         $ticket?->user?->first_name ?? '',
