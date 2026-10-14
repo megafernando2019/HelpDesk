@@ -300,6 +300,8 @@ $(document).ready(function () {
                                             <!-- Fecha -->
                                             <small class="text-muted d-block mb-2" style="font-size: 11px;">
                                                 ${ticket?.user_first_name_create || ''} ${ticket?.user_last_name_create || ''}
+                                                 <i class="ti ti-point"></i>
+                                                ${ticket?.user_email_create ?? ''}
                                             </small>
                                         </div>
                                     </div>
@@ -405,6 +407,8 @@ $(document).ready(function () {
                                             <!-- Fecha -->
                                             <small class="text-muted d-block mb-2" style="font-size: 11px;">
                                                 ${ticket?.user_first_name_create || ''} ${ticket?.user_last_name_create || ''}
+                                                 <i class="ti ti-point"></i>
+                                                ${ticket?.user_email_create ?? ''}
                                             </small>
                                         </div>
                                     </div>
@@ -512,6 +516,8 @@ $(document).ready(function () {
                                             <!-- Fecha -->
                                             <small class="text-muted d-block mb-2" style="font-size: 11px;">
                                                 ${ticket?.user_first_name_create || ''} ${ticket?.user_last_name_create || ''}
+                                                 <i class="ti ti-point"></i>
+                                                ${ticket?.user_email_create ?? ''}
                                             </small>
                                         </div>
                                     </div>

@@ -96,7 +96,7 @@ $(document).ready(function () {
                         priority_colors,
                         description
                     } = ticket;
-
+                   
                     return `
                         <div class="card shadow-sm border rounded-3 user-select-text draggable-ticket mb-2" 
                              draggable="true" 
@@ -104,6 +104,7 @@ $(document).ready(function () {
                                 data-title="${title || ''}"
                                 data-first-name="${user_ticket_first_name || ''}"
                                 data-last-name="${user_ticket_last_name || ''}"
+                                data-email="${ticket?.user_email_create ?? ''}"
                                 data-service="${services_name || ''}"
                                 data-priority="${priority_name || ''}"
                                 data-initials="${user_initial_ticket || 'U'}"
@@ -146,6 +147,10 @@ $(document).ready(function () {
                                         <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
                                             <small class="text-secondary">
                                                 ${user_ticket_first_name} ${user_ticket_last_name}
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="ti ti-point"></i>
+                                                ${ticket?.user_email_create ?? ''}
                                             </small>
 
                                             ${services_name ? `
@@ -375,6 +380,7 @@ $(document).ready(function () {
                 title: $(this).data('title'),
                 firstName: $(this).data('first-name'),
                 lastName: $(this).data('last-name'),
+                email: $(this).data('email'),
                 service: $(this).data('service'),
                 priority: $(this).data('priority'),
                 initials: $(this).data('initials'),
@@ -490,6 +496,7 @@ $(document).ready(function () {
             });
         });
 
+
         // Renderizar tarjetas en la zona asignada
         function renderAssignedTickets() {
             if (selectedTickets.length === 0) {
@@ -525,6 +532,10 @@ $(document).ready(function () {
                                     </div>
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
                                         <small class="text-secondary">${t?.firstName} ${t?.lastName}</small>
+                                         <small class="text-muted">
+                                            <i class="ti ti-point"></i>
+                                            ${t?.email ?? ''}
+                                        </small>
                                         
                                         ${t?.service ? `
                                             <span class="badge text-secondary border" style="background-color: #eff4ff; font-size: 0.725rem;">

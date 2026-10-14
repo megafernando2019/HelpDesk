@@ -308,6 +308,10 @@ $(document).ready(function () {
                                     <small class="text-secondary">
                                         ${fullName}
                                     </small>
+                                    <small class="text-muted">
+                                        <i class="ti ti-point"></i>
+                                        ${ticket?.user_email_create ?? ''}
+                                    </small>
 
                                     ${servicesName ? `
                                         <span style="background-color: #eff4ff; border:none;" class="badge text-secondary border" style="font-size: 0.725rem;">

@@ -202,6 +202,7 @@ class TicketRepo implements ITicketRepo {
             'uc.id as user_id_create',
             'uc.first_name as user_first_name_create',
             'uc.last_name as user_last_name_create',
+            'uc.email as user_email_create'
         ])
         ->whereIn('t.team_id', $teamsIds)
         ->whereIn('t.status_id', $ticket_statuses)
@@ -252,6 +253,7 @@ class TicketRepo implements ITicketRepo {
                 't.created_at',
                 'u.first_name as user_ticket_first_name',
                 'u.last_name as user_ticket_last_name',
+                'u.email as user_email_create',
                 'tua.user_id as user_id_current_asing'
             )
             ->get();
@@ -291,7 +293,8 @@ class TicketRepo implements ITicketRepo {
             's.name as services_name',
             't.created_at',
             'u.first_name as user_ticket_first_name',
-            'u.last_name as user_ticket_last_name'
+            'u.last_name as user_ticket_last_name',
+            'u.email as user_email_create'
         )
         ->orderBy('t.id', 'desc')
         ->simplePaginate(5);
