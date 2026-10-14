@@ -402,16 +402,16 @@ $(document).ready(function () {
     }
 
     function hasClassActiveFilter() {
-        const $widget = $('.status-card-widget');
-        let dataId = 0;
+        // Buscamos directamente el widget que tiene la clase shadow-lg activa
+        const $activeWidget = $('.status-card-widget.shadow-lg');
 
-        // Verificamos si tiene la clase shadow-lg
-        if ($widget.hasClass('shadow-lg')) {
-            // Obtenemos el valor de data-id
-            dataId = $widget.data('id');
+        // Verificamos si realmente se encontró alguno
+        if ($activeWidget.length > 0) {
+           
+            return $activeWidget.attr('data-id') || 0;
         }
 
-        return dataId;
+        return 0; // Retorna 0 si por alguna razón ninguno tiene la clase
     }
 
 
@@ -859,6 +859,9 @@ $(document).ready(function () {
         .then(response => {
             ui.showToast('success', `Se ha actualizado a estatus (Solucionado).`);
             reasonCompletedModal.modal('hide');
+
+            console.log(currentIdStatus)
+            debugger;
             getTicketsDataKanban(
                 currentIdStatus,
                 null,
