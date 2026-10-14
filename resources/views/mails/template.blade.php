@@ -193,8 +193,17 @@
                                     @if($type === 'observation') Observación por: @elseif($type === 'solved') Encargado @else Usuario @endif
                                 </p>
                                 <p class="value">
-                                    @if ($type === 'observation' || $type === 'solved')
+                                    @if ($type === 'observation')
                                       {{ $userEmail}}
+                                    @elseif ($type === 'solved')
+                                      @php
+                                        $assignedUser = $ticket?->assignees?->last() ?? null;
+                                      @endphp
+                                      {{sprintf(
+                                        '%s %s',
+                                         $assignedUser->first_name,
+                                         $assignedUser->last_name
+                                      )}} | {{$assignedUser->email}}  
                                     @else
                                       {{$ticket?->user?->email ?? ''}}
                                     @endif
