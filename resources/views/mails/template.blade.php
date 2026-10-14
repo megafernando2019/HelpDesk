@@ -245,8 +245,20 @@
                         <div class="detail-item">
                             <img src="{{ asset('build/img/icons/mailer/prioridad.png') }}" class="icon" alt="Prioridad">
                             <div>
+                                @php
+                                    $priority = strtolower($ticket?->priority?->name ?? 'baja');
+    
+                                    $badgeStyle = match($priority) {
+                                        'media' => 'background-color: #ff9800; color: #ffffff;', // Naranja
+                                        'alta' => 'background-color: #f44336; color: #ffffff;', // Rojo
+                                        'muy alta' => 'background-color: #b71c1c; color: #ffffff;', // Rojo intenso
+                                        default => 'background-color: #ffeb3b; color: #000000;', // Baja (Amarillo)
+                                    };
+                                @endphp
                                 <p class="label">Prioridad</p>
-                                <span class="badge-prioridad">{{ $ticket?->priority?->name ?? 'Baja' }}</span>
+                                <span class="badge-prioridad" style="{{ $badgeStyle }} padding: 2px 6px; border-radius: 4px; display: inline-block;">
+                                    {{ ucfirst($ticket?->priority?->name ?? 'Baja') }}
+                                </span>
                             </div>
                         </div>
                         <br>
