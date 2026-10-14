@@ -154,12 +154,20 @@
                         <img src="{{ asset('build/img/icons/mailer/tugui_agregar_observacion.png') }}" class="header-img" alt="Observación">
                     @elseif($type === 'solved')
                         <img src="{{ asset('build/img/icons/mailer/tugui_solucionado.png') }}" class="header-img" alt="Solucionado">
+                    @elseif($type === 'create')
+                        <img src="{{asset('build/img/icons/tugui_creacion.png')}}" class="header-img" alt="Creación del ticket">
                     @endif
                 </td>
                 <td valign="middle">
                     @if($type === 'assigned')
                         <h1 class="header-title">¡Hola {{ $recipientName }}!</h1>
-                        <p class="header-subtitle">Te informamos que el ticket <strong>{{ $ticket->title }}</strong> te fue <span class="highlight status-asignado">asignado</span></p>
+                        <p class="header-subtitle">
+                            Te informamos que el ticket <strong>{{ $ticket->title }}</strong> te fue <span class="highlight status-asignado">asignado</span></p>
+                    @elseif($type === 'create')
+                        <h1 class="header-title">¡Hola {{ $recipientName }}!</h1>
+                        <p class="header-subtitle">
+                         Te informamos que el ticket <strong>{{ $ticket->title }}</strong> fue creado
+                        </p>
                     @elseif($type === 'observation')
                         <h1 class="header-title">¡Hola!</h1>
                         <p class="header-subtitle">Te informamos que fue <span class="highlight status-observacion">agregada una observación</span> al ticket <strong>{{ $ticket->title }}</strong></p>
@@ -264,6 +272,8 @@
                 Consulta más información en los detalles del ticket
             @elseif($type === 'solved')
                 Consulta más información en los detalles del ticket y ciérralo para concluir el proceso
+            @elseif($type === 'create')
+                Revisa tu bandeja de “Mis tickets” o los detalles del ticket para conocer información releavante
             @endif
         </p>
 
@@ -271,6 +281,9 @@
         <div class="actions">
             @if($type === 'assigned')
                 <a href="{{ route('tickets.my.daily.job') }}" class="btn btn-outline">Ir a Mi trabajo diario</a>
+            @endif
+            @if ($type === 'create')
+                <a href="{{ route('tickets.index') }}" class="btn btn-outline">Ir a Mis tickets</a>
             @endif
             <a href="{{ route('tickets.show', $ticket->uid ) }}" class="btn btn-primary">Ver ticket</a>
         </div>

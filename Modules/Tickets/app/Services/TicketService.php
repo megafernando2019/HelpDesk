@@ -1136,6 +1136,21 @@ class TicketService {
             null,
             session('umo.session.token') // Token para el cURL
          );
+
+          //Enviar correo
+        SendTicketEmailJob::dispatch(
+            $ticket,
+            'create',
+            Auth::user()->email,  // Destinatario principal
+            'bborja@megatravel.com.mx',    // CC
+            sprintf(
+                '%s %s',
+            Auth::user()->first_name,
+            Auth::user()->last_name
+            ),   
+            null,
+            session('umo.session.token') // Token para el cURL
+         );
        }
 
        return $ticket;
