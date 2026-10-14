@@ -421,7 +421,7 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" 
+                                            <a href="/tickets/details_ticket/${ticket?.uid ?? ''}" 
                                             data-action="ticket-show" 
                                             data-id="${ticket?.id ?? 0}" 
                                             class="text-secondary"
@@ -613,7 +613,7 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" 
+                                            <a href="/tickets/details_ticket/${ticket?.uid ?? ''}" 
                                             data-action="ticket-show" 
                                             data-id="${ticket?.id ?? 0}" 
                                             class="text-secondary" 
@@ -806,7 +806,7 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" 
+                                            <a href="/tickets/details_ticket/${ticket?.uid ?? ''}" 
                                             data-action="ticket-show" 
                                             data-id="${ticket?.id ?? 0}"
                                             class="text-secondary" 

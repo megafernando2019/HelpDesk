@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Supports\Enums\RoleEnum;
 use App\Traits\HelpDeskUtils;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Categories\Services\TicketCategoryService;
@@ -316,6 +317,111 @@ class TicketsController extends Controller
      * Show the specified resource.
      */
     public function show($uid)
+    {
+        if (!view()->exists('tickets::show')) {
+            abort(404, 'La vista de este ticket aún no está disponible.');
+        }
+
+        $user = Auth::user();
+        $relations = [
+                      'ticketService.category', 
+                      'priority', 
+                      'status', 
+                      'url', 
+                      'attachments',
+                      'assignees',
+                      'logs',
+                      'observation.user'
+                      ];
+
+        $full_name =  sprintf(
+             '%s %s',
+              $user?->first_name,
+              $user?->last_name
+        );
+
+        $ticket = $this->service->getTicket(null, $uid, $relations);
+
+        $initials = $this->getInitials($full_name);
+        $attachments = $ticket?->attachments ?? collect();
+        $UserAssignEntity = [];
+        $assignedUserIds = $ticket?->assignees?->pluck('id')?->toArray() ?? [];
+        $currentUserAssing = 0;
+
+        if (!empty($assignedUserIds) && isset($assignedUserIds[0])) {
+           $currentUserAssing = $assignedUserIds[0];
+           $UserAssignEntity = $ticket?->assignees[0]?->toArray() ?? [];
+        }
+
+
+        if ($user) {
+            $user->load('teams');
+        }
+
+        $teamIds = $user?->teams?->pluck('id')->toArray();
+
+        //Traer integrantes del equipo del usuario en sesion
+        $supportUsers = 
+        DB::table('users as u')
+        ->join('team_user as tu', 'u.id', '=', 'tu.user_id')
+        ->whereIn('tu.team_id', $teamIds)
+        ->where('u.active', 1)
+        ->select(
+            'u.id',
+            'u.first_name',
+            'u.last_name',
+            'u.email'
+        )
+        ->distinct()
+        ->get();
+
+        $supportUsers = $supportUsers->map(function($u) {
+             $full_name =  sprintf(
+                 '%s %s',
+                  $u?->first_name,
+                  $u?->last_name
+            );
+
+            $u->initials = $this->getInitials($full_name);
+
+            return $u;
+        });
+
+        $fechaFormateada = 'el ' . $ticket?->observation?->updated_at->locale('es')->isoFormat('dddd DD [de] MMMM, YYYY [a las] hh:mm a');
+
+        $observation = $ticket?->observation ?? null;
+
+        $status = $ticket?->status?->name ?? '';
+
+        $icon = TicketStatus::getIcon($status);
+
+        $bgColor = TicketStatus::getBadgeClass($ticket?->status?->name);
+
+        $current_permissions = $this->userService->permissionListAuthenticatable();
+
+        return view('tickets::show-copy', compact(
+        'user', 
+        'initials', 
+        'full_name',
+        'ticket',
+        'attachments',
+        'supportUsers',
+        'currentUserAssing',
+        'UserAssignEntity',
+        'fechaFormateada',
+        'observation',
+        'icon',
+        'status',
+        'bgColor',
+        'teamIds',
+        'current_permissions'
+        ));
+    }
+
+    /**
+     * Show the specified resource.
+     */
+    public function showOperating($uid)
     {
         if (!view()->exists('tickets::show')) {
             abort(404, 'La vista de este ticket aún no está disponible.');

@@ -36,7 +36,8 @@
                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                         <div class="d-flex gap-2">
                             {showBtn}
-                            @if(auth()->user()->hasAnyRole(
+                             {actions_buttons}
+                            {{-- @if(auth()->user()->hasAnyRole(
                                 [
                                   App\Supports\Enums\RoleEnum::SISTEMAS->value,
                                   App\Supports\Enums\RoleEnum::ENCARGADO->value,
@@ -47,7 +48,7 @@
                             @endif
                             @role(App\Supports\Enums\RoleEnum::USUARIO->value)
                                 {actionOnlyUserCancel}
-                            @endrole
+                            @endrole --}}
                         </div>
                     </div>
 

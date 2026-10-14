@@ -36,6 +36,10 @@ Route::middleware(['auto_login'])->group(function () {
     Route::get('/tickets/my_daily_job', [TicketsController::class, 'viewMyDailyJob'])
          ->name('tickets.my.daily.job')
          ->middleware('can:mi_trabajo_diario');
+
+     //Vista show operativa para bandejas de mi trabajo diario y archivo
+     Route::get('/tickets/details_ticket/{uid}', [TicketsController::class, 'showOperating'])->name('tickets.show.operating');
+
     Route::resource('tickets', TicketsController::class)->names('tickets');
     //Mi equipo
     Route::get('/tickets/job/my_team', [TicketsController::class, 'viewMyTeam'])

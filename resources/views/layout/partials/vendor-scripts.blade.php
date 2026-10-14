@@ -324,7 +324,7 @@
     @vite('Modules/Tickets/resources/assets/js/create.js')
 @endif
 
-@if (Route::is('tickets.show'))
+@if (Route::is(['tickets.show', 'tickets.show.operating']))
     @vite(['Modules/Tickets/resources/assets/js/show.js'])  
 @endif
 

@@ -242,7 +242,7 @@
     @vite('Modules/Tickets/resources/assets/css/create.css')
 @endif
 
-@if (Route::is('tickets.show'))
+@if (Route::is(['tickets.show', 'tickets.show.operating']))
     @vite('Modules/Tickets/resources/assets/css/show.css')
 @endif
     

@@ -603,31 +603,33 @@ $(document).ready(function () {
 
                 let actionOnlyUserCancel = '';
 
+    
                 switch (ticket?.statusId || 0) {
                     case 1:
                         actionsHtml += ` 
                             ${actionObservation}
-                            ${actionAssing}
+                            ${actionCancel}
                         `;
 
-                        actionOnlyUserCancel += actionCancel;
+                        //actionOnlyUserCancel += `${actionObservation}${actionCancel}`;
 
                         break;
                     case 2:
-                        actionsHtml += `${actionReAssing}${actionWaiting}${actionSolved}${actionObservation}${actionCancel}`;
-                        break;
                     case 3:
-                        actionsHtml += `${actionReAssing}${actionSolved}${actionObservation}${actionCancel}`;
-                        break;
                     case 4:
-                        actionsHtml += `${actionObservation}${actionCancel}`;
+                        actionsHtml += `${actionObservation}`;
+                        // actionOnlyUserCancel += `${actionObservation}`;
                         break;
-                    case 5:
-                    case 6:
-                        actionsHtml += ` 
-                            ${actionObservation}
-                        `;
-                        break;
+                 
+                        // actionsHtml += `${actionObservation}`;
+                        // actionOnlyUserCancel += `${actionObservation}`;
+                        // break;
+                    // case 5:
+                    // case 6:
+                    //     actionsHtml += ` 
+                    //         ${actionObservation}
+                    //     `;
+                        // break;
                     default:
                         break;
                 }

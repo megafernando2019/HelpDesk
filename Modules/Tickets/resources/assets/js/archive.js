@@ -317,7 +317,7 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" 
+                                            <a href="/tickets/details_ticket/${ticket?.uid ?? ''}" 
                                              data-action="ticket-show" data-id="${ticket?.id ?? 0}"
                                               data-bs-toggle="tooltip"
                                               class="text-secondary"
@@ -424,7 +424,7 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}"
+                                            <a href="/tickets/details_ticket/${ticket?.uid ?? ''}"
                                                data-action="ticket-show" 
                                                data-id="${ticket?.id ?? 0}"
                                                class="text-secondary"
@@ -533,7 +533,7 @@ $(document).ready(function () {
                                     <div>
                                         <small class="text-muted d-block fw-semibold mb-1" style="font-size: 10px;">Acciones</small>
                                         <div class="d-flex gap-2">
-                                            <a href="/tickets/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
+                                            <a href="/tickets/details_ticket/${ticket?.uid ?? ''}" data-action="ticket-show" data-id="${ticket?.id ?? 0}" class="text-secondary" title="Ver">
                                                 <i class="ti ti-eye fs-18"></i>
                                             </a>
                                             ${actionAddObservation}
