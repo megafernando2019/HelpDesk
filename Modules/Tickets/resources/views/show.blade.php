@@ -167,32 +167,32 @@
 
                                                     @switch($mime)
                                                         @case(Str::contains($mime, 'pdf'))
-                                                            <a href="{{Storage::url($file->file_path ?? '')}}" 
-                                                                target="_blank" rel="noopener noreferrer" 
-                                                                class="badge rounded" style="background: #ff575753; color: #ff5757;">
+                                                            <a data-file="{{Storage::url($file->file_path ?? '')}}" 
+                                                                href="javascript:void(0)"
+                                                                class="badge rounded btn-ver-archivo" style="background: #ff575753; color: #ff5757;">
                                                                 <i class="ti ti-file-type-pdf"></i>
                                                             </a> 
                                                             @break
                                                         @case(Str::contains($mime, 'png'))
-                                                            <a href="{{Storage::url($file->file_path ?? '')}}" 
-                                                                target="_blank" rel="noopener noreferrer" 
-                                                                class="badge rounded" style="background: #ffbd594e; color: #ffbd59;">
+                                                            <a data-file="{{Storage::url($file->file_path ?? '')}}" 
+                                                                href="javascript:void(0)"
+                                                                class="badge rounded btn-ver-archivo" style="background: #ffbd594e; color: #ffbd59;">
                                                                 <i class="ti ti-file-type-png"></i>
                                                             </a> 
                                                             
                                                             @break
                                                         @case(Str::contains($mime, 'jpg'))
-                                                            <a href="{{Storage::url($file->file_path ?? '')}}" 
-                                                                target="_blank" rel="noopener noreferrer" 
-                                                                class="badge rounded" 
+                                                            <a data-file="{{Storage::url($file->file_path ?? '')}}" 
+                                                                href="javascript:void(0)"
+                                                                class="badge rounded btn-ver-archivo" 
                                                                 style="background: #5ce1e655; color: #0097b2;">
                                                                 <i class="ti ti-file-type-jpg"></i>
                                                             </a> 
                                                             @break
                                                         @default
-                                                            <a href="{{Storage::url($file->file_path ?? '')}}" 
-                                                                target="_blank" rel="noopener noreferrer" 
-                                                                class="badge rounded" 
+                                                            <a data-file="{{Storage::url($file->file_path ?? '')}}" 
+                                                                href="javascript:void(0)"
+                                                                class="badge rounded btn-ver-archivo" 
                                                                 style="background: #5ce1e655; color: #0097b2;">
                                                                 <i class="ti ti-file-type-jpg"></i>
                                                             </a> 
@@ -568,6 +568,7 @@
             </div>
         </div>
 
+        @include('tickets::partials.modal-visualizador-archivo')
         @include('tickets::partials.modal-add-reason-cancelled')
         @include('tickets::partials.modal-add-reason-completed')
 @endsection

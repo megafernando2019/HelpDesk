@@ -434,6 +434,30 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on('click', '.btn-ver-archivo', function () {
+
+        const fileUrl = $(this).data('file');
+        $('.file-render').attr('src', '');
+
+
+        if (!fileUrl) {
+            ui.showToast('error','No se encontró la URL del archivo.');
+            return;
+        }
+
+        ui.showToast('warning','Cargando archivo, por favor espere...');
+
+        $('.file-render').attr('src', fileUrl);
+        $('#viewFileModal').modal('show');
+
+        $fileRender.off('load').on('load', function () {
+            // Evitamos que disparadores vacíos o errores disparen el success
+            if ($('.file-render').attr('src') !== '') {
+                ui.showToast('success','El archivo se ha cargado correctamente.');
+            }
+        });
+    });
+
 
     $('.select2-assignees').on('change', function () {
         const value = parseInt($(this).val()) || 0;
