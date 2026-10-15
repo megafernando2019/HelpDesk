@@ -8,6 +8,13 @@ interface ITicketRepo {
 
     /**
      *
+     * @param string $args
+     * @return void
+     */
+    public function searchByUid(string $args);
+
+    /**
+     *
      * @param array $membersId
      * @param array $filters
      * @return void

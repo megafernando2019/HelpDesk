@@ -29,6 +29,13 @@ class TicketService {
     ) {
        
     }
+    public function searchUid($request)
+    {
+        $uid = $request->input('query') ?? '';
+
+        return $this->repo->searchByUid($uid);
+    }
+
 
     /**
      * Formatea y consolida los datos de métricas y gráficas aplicando filtros.

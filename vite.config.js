@@ -36,6 +36,7 @@ export default defineConfig({
             'Modules/Reports/resources/assets/css/reports_service.css',
             'Modules/Reports/resources/assets/css/reports_user_assing.css',
             'resources/js/script.js',
+            'resources/js/offcanvas.js',
             'resources/js/helpers/helper.js',
             'resources/js/change_rol.js',
             'Modules/Tickets/resources/assets/js/index.js',

@@ -40,6 +40,9 @@ Route::middleware(['auto_login'])->group(function () {
      //Vista show operativa para bandejas de mi trabajo diario y archivo
      Route::get('/tickets/details_ticket/{uid}', [TicketsController::class, 'showOperating'])->name('tickets.show.operating');
 
+     Route::get('/search_offcanvas_event', [TicketsController::class, 'searchEvent']);
+
+
     Route::resource('tickets', TicketsController::class)->names('tickets');
     //Mi equipo
     Route::get('/tickets/job/my_team', [TicketsController::class, 'viewMyTeam'])

@@ -39,6 +39,14 @@ class TicketsController extends Controller
         
     }
 
+    /**
+     * Busqueda offcanvas
+     */
+    public function searchEvent(Request $request)
+    {
+       return $this->service->searchUid($request);
+    }
+
     public function getDataChartsMyTeam(Request $request)
     {
         try {

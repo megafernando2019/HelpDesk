@@ -2,6 +2,7 @@
 
 namespace Modules\Tickets\Repositories;
 
+use Carbon\Carbon;
 use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Illuminate\Support\Facades\DB;
 use Modules\Tickets\Models\Ticket;
@@ -10,6 +11,14 @@ use Modules\Tickets\Models\TicketLog;
 use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
+
+    public function searchByUid(string $args)
+    {
+        return DB::table('tickets')
+        ->whereLike('uid', "%{$args}%")
+        ->whereBetween('created_at', [Carbon::now()->startOfYear(), Carbon::now()])
+        ->get();
+    }
 
     public function getOpenTicketsAgeDistribution($membersId = [], $filters = [])
     {

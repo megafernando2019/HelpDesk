@@ -1,7 +1,9 @@
 @if (!Route::is(['pos-2', 'pos-3', 'pos-4', 'pos-5', 'pos']))
+@vite('resources/js/offcanvas.js')
 <!-- Header -->
 <div class="header">
     <div class="main-header">
+        @include('layout.partials.off-canvas')
 
         <!-- Logo -->
         <div class="header-left active">
@@ -31,13 +33,14 @@
             <!-- Search -->
             <li class="nav-item nav-searchinputs">
                 <div class="top-nav-search">
+                    <button class="btn btn-primary d-none mt-2 offcanvas-action" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"></button>
                     <a href="javascript:void(0);" class="responsive-search">
                         <i class="fa fa-search"></i>
                     </a>
-                    <form action="#" class="dropdown">
+                    <form action="#" class="dropdown canvas-not-action">
                         <div class="searchinputs input-group dropdown-toggle" id="dropdownMenuClickable"
                             data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                            <input type="text" placeholder="Buscar">
+                            <input type="text" class="offcanvas-event" placeholder="Buscar">
                             <div class="search-addon">
                                 <span><i class="ti ti-search"></i></span>
                             </div>
@@ -47,7 +50,7 @@
                                         class="me-1">K</kbd>
                             </span>
                         </div>
-                        <div class="dropdown-menu search-dropdown" aria-labelledby="dropdownMenuClickable">
+                        <div class="d-none dropdown-menu search-dropdown" aria-labelledby="dropdownMenuClickable">
                             <div class="search-info">
                                 <h6><span><i data-feather="search" class="feather-16"></i></span>Recent Searches
                                 </h6>

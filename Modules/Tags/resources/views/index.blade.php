@@ -48,7 +48,7 @@
 </style>
 
 <div class="page-wrapper">
-    <div class="content container-fluid">
+    <div class="content container-fluid">      
         
         <!-- HEADER -->
         <div class="d-flex align-items-center justify-content-between mb-4">
