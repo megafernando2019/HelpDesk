@@ -34,7 +34,12 @@ class TicketService {
 
     public function getCurrentNotifications($request)
     {
-        $notifications = $this->repo->getNotifications(auth()->id());
+        $query = $request?->input('filter') ?? null;
+
+        $notifications = $this->repo->getNotifications(
+            auth()->id(),
+            $query
+        );
 
         // Usamos getCollection()->transform() correctamente con fromModel
         $notifications->getCollection()->transform(function ($item) {
@@ -1257,7 +1262,7 @@ class TicketService {
             'ticket_action_id' => $currentActionCtx->id,
             'user_id'          => auth()->id(),
             'title'            => 'se creó el ticket',
-            'description'      => 'Su ticket '. $ticket->uid .' ha sido creado con éxito.',
+            'description'      => 'Su ticket “'. $ticket->uid .'” ha sido creado con éxito.',
         ]);
 
         $notificacion->save();

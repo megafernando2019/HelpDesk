@@ -19,20 +19,46 @@ class TicketRepo implements ITicketRepo {
                   ->first();
     }
 
-    public function getNotifications($userId, $rangeDates = [])
+    public function getNotifications($userId, $filters = null)
     {
-        $fechaHaceUnMes = Carbon::now()->subMonth();
-
-        return DB::table('tickets_notifications as n')
+        $q= DB::table('tickets_notifications as n')
             ->join('users as u', 'n.user_id', '=', 'u.id') 
+            ->join('tickets as t', 'n.ticket_id', '=', 't.id')
+            ->join('tickets_actions as ta', 'n.ticket_action_id', '=', 'ta.id')
             ->select(
                 'n.*',
                 'u.first_name as first_name_user',
-                'u.last_name as last_name_user'
+                'u.last_name as last_name_user',
+                't.uid as ticket_folio',
+                'ta.uid as ticket_action_folio'
             )
-            ->where('n.user_id', $userId)
-            ->where('n.created_at', '>=', $fechaHaceUnMes)
-            ->orderBy('n.created_at', 'desc')
+            ->where('n.user_id', $userId);
+
+            switch ($filters) {
+                case 'today':
+                    // Notificaciones del día de hoy
+                    $q->whereDate('n.created_at', Carbon::today());
+                    break;
+
+                case 'week':
+                    
+                    // Notificaciones de esta semana (desde el lunes o últimos 7 días)
+                    $q->where('n.created_at', '>=', Carbon::now()->startOfWeek());
+                    break;
+
+                case 'read':
+                    // Notificaciones que ya han sido leídas (donde read_at no es nulo)
+                    $q->whereNotNull('n.read_at');
+                    break;
+
+                default:
+                    // Por defecto, si no manda filtro o es 'today', puedes dejar un rango por defecto (ej. el último mes como tenías)
+                    $fechaHaceUnMes = Carbon::now()->subMonth();
+                    $q->where('n.created_at', '>=', $fechaHaceUnMes);
+                    break;
+            }
+
+            return $q->orderBy('n.created_at', 'desc')
             ->simplePaginate(10);
     }
 

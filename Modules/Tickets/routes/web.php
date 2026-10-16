@@ -44,6 +44,9 @@ Route::middleware(['auto_login'])->group(function () {
 
      Route::get('/get_current_notifications', [TicketsController::class, 'filtersNotifications']);
 
+     Route::get('/mark_notifications_as_read', [TicketsController::class, 'markAsRead']);
+
+     Route::get('/get_count_notifications_pendings', [TicketsController::class, 'countNotificationsIsNotRead']);
 
     Route::resource('tickets', TicketsController::class)->names('tickets');
     //Mi equipo

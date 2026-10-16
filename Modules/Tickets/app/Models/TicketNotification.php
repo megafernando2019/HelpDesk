@@ -29,4 +29,9 @@ class TicketNotification extends Model
         'read_at' => 'datetime',
         'created_at' => 'datetime',
     ];
+
+    public function ticket()
+    {
+        return $this->belongsTo(TicketNotification::class, 'ticket_id');
+    }
 }

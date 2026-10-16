@@ -19,7 +19,7 @@ interface ITicketRepo {
      * @param array $rangeDates
      * @return void
      */
-    public function getNotifications($userId, $rangeDates = []);
+    public function getNotifications($userId, $filters = null);
 
     /**
      *

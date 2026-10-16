@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Supports\Enums\RoleEnum;
 use App\Traits\HelpDeskUtils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,42 @@ class TicketsController extends Controller
     )
     {
         
+    }
+
+
+    public function countNotificationsIsNotRead()
+    {
+        try {
+            $count = DB::table('tickets_notifications')
+            ->where('user_id', auth()->id())
+            ->whereNull('read_at')
+            ->count();
+
+            return response()->json($count);
+
+        } catch (\Throwable $th) {
+             \Log::info($th);
+            return response()->json(['success' => false, 'message' => 'Error al obtener total de notificaciones no leidas.'], 500);
+        }
+    }
+
+
+    public function markAsRead(Request $request)
+    {
+        try {
+            $notificationsIds = $request?->notification_ids ?? [];
+
+            DB::table('tickets_notifications')
+                ->where('user_id', auth()->id())
+                ->whereIn('id', $notificationsIds)
+                ->whereNull('read_at')
+                ->update(['read_at' => Carbon::now()]);
+
+            return response()->json(['success' => true, 'message' => 'Notificaciones marcadas como leídas.']);
+        } catch (\Throwable $th) {
+            \Log::info($th);
+            return response()->json(['success' => false, 'message' => 'Error al actualizar.'], 500);
+        }
     }
 
     public function filtersNotifications(Request $request)
