@@ -39,6 +39,22 @@ class TicketsController extends Controller
         
     }
 
+    public function filtersNotifications(Request $request)
+    {
+        try {
+            $notifications = $this->service->getCurrentNotifications($request);
+
+            return response()->json($notifications);
+
+        } catch (\Throwable $th) {
+            \Log::info($th);
+
+            return response()->json([
+                  'message' => 'Ocurrió un error al obtener las notificaciones, pruebe más tarde.'
+            ], 500);
+        }
+    }
+
     /**
      * Busqueda offcanvas
      */
@@ -183,7 +199,7 @@ class TicketsController extends Controller
             ], 200);
 
         } catch (\Throwable $th) {
-            \Log::info($th->getMessage());
+            \Log::info($th);
 
              return response()->json([
                 'message' => 'Ocurrió un error al actualizar el estatus del ticket.'
@@ -645,6 +661,8 @@ class TicketsController extends Controller
 
             // Obtener el último asignado de la colección
             $currentAssignee = $ticket?->assignees?->last() ?? null;
+
+            $this->service->saveNotificationsObservations($ticket, $currentAssignee);
 
             //guardar logs
             $this->ticketLogService->logAction(

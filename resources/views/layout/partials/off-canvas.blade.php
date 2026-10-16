@@ -1,7 +1,7 @@
-<div class="offcanvas offcanvas-end custom-offcanvas" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" aria-modal="true" role="dialog">
+<div class="offcanvas offcanvas-end custom-offcanvas" style="width: 520px !important;" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" aria-modal="true" role="dialog">
     <div class="offcanvas-header">
         <!-- Título cambiado a Resultados -->
-        <h4 id="offcanvasRightLabel">Resultados</h4>
+        <h4 id="offcanvasRightLabel" class="text-grey">Resultados</h4>
         <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div> <!-- end offcanvas header -->
 

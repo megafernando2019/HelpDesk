@@ -42,6 +42,8 @@ Route::middleware(['auto_login'])->group(function () {
 
      Route::get('/search_offcanvas_event', [TicketsController::class, 'searchEvent']);
 
+     Route::get('/get_current_notifications', [TicketsController::class, 'filtersNotifications']);
+
 
     Route::resource('tickets', TicketsController::class)->names('tickets');
     //Mi equipo

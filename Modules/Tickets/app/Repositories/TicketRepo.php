@@ -12,6 +12,30 @@ use Modules\Tickets\Models\TicketObservation;
 
 class TicketRepo implements ITicketRepo {
 
+    public function getActionTicketByUid($uid)
+    {
+        return DB::table('tickets_actions')
+                  ->where('uid', $uid)
+                  ->first();
+    }
+
+    public function getNotifications($userId, $rangeDates = [])
+    {
+        $fechaHaceUnMes = Carbon::now()->subMonth();
+
+        return DB::table('tickets_notifications as n')
+            ->join('users as u', 'n.user_id', '=', 'u.id') 
+            ->select(
+                'n.*',
+                'u.first_name as first_name_user',
+                'u.last_name as last_name_user'
+            )
+            ->where('n.user_id', $userId)
+            ->where('n.created_at', '>=', $fechaHaceUnMes)
+            ->orderBy('n.created_at', 'desc')
+            ->simplePaginate(10);
+    }
+
     public function searchByUid(string $args)
     {
         return DB::table('tickets')

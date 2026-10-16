@@ -91,12 +91,12 @@
                 </a>
             </li>
 
-            <li class="nav-item nav-item-box">
+            <li class="nav-item nav-item-box action-offcanvas-notifications">
                 <a href="javascript:void(0);" class="nav-link" data-bs-toggle="dropdown">
                     <img class="profileset" src="{{Storage::url('icons/tugui_helpdesk.png')}}" alt="Notificaciones">
                     <span class="badge rounded-pill text-white">8</span>
                 </a>
-                <div class="dropdown-menu">
+                <div class="dropdown-menu d-none">
                     notificaciones helpdesk
                 </div>
             </li>

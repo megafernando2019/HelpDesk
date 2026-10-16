@@ -8,6 +8,21 @@ interface ITicketRepo {
 
     /**
      *
+     * @param string $uid
+     * @return void
+     */
+    public function getActionTicketByUid($uid);
+
+    /**
+     *
+     * @param int $userId
+     * @param array $rangeDates
+     * @return void
+     */
+    public function getNotifications($userId, $rangeDates = []);
+
+    /**
+     *
      * @param string $args
      * @return void
      */

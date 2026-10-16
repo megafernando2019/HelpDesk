@@ -14,8 +14,10 @@ use Illuminate\Support\Str;
 use Modules\Tickets\app\Support\Exceptions\TicketException;
 use Modules\Tickets\Jobs\SendTicketEmailJob;
 use Modules\Tickets\Models\Ticket;
+use Modules\Tickets\Models\TicketNotification;
 use Modules\Tickets\Support\Enums\TicketAction;
 use Modules\Tickets\Support\Enums\TicketPriorityColor;
+use Modules\Tickets\Support\Mappers\NotificationMapper;
 use Modules\User\app\Services\UserService;
 
 class TicketService {
@@ -29,6 +31,19 @@ class TicketService {
     ) {
        
     }
+
+    public function getCurrentNotifications($request)
+    {
+        $notifications = $this->repo->getNotifications(auth()->id());
+
+        // Usamos getCollection()->transform() correctamente con fromModel
+        $notifications->getCollection()->transform(function ($item) {
+            return NotificationMapper::fromModel($item)->toArray();
+        });
+
+        return $notifications;
+    }
+
     public function searchUid($request)
     {
         $uid = $request->input('query') ?? '';
@@ -824,7 +839,8 @@ class TicketService {
        $cancel_reason = $request?->cancel_reason ?? null;
        $completed_reason = $request?->completed_reason ?? null;
        $result = $this->repo->updateStatus($status, $ticket_id);
-       
+       $ticket = $this->getTicket($ticket_id,$ticket_uid);
+
 
        //Si se actualizo el estatus con éxito
        if($result) {
@@ -833,21 +849,121 @@ class TicketService {
             switch ($status) {
                 case 2:
                     $enum_action = TicketAction::STATUS_IN_PROGRESS;
+                     //Guardar accion
+                    $notificacion = new TicketNotification();
+                    $actionCtx = $this->repo->getActionTicketByUid($enum_action->value);
+                        
+                    $notificacion->fill([
+                        'ticket_id'        => $ticket->id,
+                        'ticket_action_id' => $actionCtx->id,
+                        'user_id'          => Auth::user()->id,
+                        'title'            => 'cambió de estatus a En proceso',
+                        'description'      => sprintf(
+                            'El ticket “%s - %s” se colocó en proceso por tu usuario el %s',
+                            $ticket->uid,
+                            $ticket->title,
+                            Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                        ),
+                    ]);
+
+
+                    $notificacion->save();
+                    
                     break;
                 case 6:
                     $enum_action = TicketAction::STATUS_CANCELLED;
+
+                     //Guardar accion
+                    $notificacion = new TicketNotification();
+                    $actionCtx = $this->repo->getActionTicketByUid($enum_action->value);
+
+                    
+                    $notificacion->fill([
+                        'ticket_id'        => $ticket->id,
+                        'ticket_action_id' => $actionCtx->id,
+                        'user_id'          => auth()->id(),
+                        'title'            => 'cambió de estatus a Cancelado',
+                        'description'      => sprintf(
+                            'El ticket “%s - %s” se colocó en cancelado por tu usuario el %s',
+                            $ticket->uid,
+                            $ticket->title,
+                            Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                        ),
+                    ]);
+
+                    $notificacion->save();
+
                     break;
                 case 4:
                     $enum_action = TicketAction::STATUS_SOLVED;
+
+                     //Guardar accion
+                    $notificacion = new TicketNotification();
+                    $actionCtx = $this->repo->getActionTicketByUid($enum_action->value);
+                        
+                    $notificacion->fill([
+                        'ticket_id'        => $ticket->id,
+                        'ticket_action_id' => $actionCtx->id,
+                        'user_id'          => auth()->id(),
+                        'title'            => 'cambió de estatus a Solucionado',
+                        'description'      => sprintf(
+                            'El ticket “%s - %s” se colocó en solucionado por tu usuario el %s',
+                            $ticket->uid,
+                            $ticket->title,
+                            Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                        ),
+                    ]);
+
+                    $notificacion->save();
+
+
                     break;
                 case 1:
                     $enum_action = TicketAction::ASSIGN_TICKET;
                     break;
                 case 3: 
                     $enum_action = TicketAction::STATUS_PENDING;
+                     //Guardar accion
+                    $notificacion = new TicketNotification();
+                    $actionCtx = $this->repo->getActionTicketByUid($enum_action->value);
+                        
+                    $notificacion->fill([
+                        'ticket_id'        => $ticket->id,
+                        'ticket_action_id' => $actionCtx->id,
+                        'user_id'          => auth()->id(),
+                        'title'            => 'cambió de estatus a En espera',
+                        'description'      => sprintf(
+                            'El ticket “%s - %s” se colocó en espera por tu usuario el %s',
+                            $ticket->uid,
+                            $ticket->title,
+                            Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                        ),
+                    ]);
+
+                    $notificacion->save();
+
                     break;
                 case 5:
                     $enum_action = TicketAction::STATUS_CLOSED;
+
+                      //Guardar accion
+                    $notificacion = new TicketNotification();
+                    $actionCtx = $this->repo->getActionTicketByUid($enum_action->value);
+                        
+                    $notificacion->fill([
+                        'ticket_id'        => $ticket->id,
+                        'ticket_action_id' => $actionCtx->id,
+                        'user_id'          => auth()->id(),
+                        'title'            => 'cambió de estatus a Cerrado',
+                        'description'      => sprintf(
+                            'El ticket “%s - %s” se colocó en cerrado por tu usuario el %s',
+                            $ticket->uid,
+                            $ticket->title,
+                            Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                        ),
+                    ]);
+
+                    $notificacion->save();
                     break;
                 
                 default:
@@ -1116,6 +1232,13 @@ class TicketService {
 
         //Se instancia automaticamente a en progreso
         $enum_action_progress = TicketAction::STATUS_IN_PROGRESS;
+        $notificacion = new TicketNotification();
+        $notificacionTwo = new TicketNotification();
+        $currentActionCtx = $this->repo->getActionTicketByUid($enum_action_progress->value);
+        //Obtener accion asignar
+        $actionAssingId = $this->repo->getActionTicketByUid(TicketAction::ASSIGN_TICKET->value);
+        $userBot = $this->getUserBotHelpDesk();
+
 
         //guardar logs sobre el paso de estatus 1 a 2
         $this->log_ticket_service->logAction(
@@ -1128,6 +1251,34 @@ class TicketService {
                 null
         );
         
+        //Para el usuario que creó el ticket
+        $notificacion->fill([
+            'ticket_id'        => $ticket->id,
+            'ticket_action_id' => $currentActionCtx->id,
+            'user_id'          => auth()->id(),
+            'title'            => 'se creó el ticket',
+            'description'      => 'Su ticket '. $ticket->uid .' ha sido creado con éxito.',
+        ]);
+
+        $notificacion->save();
+
+        //Para el usuario que se le asigno el ticket
+        $notificacionTwo->fill([
+            'ticket_id'        => $ticket->id,
+            'ticket_action_id' => $actionAssingId->id,
+            'user_id'          => $assignedUser->id,
+            'title'            => 'asignó el ticket',
+            'description'      => sprintf(
+                'El ticket “%s - %s” te fue asignado por el %s (%s) el %s',
+                $ticket->uid,
+                $ticket->title,
+                $userBot->first_name,
+                $userBot->email,
+                Carbon::parse($ticket?->created_at)->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+            ),
+        ]);
+
+        $notificacionTwo->save();
 
          //Enviar correo
         SendTicketEmailJob::dispatch(
@@ -1205,6 +1356,27 @@ class TicketService {
         return $this->repo->saveObservations($records);
     }
 
+    public function saveNotificationsObservations($ticket, $currentAssignee)
+    {
+        $notificacion = new TicketNotification();
+        $actionCtx = $this->repo->getActionTicketByUid(TicketAction::OBSERVE_TICKET->value);
+                        
+        $notificacion->fill([
+            'ticket_id'        => $ticket->id,
+            'ticket_action_id' => $actionCtx->id,
+            'user_id'          => $currentAssignee->id,
+            'title'            => 'nueva observación',
+            'description'      => sprintf(
+                'Han agregado una nueva observación para el ticket “%s - %s” el %s',
+                $ticket->uid,
+                $ticket->title,
+                Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+            ),
+        ]);
+
+        $notificacion->save();
+    }
+
     /**
      * Método para solo asignar tickets a un solo usuario
      *
@@ -1269,23 +1441,6 @@ class TicketService {
 
                 }
             }
-
-            //$assignedUser = $this->user_service->getUser($user_id);
-
-             //Enviar correo
-            // SendTicketEmailJob::dispatch(
-            //     $ticket,
-            //     'assigned',
-            //     $assignedUser->email,  // Destinatario principal
-            //     'bborja@megatravel.com.mx',    // CC
-            //     sprintf(
-            //         '%s %s',
-            //     $assignedUser->first_name,
-            //     $assignedUser->last_name
-            //     ),   
-            //     null,
-            //     session('umo.session.token') // Token para el cURL
-            //  );
         });
 
         return true;
@@ -1329,6 +1484,8 @@ class TicketService {
 
             $assignedUserLeft = $this->user_service->getUser($userLeftId, ['active_assigned_tickets']);
             $assignedUserRight = $this->user_service->getUser($userRightId, ['active_assigned_tickets']);
+            //Obtener accion id
+            $currentActionCtx =$this->repo->getActionTicketByUid(TicketAction::REASSIGN_TICKET->value);
 
             //Tickets ya asignados para el usuario de la izquierda
             $currentTicktesUserLeftsAssing = $assignedUserLeft 
@@ -1361,9 +1518,30 @@ class TicketService {
 
                     //Por cada reasignacion de ticket, les mando el correo
                     if (!empty($sendTicketsNewLeft)) {
-                         
+
                         foreach ($sendTicketsNewLeft as $value) {
+
                             if ($value === $ticket?->uid ?? 'Dato no disponible') {
+
+                                $notificacion = new TicketNotification();
+                           
+                                $notificacion->fill([
+                                    'ticket_id'        => $ticket->id,
+                                    'ticket_action_id' => $currentActionCtx->id,
+                                    'user_id'          => $assignedUserLeft->id,
+                                    'title'            => 're asignó el ticket',
+                                    'description'      => sprintf(
+                                        'El ticket “%s - %s” te fue reasignado por %s %s el %s',
+                                        $ticket->uid,
+                                        $ticket->title,
+                                        Auth::user()->first_name,
+                                        Auth::user()->last_name,
+                                        Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                                    ),
+                                ]);
+
+                                $notificacion->save();
+
                                 SendTicketEmailJob::dispatch(
                                     $ticket,
                                     'assigned',
@@ -1406,7 +1584,28 @@ class TicketService {
                     if (!empty($sendTicketsNewRight)) {
                          
                         foreach ($sendTicketsNewRight as $value) {
+
                             if ($value === $ticket?->uid ?? 'Dato no disponible') {
+
+                                $notificacion = new TicketNotification();
+                        
+                                $notificacion->fill([
+                                    'ticket_id'        => $ticket->id,
+                                    'ticket_action_id' => $currentActionCtx->id,
+                                    'user_id'          => $assignedUserRight->id,
+                                    'title'            => 're asignó el ticket',
+                                    'description'      => sprintf(
+                                        'El ticket “%s - %s” te fue reasignado por %s %s el %s',
+                                        $ticket->uid,
+                                        $ticket->title,
+                                        Auth::user()->first_name,
+                                        Auth::user()->last_name,
+                                        Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                                    ),
+                                ]);
+
+                                $notificacion->save();
+
                                 SendTicketEmailJob::dispatch(
                                     $ticket,
                                     'assigned',
@@ -1435,6 +1634,8 @@ class TicketService {
     public function assignUser($request)
     {
         $selectedName = $request?->selectedName ?? '';
+        preg_match('/\((.*?)\)/', $selectedName, $matches);
+        $email = $matches[1] ?? null;
         //Cortar parentesis y email del string
         $selectedName = strstr($selectedName, '(', true); 
         $ticket_id = $request?->ticket_id ?? null;
@@ -1443,26 +1644,74 @@ class TicketService {
         $users_ids = $request?->assignees ?? [];
         $flag_exist_assigned = $request?->flag_exist_assigned ?? [];
         $enum_action = TicketAction::ASSIGN_TICKET;
+        //Obtener al usuario
+        $userAssing = $this->user_service->getUser($users_ids[0] ?? 0);
 
         if (!$ticket || $ticket === null) {
             throw new TicketException('No se encontro un ticket válido');
         }
 
-        //Ya tenia un usuario asignado previamente
-        if (!empty($flag_exist_assigned)) {
-            $enum_action = TicketAction::REASSIGN_TICKET;
-        }
-
         $this->repo->assignUser($ticket, $users_ids);
 
-        // Registrar en los logs
-        $this->log_ticket_service->logAction(
-            $ticket,
-            $enum_action,
-            'update',
-            'tickets/show',
-            $selectedName
-        );
+        $actionCtxId = $this->repo->getActionTicketByUid($enum_action->value);
+
+
+        //Solo para mi trabajo diario
+        if (
+            in_array((int) $ticket->status_id, [2,3])
+        ) {
+            
+            $selectedName = $userAssing->first_name.' '.
+            $userAssing->last_name;
+            $enum_action = TicketAction::REASSIGN_TICKET;
+
+            $actionCtxId = $this->repo->getActionTicketByUid($enum_action->value);
+
+             // Registrar en los logs
+            $this->log_ticket_service->logAction(
+                $ticket,
+                $enum_action,
+                'update',
+                'tickets/show',
+                $selectedName
+            );
+
+             //Guardar accion
+            $notificacion = new TicketNotification();
+                        
+            $notificacion->fill([
+                'ticket_id'        => $ticket->id,
+                'ticket_action_id' => $actionCtxId->id,
+                'user_id'          => $userAssing->id,
+                'title'            => 're asignó el ticket',
+                'description'      => sprintf(
+                    'El ticket “%s - %s” te fue reasignado por %s %s el %s',
+                    $ticket->uid,
+                    $ticket->title,
+                    Auth::user()->first_name,
+                    Auth::user()->last_name,
+                    Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                ),
+            ]);
+
+            $notificacion->save();
+
+            SendTicketEmailJob::dispatch(
+                $ticket,
+                'assigned',
+                $userAssing->email, 
+                'bborja@megatravel.com.mx', 
+                sprintf(
+                    '%s',
+                    $selectedName
+                ),   
+                null,
+                session('umo.session.token') // Token para el cURL
+            );
+
+            return $ticket;
+        }
+       
 
         //Si el ticket esta por asignar, lo paso en automatico a en proceso
         if ($ticket->status_id === 1) {
@@ -1471,6 +1720,29 @@ class TicketService {
 
             //Se instancia automaticamente a en progreso
             $enum_action = TicketAction::STATUS_IN_PROGRESS;
+
+
+             //Ya tenia un usuario asignado previamente
+            if (!empty($flag_exist_assigned)) {
+
+                 //Guardar accion
+                $notificacionProcess = new TicketNotification();
+                        
+                $notificacionProcess->fill([
+                    'ticket_id'        => $ticket->id,
+                    'ticket_action_id' => $enum_action->id,
+                    'user_id'          => $users_ids[0],
+                    'title'            => 'cambió de estatus a En proceso',
+                    'description'      => sprintf(
+                        'El ticket “%s - %s” se colocó en proceso por tu usuario el %s',
+                        $ticket->uid,
+                        $ticket->title,
+                        Carbon::now()->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                    ),
+                ]);
+
+                $notificacionProcess->save();
+            }
 
             //guardar logs sobre el paso de estatus 1 a 2
             $this->log_ticket_service->logAction(
@@ -1483,6 +1755,7 @@ class TicketService {
                 null
             );
         }
+
 
         return $ticket;
     }

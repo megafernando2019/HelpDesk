@@ -163,4 +163,9 @@ trait HelpDeskUtils
 
         return $candidates[$nextIndex];
     }
+
+    public function getUserBotHelpDesk()
+    {
+        return DB::table('users')->where('id_sso', 'SYSTEM_BOT_01')->first();
+    }
 }
