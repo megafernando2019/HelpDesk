@@ -100,11 +100,12 @@
                                 <span 
                                 @if (!$color)
                                  class="badge px-2 py-1 fs-12"
-                                 style="background-color: #C4C4C44D; color: #c4c4c4;"
+                                 style="background-color: #C4C4C44D; color: #c4c4c4; text-wrap: wrap;"
                                 @else
                                  class="badge px-2 py-1 fs-12"
-                                 style="background-color: {{$color}}3D; color: {{$color}} !important;"
+                                 style="background-color: {{$color}}3D; color: {{$color}} !important; text-wrap: wrap;"
                                 @endif  
+                                
                                 >
                                     {{ $category?->name ?? '' }}
                                 </span>
