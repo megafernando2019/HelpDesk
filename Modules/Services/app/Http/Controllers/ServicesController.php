@@ -129,7 +129,7 @@ class ServicesController extends Controller
         try {
 
              do {
-                $uid = 'SR' . strtoupper(Str::random(5));
+                $uid = 'SRV' . strtoupper(Str::random(5));
             } while (TicketServiceEntity::where('uid', $uid)->exists());
 
             // Creación del registro

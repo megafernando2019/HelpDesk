@@ -318,18 +318,22 @@
                                     Encargado
                                 </h3>
 
-                                @if ($ticket->status_id === 2 || $ticket->status_id === 3 || $ticket->status_id === 1)
-                                        @canany(['assign-tickets', 'reassign-tickets'])
-                                            <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
-                                                    class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
-                                                    data-exist-user-assing='@json($UserAssignEntity)'
-                                                    >
-                                                <i 
-                                                class="{{$currentUserAssing === 0 ? 'ti ti-user-check' 
-                                                                                : 'ti ti-replace-user'}}"></i>
-                                                {{$currentUserAssing === 0 ? 'Confirmar asignación' : 'Confirmar reasignación'}}
-                                            </button>
-                                        @endcanany
+                             
+
+                                @if ($ticket)
+                                    @if ($ticket->status_id === 2 || $ticket->status_id === 3 || $ticket->status_id === 1)
+                                            @canany(['assign-tickets', 'reassign-tickets'])
+                                                <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
+                                                        class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
+                                                        data-exist-user-assing='@json($UserAssignEntity)'
+                                                        >
+                                                    <i 
+                                                    class="{{$currentUserAssing === 0 ? 'ti ti-user-check' 
+                                                                                    : 'ti ti-replace-user'}}"></i>
+                                                    {{$currentUserAssing === 0 ? 'Confirmar asignación' : 'Confirmar reasignación'}}
+                                                </button>
+                                            @endcanany
+                                    @endif
                                 @endif
                             </div>
                             <div class="card-body">

@@ -3,6 +3,9 @@
 @section('title', 'HelpDesk - Ver ticket')
 
 @section('content')
+        @php
+            $statusTicket = $ticket?->status_id ?? 0;
+        @endphp
         <div class="page-wrapper">
             <div class="content container-fluid">
             
@@ -318,7 +321,8 @@
                                     Encargado
                                 </h3>
 
-                                @if ($ticket->status_id === 2 || $ticket->status_id === 3 || $ticket->status_id === 1)
+    
+                                @if ($statusTicket === 2 || $statusTicket === 3 || $statusTicket === 1)
                                         @canany(['assign-tickets', 'reassign-tickets'])
                                             <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
                                                     class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
