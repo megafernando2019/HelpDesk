@@ -79,19 +79,13 @@ class AppServiceProvider extends ServiceProvider
                 ]);
         });
 
-         //Acceso por roles para ReAsignacion
-        Gate::define('reasignar', function ($user) {
-            return $user->hasAnyRole([
-                    RoleEnum::SISTEMAS->value,
-                    RoleEnum::JEFE_EQUIPO->value
-                ]);
-        });
 
          //Acceso por roles para ReAsignacion
         Gate::define('show_operating', function ($user) {
             return $user->hasAnyRole([
                     RoleEnum::SISTEMAS->value,
-                    RoleEnum::JEFE_EQUIPO->value
+                    RoleEnum::JEFE_EQUIPO->value,
+                    RoleEnum::ENCARGADO->value
                 ]);
         });
 

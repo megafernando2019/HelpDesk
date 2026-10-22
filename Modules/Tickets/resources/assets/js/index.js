@@ -601,35 +601,46 @@ $(document).ready(function () {
                         <i class="ti ti-user-check fs-18"></i>
                     </a>` : ``;
 
-                let actionOnlyUserCancel = '';
+                let actionClosed = applyPermissionCloseTicket ?
+                `
+                <a href="javascript:void(0);"
+                  data-id="${ticket?.id || 0}"
+                  data-status-id="${ticket?.statusId || 0}" 
+                  data-bs-toggle="tooltip" 
+                  class="ticket-status-closed"
+                  title="Cerrar ticket">
+                    <i class="ti ti-lock-check fs-18"></i>
+                </a>` : ``;
 
+                let actionOnlyUserCancel = '';
     
                 switch (ticket?.statusId || 0) {
                     case 1:
                         actionsHtml += ` 
                             ${actionObservation}
-                            ${actionCancel}
                         `;
 
-                        //actionOnlyUserCancel += `${actionObservation}${actionCancel}`;
+                        actionOnlyUserCancel += `${actionObservation} ${actionCancel}`;
 
                         break;
                     case 2:
                     case 3:
-                    case 4:
-                        actionsHtml += `${actionObservation}`;
-                        // actionOnlyUserCancel += `${actionObservation}`;
+                        actionsHtml += `${actionObservation} ${actionCancel}`;
+                        actionOnlyUserCancel += `${actionObservation}`;
                         break;
-                 
-                        // actionsHtml += `${actionObservation}`;
-                        // actionOnlyUserCancel += `${actionObservation}`;
-                        // break;
-                    // case 5:
-                    // case 6:
-                    //     actionsHtml += ` 
-                    //         ${actionObservation}
-                    //     `;
-                        // break;
+                    case 4:
+                        actionsHtml += `${actionObservation} ${actionClosed}`;
+                        actionOnlyUserCancel += `${actionObservation}`;
+
+                        break;
+                    case 5:
+                    case 6:
+                        actionsHtml += ` 
+                            ${actionObservation}
+                        `;
+                        actionOnlyUserCancel += `${actionObservation}`;
+
+                        break;
                     default:
                         break;
                 }
@@ -670,12 +681,12 @@ $(document).ready(function () {
 
 
 
-    $(document).on('click', '.ticket-status-process, .ticket-status-cancel, .ticket-status-completed, .ticket-status-waiting', function (e) {
+    $(document).on('click', '.ticket-status-process, .ticket-status-cancel, .ticket-status-completed, .ticket-status-waiting, .ticket-status-closed', function (e) {
         e.preventDefault();
 
         const $btn = $(this);
         const ticketId = $btn.data('id');
-        const statusId = parseInt($btn.data('statusId'));
+        let statusId = parseInt($btn.data('statusId'));
         const ticketUid = $btn.data('uid');
         const currentIdStatus = hasClassActiveFilter();
         const priority = $('[data-action=filter-by-priority]').val() || 0;
@@ -694,11 +705,9 @@ $(document).ready(function () {
                 actionText = "poner en espera";
                 break;
             case 4:
-                actionText = "solucionar";
-                break;
-            case 5:
                 actionText = "cerrar";
                 break;
+            
             case 6:
                 actionText = "cancelar";
                 
@@ -709,20 +718,7 @@ $(document).ready(function () {
         }
 
         //Si la accion es solucionado
-        if (statusId === 4) {
-
-            $('#ReasonCompletedDescription').val('');
-            $('.error-input-reason-completed').text('');
-            $('#ReasonCompletedDescription').removeClass('is-invalid');
-
-            $('#modal_completed_reason_ticket_id').val(ticketId);
-            $('#modal_completed_reason_status_id').val(statusId);
-
-            reasonCompletedModal.modal('show');
-            return;
-        }
-        // o cancelado
-        else if (statusId === 6) {
+       if (statusId === 6) {
             $('#ReasonCancelledDescription').val('');
             $('.error-input-reason-cancelled').text('');
             $('#ReasonCancelledDescription').removeClass('is-invalid');
@@ -732,6 +728,11 @@ $(document).ready(function () {
 
             reasonCancelledModal.modal('show');
             return;
+        }
+
+        //Si es solucionado
+        if (statusId === 4) {
+            statusId = 5;
         }
 
         Swal.fire({

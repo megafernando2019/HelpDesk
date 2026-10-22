@@ -38,7 +38,9 @@ Route::middleware(['auto_login'])->group(function () {
          ->middleware('can:mi_trabajo_diario');
 
      //Vista show operativa para bandejas de mi trabajo diario y archivo
-     Route::get('/tickets/details_ticket/{uid}', [TicketsController::class, 'showOperating'])->name('tickets.show.operating');
+     Route::get('/tickets/details_ticket/{uid}', [TicketsController::class, 'showOperating'])
+     ->middleware('can:show_operating')
+     ->name('tickets.show.operating');
 
      Route::get('/search_offcanvas_event', [TicketsController::class, 'searchEvent']);
 
