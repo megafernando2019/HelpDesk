@@ -148,3 +148,7 @@
 .dropdown-item.active {
     color: #31343b;
 }
+
+span.select2-selection__clear {
+    margin-right: 0.8em !important;
+}
