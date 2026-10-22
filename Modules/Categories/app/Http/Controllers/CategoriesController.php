@@ -56,7 +56,9 @@ class CategoriesController extends Controller
                 $query->select('id', 'category_id', 'name', 'color')
                       ->where('status_id', 1);             
             },
-            'logs_actions'
+            'logs_actions' => function ($query) {
+                $query->orderBy('id', 'desc');
+            }
             ])
             ->where('team_id', $user_team_id)
             ->orderByDesc('id')
