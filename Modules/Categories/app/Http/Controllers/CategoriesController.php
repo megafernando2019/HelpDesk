@@ -52,6 +52,10 @@ class CategoriesController extends Controller
         $categories = TicketCategory::with([
             'creator:id,first_name,last_name', 
             'services:id,category_id,name,color',
+            'services' => function ($query) {
+                $query->select('id', 'category_id', 'name', 'color')
+                      ->where('status_id', 1);             
+            },
             'logs_actions'
             ])
             ->where('team_id', $user_team_id)
@@ -71,7 +75,7 @@ class CategoriesController extends Controller
                     ? trim("{$log->user->first_name} {$log->user->last_name}")
                     : 'Usuario';
 
-                // Formato: "Miércoles 04 de Octubre del 2023 a las 12:14 pm"
+               
                 $dateFormatted = ucfirst($log->created_at->locale('es')->isoFormat('dddd DD [de] MMMM [del] YYYY [a las] hh:mm a'));
 
                 $actionText = $log->message ?? 'realizó un cambio en esta categoría';
