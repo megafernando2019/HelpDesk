@@ -166,7 +166,7 @@
                     @elseif($type === 'create')
                         <h1 class="header-title">¡Hola {{ $recipientName }}!</h1>
                         <p class="header-subtitle">
-                         Te informamos que el ticket <strong>{{ $ticket->title }}</strong> fue creado
+                         Te informamos que el ticket <strong>{{ $ticket->title }}</strong> fue <strong style="color: #0049fc;">creado</strong>
                         </p>
                     @elseif($type === 'observation')
                         <h1 class="header-title">¡Hola!</h1>
