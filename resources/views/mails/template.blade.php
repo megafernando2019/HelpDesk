@@ -266,7 +266,10 @@
                             <img src="{{ asset('build/img/icons/mailer/fecha.png') }}" class="icon" alt="Fecha">
                             <div>
                                 <p class="label">
-                                    @if($type === 'assigned') Fecha de asignación @elseif($type === 'observation') Fecha de observación @else Fecha de solución @endif
+                                    @if($type === 'assigned') Fecha de asignación 
+                                    @elseif($type === 'create') Fecha de creación
+                                    @elseif($type === 'observation') Fecha de observación
+                                    @else Fecha de solución @endif
                                 </p>
                                 <p class="value">{{ now()->locale('es')->translatedFormat('d \d\e F Y, H:i') }} h</p>
                             </div>
