@@ -407,6 +407,18 @@
                                         @case(3)
                                         @case(4)
                                             
+                                            @can('close-ticket')
+                                                <button type="button" 
+                                                        class="btn btn-status-action"
+                                                        data-status="5"
+                                                        data-name="Cerrado"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Cerrar ticket">
+                                                    <i class="ti ti-lock-check"></i>
+                                                </button>
+                                            @endcan
+                                            
                                             @can('add-observations')
                                                 <button type="button" 
                                                             class="btn btn-status-observation"
