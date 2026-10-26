@@ -2,9 +2,12 @@
 
 namespace Modules\Tickets\Repositories;
 
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Modules\Tickets\Repositories\Interfaces\ITicketRepo;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Models\TicketAttachment;
 use Modules\Tickets\Models\TicketLog;
@@ -240,6 +243,12 @@ class TicketRepo implements ITicketRepo {
         $applyDateDefault = false
     )
     {
+        $rol = auth()?->user()?->roles?->first() ?? null;
+
+        if (!$rol) {
+            throw new InvalidArgumentException('El rol del usuario es inválido o no tiene asignado uno aún.');
+        }
+
         $q = DB::table('tickets as t')
         ->select([
             't.id',
@@ -284,10 +293,14 @@ class TicketRepo implements ITicketRepo {
         ->leftJoin('users as u', 'u.id', '=', 'tua.user_id')
         ->leftJoin('tickets_observations as tob', 'tob.ticket_id', '=', 't.id')
         ->leftJoin('users as uc', 't.user_id', '=', 'uc.id')
-        ->orderByDesc('t.id')
-        ->get();
-
-        return $q;
+        ->orderByDesc('t.id');
+        
+        //Solo para el encargado
+        if ($rol->uid ===  User::ENCARGADO) {
+            $q->where('tua.user_id', Auth::user()->id);
+        }
+        
+        return $q->get();
     }
 
     public function getAssignedTicketsByUserId(
