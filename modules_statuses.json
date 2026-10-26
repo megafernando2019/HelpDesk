@@ -5,5 +5,6 @@
     "Services": true,
     "Tags": true,
     "User": true,
-    "Reports": true
+    "Reports": true,
+    "RecurringIncidents": true
 }

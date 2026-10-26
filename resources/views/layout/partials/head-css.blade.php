@@ -232,7 +232,8 @@
                 'tickets.archive',
                 'reports.index',
                 'reports.index.service',
-                'reports.index.users_assings'
+                'reports.index.users_assings',
+                'incidents.index'
             ]))
     <!-- flatpickr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">

@@ -283,7 +283,9 @@
             <div class="dropdown-menu menu-drop-user">
                 <div class="profilename">
                     <div class="profileset">
-                        <span class="user-img"><img src="{{URL::asset('build/img/profiles/avator1.jpg')}}" alt="Img">
+                        <span class="user-img">
+                           
+                            <img src="https://ssotest.megatravel.online/storage/employees/documents/{{Auth::user()->id_sso}}/{{Auth::user()->id_sso}}.png" alt="">
                             <span class="status online"></span></span>
                         <div class="profilesets">
                             <h6>John Smilga</h6>

@@ -208,7 +208,7 @@
                                             </li>
                                         </ul>
                                     </li>
-                                    <li class="{{ Request::is('product-list', 'product-details', 'edit-product') ? 'active' : '' }}">
+                                    <li class="{{ Request::is('tickets.my.team') ? 'active' : '' }}">
                                         <a href="{{ route('tickets.my.team') }}">
                                             <i class="ti ti-users fs-16 me-2"></i>
                                             <span>Mi equipo</span>
@@ -244,6 +244,27 @@
                          </li>
                         @endhasanyrole
                     @endif
+
+                    @if(auth()->check())
+                        @hasanyrole([
+                            App\Supports\Enums\RoleEnum::SISTEMAS->value,
+                            App\Supports\Enums\RoleEnum::JEFE_EQUIPO->value,
+                            App\Supports\Enums\RoleEnum::ENCARGADO->value
+                        ])
+                        <li class="submenu-open">
+                            <ul>
+                                <li class="{{ Request::is('incidents.index') ? 'active' : '' }}">
+                                    <a href="{{route('incidents.index')}}"
+                                       class="">
+                                        <i class="ti ti-refresh-dot fs-16 me-2"></i>
+                                        <span>Reincidencias</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endhasanyrole
+                    @endif
+
                 </ul>
                 <!-- end menu -->
             </div>

@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/recurringincidents",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\RecurringIncidents\\": "app/",
+            "Modules\\RecurringIncidents\\Database\\Factories\\": "database/factories/",
+            "Modules\\RecurringIncidents\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\RecurringIncidents\\Tests\\": "tests/"
+        }
+    }
+}

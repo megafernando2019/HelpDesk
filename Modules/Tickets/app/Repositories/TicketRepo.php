@@ -52,7 +52,7 @@ class TicketRepo implements ITicketRepo {
                     break;
 
                 default:
-                    // Por defecto, si no manda filtro o es 'today', puedes dejar un rango por defecto (ej. el último mes como tenías)
+                    // Por defecto, si no manda filtro o es 'today'
                     $fechaHaceUnMes = Carbon::now()->subMonth();
                     $q->where('n.created_at', '>=', $fechaHaceUnMes);
                     break;

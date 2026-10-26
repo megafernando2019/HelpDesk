@@ -314,7 +314,8 @@
                'tickets.archive',
                'reports.index',
                'reports.index.service',
-                'reports.index.users_assings'
+                'reports.index.users_assings',
+               'incidents.index'
                ]))     
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>

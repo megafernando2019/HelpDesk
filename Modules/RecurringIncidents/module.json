@@ -1,0 +1,11 @@
+{
+    "name": "RecurringIncidents",
+    "alias": "recurringincidents",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\RecurringIncidents\\Providers\\RecurringIncidentsServiceProvider"
+    ],
+    "files": []
+}
