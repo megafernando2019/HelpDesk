@@ -214,7 +214,8 @@ $(document).ready(function () {
                         notification_ids: pluckIds
                     },
                     success: function (response) {
-                        console.log('Respuesta del servidor:', response.message);
+                        console.log(response.count)
+                        $('.count-notifications').text(response?.count??0);
                     },
                     error: function (xhr, status, error) {
                         console.error('Error en la petición POST:', error);

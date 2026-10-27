@@ -48,9 +48,13 @@ class TicketRepo implements ITicketRepo {
                     // Notificaciones de esta semana (desde el lunes o últimos 7 días)
                     $q->where('n.created_at', '>=', Carbon::now()->startOfWeek());
                     break;
+                case 'not_read':
+                    // Notificaciones que no han sido leídas
+                    $q->whereNull('n.read_at');
+                    break;
 
                 case 'read':
-                    // Notificaciones que ya han sido leídas (donde read_at no es nulo)
+                    // Notificaciones que ya han sido leídas
                     $q->whereNotNull('n.read_at');
                     break;
 

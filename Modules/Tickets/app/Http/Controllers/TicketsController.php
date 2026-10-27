@@ -69,7 +69,15 @@ class TicketsController extends Controller
                 ->whereNull('read_at')
                 ->update(['read_at' => Carbon::now()]);
 
-            return response()->json(['success' => true, 'message' => 'Notificaciones marcadas como leídas.']);
+            $count = DB::table('tickets_notifications')
+            ->where('user_id', auth()->id())
+            ->whereNull('read_at')
+            ->count();
+
+            return response()->json(['success' => true, 
+                                     'count'   => $count,
+                                     'message' => 'Notificaciones marcadas como leídas.'
+                                    ]);
         } catch (\Throwable $th) {
             \Log::info($th);
             return response()->json(['success' => false, 'message' => 'Error al actualizar.'], 500);
