@@ -54,7 +54,7 @@
                                                       {{$user?->department?->name ?? 'Departamento no disponible'}}
                                                     @else
                                                      {{$user?->department?->name ?? 'Departamento no disponible'}}  <i class="ti ti-point"></i> 
-                                                    Equipo : {{ $user?->teams?->first()?->name ?? 'Equipo no disponible' }}
+                                                    Equipo {{ $user?->teams?->first()?->name ?? 'Equipo no disponible' }}
                                                     @endrole
                                                 </p>
                                                 <small style="font-size: 11px;" class="text-muted">{{$user?->email}}</small>
