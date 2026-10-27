@@ -56,7 +56,7 @@
                                                     @role(App\Supports\Enums\RoleEnum::USUARIO->value)
                                                       {{$user?->department?->name ?? 'Departamento no disponible'}}
                                                     @else
-                                                    {{$user?->department?->name ?? 'Departamento no disponible'}}  <i class="ti ti-point"></i>  {{ $user?->teams?->first()?->name ?? 'Equipo no disponible' }}
+                                                    {{$user?->department?->name ?? 'Departamento no disponible'}}  <i class="ti ti-point"></i> Equipo: {{ $user?->teams?->first()?->name ?? 'Equipo no disponible' }}
                                                     @endrole
                                                 </p>
                                                 <small style="font-size: 11px;" class="text-muted">{{$user?->email}}</small>
