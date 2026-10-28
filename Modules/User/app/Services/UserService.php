@@ -119,6 +119,7 @@ class UserService
                 'move-ticket-to-wait',
                 'add-observations',
                 'solve-ticket',
+                'close-ticket',
                 'cancel-ticket'
             ],
             RoleEnum::USUARIO->value => 
@@ -126,7 +127,8 @@ class UserService
                 'create-ticket',
                 'view-tickets',
                 'add-observations',
-                'cancel-ticket'
+                'cancel-ticket',
+                'close-ticket',
             ],
             RoleEnum::SISTEMAS->value => 
             [
