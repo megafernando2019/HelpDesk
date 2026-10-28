@@ -269,6 +269,12 @@ $(document).ready(function () {
         });
     }
 
+    $('#filterUser').select2({
+        placeholder: "Selecciona una opción",
+        allowClear: true,
+        width: '100%',
+    });
+
     function debounce(func, wait) {
         let timeout;
         return function(...args) {

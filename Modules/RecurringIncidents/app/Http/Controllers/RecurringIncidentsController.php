@@ -44,6 +44,8 @@ class RecurringIncidentsController extends Controller
         ->distinct()
         ->get();
 
+        $usersAll = User::where('active', 1)->get();
+
         $categorias = TicketCategory::whereIn('team_id', $teamIds)->get();
 
         if ($categorias->isNotEmpty()) {
@@ -54,7 +56,14 @@ class RecurringIncidentsController extends Controller
 
         $ctxStatus = DB::table('status')->get();
 
-        return view('recurringincidents::index', compact('supportUsers', 'categorias', 'servicios', 'ctxStatus'));
+        return view('recurringincidents::index',
+         compact(
+        'supportUsers', 
+         'categorias', 
+         'servicios', 
+         'ctxStatus',
+         'usersAll'
+         ));
     }
 
     public function getDataKpMetrics(Request $request)

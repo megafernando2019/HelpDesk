@@ -14,7 +14,7 @@
                     <div style="background-color: #f3f6ff;" class="card border border-info rounded-4 p-2 shadow-sm">
                         <div class="d-flex align-items-center">
                             <div class="me-3">
-                                <!-- Reemplaza con la ruta de tu icono/avatar -->
+                             
                                 <img src="{{asset('build/img/icons/tugui_en_computadora.png')}}" alt="Usuarios" style="height: 100px;
                                 width: 140px;">
                             </div>
@@ -65,11 +65,11 @@
             <!-- Fila principal de filtros -->
             <div class="row g-3 align-items-center mb-4">
     
-                <!-- Rango de fecha (Flatpickr) -->
-                <div class="col-12 col-xl-3 col-md-4">
+                <!-- Rango de fecha -->
+                <div class="col-md-3 p-2">
                    
-                    <div class="input-group bg-white rounded-3 shadow-sm border px-2 py-1">
-                        <span class="input-group-text bg-transparent border-0 text-muted ps-1">
+                    <div class="input-group">
+                        <span class="input-group-text text-muted ps-1">
                             <!-- Icono de calendario -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-week">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -86,37 +86,43 @@
                                 <path d="M10.01 17h.005" />
                             </svg>
                         </span>
-                        <input type="text" id="dateRangePicker" class="form-control border-0 bg-transparent shadow-none form-control-sm" placeholder="Selecciona rango de fecha">
+                        <input type="text" id="dateRangePicker" class="form-control" placeholder="Selecciona rango de fecha">
                     </div>
                 </div>
 
                 <!-- Usuario -->
-                <div class="col-12 col-xl-2 col-md-4">
-                    <div class="input-group bg-white rounded-3 shadow-sm border px-2 py-1">
-                        <span class="input-group-text bg-transparent border-0 text-muted ps-1">
+                <div class="col-md-3 p-2">
+                    <div class="input-group">
+                        <span class="input-group-text text-muted ps-1">
                             <!-- Icono de usuario -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+                                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
                             </svg>
                         </span>
-                        <select class="form-select border-0 bg-transparent shadow-none form-select-sm" id="filterUser">
-                            <option value="">Usuario</option>
-                            <!-- Opciones dinámicas con Blade -->
-                            @forelse ($supportUsers as $item)
+                        <div class="w-100">
+                            <select class="form-control" id="filterUser">
+                                <option value="">Usuario</option>
+                                 @forelse ($usersAll as $item)
                                 <option value="{{$item?->id ?? 0}}">{{$item?->first_name ?? ''}} {{$item?->last_name ?? ''}}</option>
-                            @empty
-                                
-                            @endforelse
-                        </select>
+                                 @empty
+                                     
+                                 @endforelse
+                            </select>
+                        </div>
                     </div>
                 </div>
 
+                <style>
+               
+                    
+                </style>
+
                 <!-- Categoría(s) -->
-                <div class="col-12 col-xl-2 col-md-4">
-                    <div class="input-group bg-white rounded-3 shadow-sm border px-2 py-1">
-                        <span class="input-group-text bg-transparent border-0 text-muted ps-1">
+                <div class="col-md-3 p-2">
+                    <div class="input-group">
+                        <span class="input-group-text  text-muted ps-1">
                             <!-- Icono de categoría -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-file-stack">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -128,7 +134,7 @@
                             </svg> 
                             
                         </span>
-                        <select class="form-select border-0 bg-transparent shadow-none form-select-sm" id="filterCategory">
+                        <select class="form-control" id="filterCategory">
                             <option  value="">Selecciona categoría(s)</option>
                             @forelse ($categorias as $item)
                             <option value="{{$item?->id ?? 0}}">{{$item?->name ?? ''}}</option>
@@ -140,16 +146,16 @@
                 </div>
 
                 <!-- Servicio(s) -->
-                <div class="col-12 col-xl-2 col-md-6">
-                    <div class="input-group bg-white rounded-3 shadow-sm border px-2 py-1">
-                        <span class="input-group-text bg-transparent border-0 text-muted ps-1">
+                <div class="col-md-3 p-2">
+                    <div class="input-group">
+                        <span class="input-group-text  text-muted ps-1">
                             <!-- Icono de servicio -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-hotel-service">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path d="M8.5 10a1.5 1.5 0 0 1 -1.5 -1.5a5.5 5.5 0 0 1 11 0v10.5a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-2c0 -1.38 .71 -2.444 1.88 -3.175l4.424 -2.765c1.055 -.66 1.696 -1.316 1.696 -2.56a2.5 2.5 0 1 0 -5 0a1.5 1.5 0 0 1 -1.5 1.5" />
                             </svg>
                         </span>
-                        <select class="form-select border-0 bg-transparent shadow-none form-select-sm" id="filterService">
+                        <select class="form-control" id="filterService">
                             <option  value="">Selecciona servicio(s)</option>
                              @forelse ($servicios as $item)
                              <option value="{{$item?->id ?? 0}}">{{$item?->name ?? ''}}</option>
@@ -161,9 +167,9 @@
                 </div>
 
                 <!-- Estatus -->
-                {{-- <div class="col-12 col-xl-3 col-md-6">
-                    <div class="input-group bg-white rounded-3 shadow-sm border px-2 py-1">
-                        <span class="input-group-text bg-transparent border-0 text-muted ps-1">
+                {{-- <div class="col-md-6">
+                    <div class="input-group border px-2 py-1">
+                        <span class="input-group-text  text-muted ps-1">
                             <!-- Icono de estatus -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-loader-4">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
