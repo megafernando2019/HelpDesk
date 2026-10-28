@@ -154,7 +154,14 @@ $(document).ready(function () {
         plotOptions: { bar: { horizontal: true, barHeight: '55%', distributed: true, borderRadius: 6 } },
         colors: ['#0049fc', '#a3a4ac', '#28c76f', '#f3972c'],
         dataLabels: { enabled: false },
-        legend: { show: false },
+        legend: {
+            show: true,
+            position: 'top',
+            horizontalAlign: 'left',
+            itemClick: {
+                toggleDataSeries: true // Puedes cambiarlo a false si no quieres que se oculten al hacer clic
+            }
+        },
         xaxis: { categories: ['En proceso', 'En espera', 'Solucionado', 'Cerrado'] }
     };
     var chart = new ApexCharts(document.querySelector("#tickets-status-chart"), options);
@@ -364,6 +371,7 @@ $(document).ready(function () {
                         }
                 });
 
+                chart.updateSeries(dataByStatusDistribution.series || []);
 
             } else {
                 dynamicColors = (dataByStatusDistribution.categories || []).map(cat => STATUS_COLORS[cat] || statusColorsMap[cat] || '#7367f0');
@@ -387,6 +395,8 @@ $(document).ready(function () {
             }
 
             chart.updateSeries(dataByStatusDistribution.series || []);
+            chart.hideSeries('Cerrado');
+            chart.hideSeries('Solucionado');
 
             // --- Tasa de Cierre ---
             const tasaCierre = response.data.tasaCierre ?? {};
