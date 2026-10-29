@@ -4,6 +4,7 @@
 
 @section('content')
         @php
+            
             $statusTicket = $ticket?->status_id ?? 0;
         @endphp
        
@@ -322,45 +323,17 @@
                                     Encargado
                                 </h3>
 
-    
-                                @if ($statusTicket === 2 || $statusTicket === 3 || $statusTicket === 1)
-                                        @canany(['assign-tickets', 'reassign-tickets'])
-                                            <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
-                                                    class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
-                                                    data-exist-user-assing='@json($UserAssignEntity)'
-                                                    >
-                                                <i 
-                                                class="{{$currentUserAssing === 0 ? 'ti ti-user-check' 
-                                                                                : 'ti ti-replace-user'}}"></i>
-                                                {{$currentUserAssing === 0 ? 'Confirmar asignación' : 'Confirmar reasignación'}}
-                                            </button>
-                                        @endcanany
-                                @endif
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         @if ($ticket)
-                                            @if ($ticket->status_id === 6 || $ticket->status_id === 5 || $ticket->status_id === 4)
-                                                @include('tickets::partials.show.view-user-default-assign',
-                                                        [
-                                                            'supportUsers' => $supportUsers,
-                                                            'currentUserAssing' => $currentUserAssing
-                                                        ]
-                                                )
-                                                 
-                                            @else
-                                                @canany(['assign-tickets', 'reassign-tickets'])
-                                                    @include(
-                                                    'tickets::partials.show.view-user-permision-action',
-                                                        [
-                                                            'supportUsers' => $supportUsers,
-                                                            'currentUserAssing' => $currentUserAssing
-                                                        ]
-                                                    )
-                                                @endcanany
-                                                
-                                            @endif
+                                            @include('tickets::partials.show.view-user-default-assign',
+                                                    [
+                                                        'supportUsers' => $supportUsers,
+                                                        'currentUserAssing' => $currentUserAssing
+                                                    ]
+                                            )
                                         @endif
                                     </div>
                                 </div>
