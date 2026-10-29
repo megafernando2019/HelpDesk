@@ -69,10 +69,7 @@
                 </div>
             </div>
             <div class="info-user-auth-heldesk">
-                    <p class="p-0 m-0">
-                        Sin usuario asignado
-                    </p>
-                    <small class="text-muted">Asignar</small>
+                    <small class="text-muted">Por asignar</small>
             </div>
         </div>
     </div>

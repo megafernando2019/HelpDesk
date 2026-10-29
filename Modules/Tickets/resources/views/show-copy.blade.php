@@ -6,6 +6,7 @@
         @php
             $statusTicket = $ticket?->status_id ?? 0;
         @endphp
+       
         <div class="page-wrapper">
             <div class="content container-fluid">
             
@@ -375,59 +376,55 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex gap-2 icons-group-actions">
-                                
-                                     @switch($ticket?->status_id ?? 0)
+                                    @switch($ticket?->status_id ?? 0)
                                         @case(1)
-                                           
-                                            @can('add-observations')
-                                                <button type="button" 
-                                                            class="btn btn-status-observation"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top"
-                                                            data-bs-title="Agregar observación">
-                                                        <i class="ti ti-edit-circle"></i>
-                                                </button>
-                                            @endcan
-
-                                            @can('cancel-ticket')
-                                                <button type="button" 
-                                                        class="btn btn-status-action"
-                                                        data-status="6"
-                                                        data-name="Cancelado"
+                                            <button type="button" 
+                                                        class="btn btn-status-observation"
                                                         data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
-                                                        data-bs-title="Cancelar ticket">
-                                                    <i class="ti ti-cancel"></i>
-                                                </button>
-                                            @endcan
-                                            
+                                                        data-bs-title="Agregar observación">
+                                                    <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="6"
+                                                    data-name="Cancelado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Cancelar ticket">
+                                                <i class="ti ti-cancel"></i>
+                                            </button>
                                             @break
 
                                         @case(2)
                                         @case(3)
-                                        @case(4)
-                                            
-                                            @can('close-ticket')
-                                                <button type="button" 
-                                                        class="btn btn-status-action"
-                                                        data-status="5"
-                                                        data-name="Cerrado"
+                                        @case(5)
+                                            <button type="button" 
+                                                        class="btn btn-status-observation"
                                                         data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
-                                                        data-bs-title="Cerrar ticket">
-                                                    <i class="ti ti-lock-check"></i>
-                                                </button>
-                                            @endcan
-                                            
-                                            @can('add-observations')
-                                                <button type="button" 
-                                                            class="btn btn-status-observation"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top"
-                                                            data-bs-title="Agregar observación">
-                                                        <i class="ti ti-edit-circle"></i>
-                                                </button>
-                                            @endcan
+                                                        data-bs-title="Agregar observación">
+                                                    <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            @break
+
+                                        @case(4)
+                                            <button type="button" 
+                                                        class="btn btn-status-observation"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Agregar observación">
+                                                    <i class="ti ti-edit-circle"></i>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-status-action"
+                                                    data-status="5"
+                                                    data-name="Cerrado"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    data-bs-title="Cerrar ticket">
+                                                <i class="ti ti-lock-check"></i>
+                                            </button>
                                             @break
 
                                         @default

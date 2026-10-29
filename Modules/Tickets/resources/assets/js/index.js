@@ -508,6 +508,7 @@ $(document).ready(function () {
                 };
 
                 let assigned_name = ticket?.assignedUserName ?? '';
+
                 let actionsHtml = '';
                 showBtn = `
                     <a 
@@ -522,7 +523,7 @@ $(document).ready(function () {
                          <i class="ti ti-eye fs-18"></i>
                     </a>`;
 
-                let actionSolved = applyPermissionSolveTicket ? `
+                let actionSolved = `
                 <a 
                         href="javascript:void(0);" 
                         data-id="${ticket?.id ?? 0}" 
@@ -533,9 +534,9 @@ $(document).ready(function () {
                         data-bs-toggle="tooltip"
                         title="Solucionado">
                         <i class="ti ti-circle-check fs-18"></i>
-                </a>`: ``;
+                </a>`;
 
-                let actionWaiting = applyPermissionMoveWait ? `
+                let actionWaiting = `
                 <a 
                         href="javascript:void(0);" 
                         data-id="${ticket?.id ?? 0}" 
@@ -546,9 +547,9 @@ $(document).ready(function () {
                         data-bs-toggle="tooltip"
                         title="En espera">
                         <i class="ti ti-clock fs-18"></i>
-                 </a>`:``;
+                 </a>`;
 
-                let actionObservation =  applyPermissionAddObservations ?
+                let actionObservation =
                     `
                     <a href="javascript:void(0);" 
                        data-id="${ticket?.id || 0}" 
@@ -560,9 +561,9 @@ $(document).ready(function () {
                        class="text-secondary ticket-add-observation" 
                        title="Agregar observación">
                         <i class="ti ti-edit-circle fs-18"></i>
-                    </a>` : ``;
+                    </a>`;
 
-                let actionCancel = applyPermissionCancelTicket ? 
+                let actionCancel =
                 `<a 
                         href="javascript:void(0);" 
                         data-id="${ticket?.id ?? 0}" 
@@ -574,9 +575,9 @@ $(document).ready(function () {
                         title="Cancelar">
                         <i class="ti ti-cancel fs-18"></i>
                  </a>
-                ` : ``;
+                `;
 
-                let actionReAssing = applyPermissionReAssing ?
+                let actionReAssing =
                    `
                     <a  href="javascript:void(0);"
                         data-id="${ticket?.id || 0}"
@@ -587,9 +588,9 @@ $(document).ready(function () {
                         title="Reasignar">
                         <i class="ti ti-replace-user fs-18"></i>
                     </a>
-                   ` : ``;
+                   `;
 
-                let actionAssing = applyPermissionAssing ?
+                let actionAssing =
                     `
                     <a href="javascript:void(0);"
                       data-id="${ticket?.id || 0}"
@@ -599,9 +600,9 @@ $(document).ready(function () {
                       class="btn-assing-user"
                       title="Asignar">
                         <i class="ti ti-user-check fs-18"></i>
-                    </a>` : ``;
+                    </a>`;
 
-                let actionClosed = applyPermissionCloseTicket ?
+                let actionClosed =
                 `
                 <a href="javascript:void(0);"
                   data-id="${ticket?.id || 0}"
@@ -610,36 +611,25 @@ $(document).ready(function () {
                   class="ticket-status-closed"
                   title="Cerrar ticket">
                     <i class="ti ti-lock-check fs-18"></i>
-                </a>` : ``;
+                </a>`;
 
                 let actionOnlyUserCancel = '';
     
                 switch (ticket?.statusId || 0) {
                     case 1:
-                        actionsHtml += ` 
-                            ${actionObservation}
-                        `;
-
-                        actionOnlyUserCancel += `${actionObservation} ${actionCancel}`;
-
+                        actionsHtml += `${actionObservation}${actionCancel}`;
                         break;
                     case 2:
                     case 3:
-                        actionsHtml += `${actionObservation} ${actionCancel}`;
-                        actionOnlyUserCancel += `${actionObservation}`;
+                        actionsHtml += `${actionObservation}`;
                         break;
                     case 4:
                         actionsHtml += `${actionObservation} ${actionClosed}`;
-                        actionOnlyUserCancel += `${actionObservation}`;
-
                         break;
                     case 5:
-                    case 6:
-                        actionsHtml += ` 
-                            ${actionObservation}
-                        `;
-                        actionOnlyUserCancel += `${actionObservation}`;
-
+                        actionsHtml += `${actionObservation}`;
+                        break;
+                    case 6: 
                         break;
                     default:
                         break;
