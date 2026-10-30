@@ -9,6 +9,7 @@ use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Modules\Tickets\Console\AutoCloseTicketsCommand;
 use Modules\Tickets\Console\MigrateLegacyTicketLogs;
+use Modules\Tickets\Console\SeedBulkTicketsCommand;
 use Modules\Tickets\Services\TicketService;
 
 class TicketsServiceProvider extends ModuleServiceProvider
@@ -51,7 +52,8 @@ class TicketsServiceProvider extends ModuleServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MigrateLegacyTicketLogs::class,
-                AutoCloseTicketsCommand::class
+                AutoCloseTicketsCommand::class,
+                SeedBulkTicketsCommand::class
             ]);
         }
 
