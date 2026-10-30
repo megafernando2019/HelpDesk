@@ -356,7 +356,7 @@ class TicketsController extends Controller
      */
     public function create()
     {
-        $department_session_id = Auth::user()->department_id;
+        $department_session_id = Auth::user()?->department_id??0;
         return view('tickets::create', compact('department_session_id'));
     }
 

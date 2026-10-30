@@ -247,66 +247,65 @@ class TicketRepo implements ITicketRepo {
         $applyDateDefault = false
     )
     {
-        $rol = auth()?->user()?->roles?->first() ?? null;
+        $user = auth()->user();
+        $rol = $user?->roles?->first() ?? null;
 
         if (!$rol) {
             throw new InvalidArgumentException('El rol del usuario es inválido o no tiene asignado uno aún.');
         }
 
         $q = DB::table('tickets as t')
-        ->select([
-            't.id',
-            't.uid',
-            't.title',
-            't.description',
-            't.created_at',
-            't.status_id',
-            't.ticket_priority_id',
-            't.user_id',
-            't.team_id',
-            'ts.name as service_name',
-            'tp.name as priority_name',
-            'u.id as assigned_id',
-            'u.first_name as assigned_first_name',
-            'u.last_name as assigned_last_name',
-            'tob.description as observation',
-            'tua.user_id as user_assing_id',
-            'uc.id as user_id_create',
-            'uc.first_name as user_first_name_create',
-            'uc.last_name as user_last_name_create',
-            'uc.email as user_email_create'
-        ])
-        ->whereIn('t.team_id', $teamsIds)
-        ->whereIn('t.status_id', $ticket_statuses)
-        ->when($priority, function ($q, $priority) {
-            return $q->where('t.ticket_priority_id', $priority);
-        })
-        ->when($startDate && $endDate, function ($q) use ($startDate, $endDate) {
-            return $q->whereBetween('t.created_at', [
-                $startDate . ' 00:00:00',
-                $endDate . ' 23:59:59'
-            ]);
-        })
-        //Fecha inicial
-        ->when($applyDateDefault, function($q) {
-            $q->where('t.created_at', '>=', now()->subMonth()->startOfDay());
-        })
-        ->leftJoin('tickets_services as ts', 'ts.id', '=', 't.ticket_service_id')
-        ->leftJoin('tickets_priorities as tp', 'tp.id', '=', 't.ticket_priority_id')
-        ->leftJoin('tickets_users_assignations as tua', 'tua.ticket_id', '=', 't.id')
-        ->leftJoin('users as u', 'u.id', '=', 'tua.user_id')
-        ->leftJoin('tickets_observations as tob', 'tob.ticket_id', '=', 't.id')
-        ->leftJoin('users as uc', 't.user_id', '=', 'uc.id')
-        ->orderByDesc('t.id');
-        
-        //Solo para el encargado
-        if ($rol->uid ===  User::ENCARGADO) {
-            $q->where('tua.user_id', Auth::user()->id);
+            ->select([
+                't.id',
+                't.uid',
+                't.title',
+                't.description',
+                't.created_at',
+                't.status_id',
+                't.ticket_priority_id',
+                't.user_id',
+                't.team_id',
+                'ts.name as service_name',
+                'tp.name as priority_name',
+                'u.id as assigned_id',
+                'u.first_name as assigned_first_name',
+                'u.last_name as assigned_last_name',
+                'tob.description as observation',
+                'tua.user_id as user_assing_id',
+                'uc.id as user_id_create',
+                'uc.first_name as user_first_name_create',
+                'uc.last_name as user_last_name_create',
+                'uc.email as user_email_create'
+            ])
+            ->leftJoin('tickets_services as ts', 'ts.id', '=', 't.ticket_service_id')
+            ->leftJoin('tickets_priorities as tp', 'tp.id', '=', 't.ticket_priority_id')
+            ->leftJoin('tickets_users_assignations as tua', 'tua.ticket_id', '=', 't.id')
+            ->leftJoin('users as u', 'u.id', '=', 'tua.user_id')
+            ->leftJoin('tickets_observations as tob', 'tob.ticket_id', '=', 't.id')
+            ->leftJoin('users as uc', 't.user_id', '=', 'uc.id')
+            ->whereIn('t.team_id', $teamsIds)
+            ->whereIn('t.status_id', $ticket_statuses)
+            ->when($priority, function ($query, $priority) {
+                return $query->where('t.ticket_priority_id', $priority);
+            })
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                return $query->whereBetween('t.created_at', [
+                    $startDate . ' 00:00:00',
+                    $endDate . ' 23:59:59'
+                ]);
+            })
+            ->when($applyDateDefault, function($query) {
+                return $query->where('t.created_at', '>=', now()->subMonth()->startOfDay());
+            });
+
+        if ($rol->uid === User::ENCARGADO) {
+            $q->where('tua.user_id', $user->id);
         }
-        
-        return $q->get();
+
+        return $q->orderByDesc('t.id')->get();
     }
 
+    
     public function getAssignedTicketsByUserId(
         int $userId,
         array $team

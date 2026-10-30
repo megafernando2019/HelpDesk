@@ -1046,7 +1046,7 @@ class TicketService {
         $priorities = $this->repo->getPriorities();
         $statuses = $this->repo->getStatus();
 
-        $user_id = Auth::user()->id;
+        $user_id = Auth::user()?->id ?? 0;
 
         $count_details_ctx = $this->repo->getStatusesWithCount($user_id);
 
