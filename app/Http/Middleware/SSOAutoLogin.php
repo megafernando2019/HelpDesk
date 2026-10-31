@@ -21,6 +21,7 @@ class SSOAutoLogin
         $broker = new LaravelSSOBroker();
         $response = $broker->getUserInfo();
         $request->session()->put('umo', $response);
+        
         // dd($request->session()->get('umo', ['session']));   
 
         // If client is logged out in SSO server but still logged in broker.
@@ -68,7 +69,8 @@ class SSOAutoLogin
         }
         else
         {
-            return redirect()->away(env('SSO_LOGIN_URL'));
+            $ssoLoginUrl = env('SSO_LOGIN_URL') ?? route('tickets.index');
+            return redirect()->away($ssoLoginUrl);
         }
 
         return $next($request);
