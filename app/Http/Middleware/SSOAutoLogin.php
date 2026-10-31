@@ -66,14 +66,11 @@ class SSOAutoLogin
                 'user_session_token',
                 $response['session']['token']
             );
-        }
-        else
+        } else
         {
-            $ssoLoginUrl = env('SSO_LOGIN_URL') ?? null;
-            if ($ssoLoginUrl || $ssoLoginUrl !== null) {
-                return redirect()->away($ssoLoginUrl);
-            }
-            
+            $ssoLoginUrl = env('SSO_LOGIN_URL') ?? 'https://sso.megatravel.online/';
+
+            return redirect()->away($ssoLoginUrl);
         }
 
         return $next($request);
