@@ -75,7 +75,7 @@
                                             <th class="py-3 fw-bold">Cerrados</th>
                                             <th class="py-3 fw-bold">Cancelados</th>
                                             <th class="py-3 fw-bold">Cumplimiento</th>
-                                            <th class="py-3 fw-bold">TPS</th>
+                                            <th class="py-3 fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" title="Tiempo promedio de solución">TPS</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-secondary fs-14">
