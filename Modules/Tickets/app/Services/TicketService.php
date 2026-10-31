@@ -1006,7 +1006,7 @@ class TicketService {
                         $ticket,
                         'solved',
                         $ticket?->user?->email,
-                        $assignedUser->email.','.'bborja@megatravel.com.mx',
+                        $assignedUser->email.','.'wgonzalez@megatravel.com.mx',
                         sprintf(
                             '%s %s',
                         $ticket?->user?->first_name ?? '',
@@ -1245,7 +1245,7 @@ class TicketService {
                 $ticket,
                 'create',
                 Auth::user()->email,  // Destinatario principal
-                'bborja@megatravel.com.mx',    // CC
+                'wgonzalez@megatravel.com.mx',    // CC
                 sprintf(
                     '%s %s',
                 Auth::user()->first_name,
@@ -1328,7 +1328,7 @@ class TicketService {
                 $ticket,
                 'assigned',
                 $assignedUser->email,  // Destinatario principal
-                'bborja@megatravel.com.mx',    // CC
+                'wgonzalez@megatravel.com.mx',    // CC
                 sprintf(
                     '%s %s',
                 $assignedUser->first_name,
@@ -1576,7 +1576,7 @@ class TicketService {
                                     $ticket,
                                     'assigned',
                                     $assignedUserLeft->email,  // Destinatario principal
-                                    'bborja@megatravel.com.mx',    // CC
+                                    'wgonzalez@megatravel.com.mx',    // CC
                                     sprintf(
                                         '%s %s',
                                     $assignedUserLeft->first_name,
@@ -1640,7 +1640,7 @@ class TicketService {
                                     $ticket,
                                     'assigned',
                                     $assignedUserRight->email,  // Destinatario principal
-                                    'bborja@megatravel.com.mx',    // CC
+                                    'wgonzalez@megatravel.com.mx',    // CC
                                     sprintf(
                                         '%s %s',
                                     $assignedUserRight->first_name,
@@ -1730,7 +1730,7 @@ class TicketService {
                 $ticket,
                 'assigned',
                 $userAssing->email, 
-                'bborja@megatravel.com.mx', 
+                'wgonzalez@megatravel.com.mx', 
                 sprintf(
                     '%s',
                     $selectedName

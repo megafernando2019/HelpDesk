@@ -722,7 +722,7 @@ class TicketsController extends Controller
                 $ticket,
                 'observation',
                 $currentAssignee->email ?? Auth::user()?->email ?? '',
-                $ticket->user->email . ',' . ($currentAssignee->email ?? Auth::user()?->email ?? '').','.'bborja@megatravel.com.mx', // Múltiples CCs separados por coma
+                $ticket->user->email . ',' . ($currentAssignee->email ?? Auth::user()?->email ?? '').','.'wgonzalez@megatravel.com.mx', // Múltiples CCs separados por coma
                 null,
                 auth()->user()->email,
                 session('umo.session.token')
