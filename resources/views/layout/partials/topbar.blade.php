@@ -93,7 +93,7 @@
 
             <li class="nav-item nav-item-box action-offcanvas-notifications">
                 <a href="javascript:void(0);" class="nav-link" data-bs-toggle="dropdown">
-                    <img class="profileset" src="{{Storage::url('icons/tugui_helpdesk.png')}}" alt="Notificaciones">
+                    <img class="profileset" src="/build/img/icons/tugui_helpdesk.png" alt="Notificaciones">
                     <span class="badge rounded-pill text-white count-notifications">0</span>
                 </a>
                 <div class="dropdown-menu d-none">
