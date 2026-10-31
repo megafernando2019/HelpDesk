@@ -69,8 +69,11 @@ class SSOAutoLogin
         }
         else
         {
-            $ssoLoginUrl = env('SSO_LOGIN_URL') ?? route('tickets.index');
-            return redirect()->away($ssoLoginUrl);
+            $ssoLoginUrl = env('SSO_LOGIN_URL') ?? null;
+            if ($ssoLoginUrl || $ssoLoginUrl !== null) {
+                return redirect()->away($ssoLoginUrl);
+            }
+            
         }
 
         return $next($request);
