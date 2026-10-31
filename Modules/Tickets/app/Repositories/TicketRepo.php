@@ -158,7 +158,8 @@ class TicketRepo implements ITicketRepo {
         return DB::table('tickets')
         ->join('status', 'tickets.status_id', '=', 'status.id')
         ->join('tickets_users_assignations', 'tickets.id', '=', 'tickets_users_assignations.ticket_id')
-        ->where('tickets.status_id', '!=', 6)
+        ->where('tickets.status_id', '!=', '6')
+        ->where('tickets.status_id', '!=', '1')
         ->select(
             'status.name as status_name',
             DB::raw('COALESCE(ROUND(AVG(DATEDIFF(tickets.updated_at, tickets.created_at)), 1), 0) as avg_days')
@@ -406,7 +407,10 @@ class TicketRepo implements ITicketRepo {
             'status.id', 
             'status.name', 
             DB::raw('COUNT(tickets.id) as tickets_count')
-        )
+        )->whereBetween('created_at', [
+             now()->subMonth()->toDateString() . ' 00:00:00',
+             now()->toDateString() . ' 23:59:59'
+        ])
         ->groupBy('status.id', 'status.name')
         ->get();
     }

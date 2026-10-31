@@ -63,6 +63,10 @@ class ViewParamsIndexMapper {
                 'icon'       => 'ti ti-help-circle',
             ];
 
+            $ticketsCount = isset($count_details[$key]) 
+            ? ($count_details[$key]['tickets_count'] ?? 0) 
+            : 0;
+
             if (is_array($status)) {
                
                 return array_merge($status, $style);
@@ -72,8 +76,7 @@ class ViewParamsIndexMapper {
             $status->badge_bg  = $style['badge_bg'];
             $status->text_color = $style['text_color'];
             $status->icon       = $style['icon'];
-            $status->tickets_count =  $count_details[$key] ?
-            ($count_details[$key]['tickets_count'] ?? 0) : 0;
+            $status->tickets_count =  $ticketsCount;
 
             return $status;
         });

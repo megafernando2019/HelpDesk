@@ -721,8 +721,8 @@ class TicketsController extends Controller
             SendTicketEmailJob::dispatch(
                 $ticket,
                 'observation',
-                $currentAssignee->email,
-                $ticket->user->email . ',' . $currentAssignee->email.','.'bborja@megatravel.com.mx', // Múltiples CCs separados por coma
+                $currentAssignee->email ?? Auth::user()?->email ?? '',
+                $ticket->user->email . ',' . ($currentAssignee->email ?? Auth::user()?->email ?? '').','.'bborja@megatravel.com.mx', // Múltiples CCs separados por coma
                 null,
                 auth()->user()->email,
                 session('umo.session.token')

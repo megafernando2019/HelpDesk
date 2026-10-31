@@ -403,6 +403,7 @@ $(document).ready(function () {
         e.preventDefault();
 
         const $btn = $(this);
+        const dataPage = $btn.data('data-page');
         const selected = $('.select2-assignees').val() || 0;
         const selectedData = $('.select2-assignees').select2('data');
         const selectedName = selectedData.length ? selectedData[0].text : '';
@@ -423,7 +424,9 @@ $(document).ready(function () {
         })
         .then(response => {
             ui.showToast('success', response?.data?.message || 'Asignación actualizada correctamente');
-            window.location.href = '/tickets/'+currentUid
+
+            window.location.href = '/tickets/details_ticket/'+currentUid;
+            
         })
         .catch(error => {
             console.error('Error al asignar usuarios:', error);

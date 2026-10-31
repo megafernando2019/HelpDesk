@@ -322,11 +322,13 @@
                              
 
                                 @if ($ticket)
+                                
                                     @if ($ticket->status_id === 2 || $ticket->status_id === 3 || $ticket->status_id === 1)
                                             @canany(['assign-tickets', 'reassign-tickets'])
-                                                <button {{$currentUserAssing === 0 ? 'disabled' : ''}} 
-                                                        class="btn btn-sm {{$currentUserAssing === 0 ? 'btn-grey' : 'btn-mega'}} btn-assign-users"
+                                                <button
+                                                        class="btn btn-sm btn-mega btn-assign-users"
                                                         data-exist-user-assing='@json($UserAssignEntity)'
+                                                        data-page="show-details"
                                                         >
                                                     <i 
                                                     class="{{$currentUserAssing === 0 ? 'ti ti-user-check' 

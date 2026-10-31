@@ -19,6 +19,7 @@
         
         <div class="d-flex align-items-center justify-content-between gap-2">
             @forelse ($dto->statuses as $item)
+                  
                    <div 
                         data-action="filter-by-status"
                         data-id="{{$item?->id}}"
