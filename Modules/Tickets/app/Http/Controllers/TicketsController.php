@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Categories\Services\TicketCategoryService;
 use Modules\Services\Services\CatalogService;
-use Modules\Tickets\app\Support\Exceptions\TicketException;
+use Modules\Tickets\Support\Exceptions\TicketException;
 use Modules\Tickets\Http\Requests\StoreTicketRequest;
 use Modules\Tickets\Jobs\SendTicketEmailJob;
 use Modules\Tickets\Services\TicketLogService;

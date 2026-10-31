@@ -12,7 +12,7 @@ use Modules\Tickets\Support\Mappers\TicketMapper;
 use Modules\Tickets\Support\Mappers\ViewParamsIndexMapper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Modules\Tickets\app\Support\Exceptions\TicketException;
+use Modules\Tickets\Support\Exceptions\TicketException;
 use Modules\Tickets\Jobs\SendTicketEmailJob;
 use Modules\Tickets\Models\Ticket;
 use Modules\Tickets\Models\TicketNotification;

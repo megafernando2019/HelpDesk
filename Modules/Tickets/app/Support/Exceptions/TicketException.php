@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Tickets\app\Support\Exceptions;
+namespace Modules\Tickets\Support\Exceptions;
 
 use Exception;
 
