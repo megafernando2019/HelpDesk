@@ -52,7 +52,8 @@
                                     Tickets disponibles
                                 </h3>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="height: 300px !important;
+                                overflow-x: auto !important;">
                                 <div class="content-cards">
                                     <!-- Ordenamiento -->
                                     <div class="order-by-tickets-container d-flex justify-content-end mb-3">
