@@ -1179,10 +1179,6 @@ class TicketService {
         
        $firstTeam = $user?->teams?->first() ?? null;
 
-       if (!$firstTeam) {
-          throw new InvalidArgumentException('Para crear el ticket debes estar en un equipo.');
-       }
-
        $values['uid'] = $uid;
        $values['user_id'] = $user?->id ?? 0;
        $values['status_id'] = 1;
@@ -1255,91 +1251,93 @@ class TicketService {
                 session('umo.session.token') // Token para el cURL
             );
 
+            if ($firstTeam) {
+                //Solo aplica el carrusel si el equipo se trata de soporte tecnico
+                if ($firstTeam->id === 2) {
 
-        //Solo aplica el carrusel si el equipo se trata de soporte tecnico
-           if ($firstTeam->id === 2) {
-            //Asignacion automatizada
-               $assignedUserId = $this->getNextAssignedUserId($values['team_id']);
+                    //Asignacion automatizada
+                    $assignedUserId = $this->getNextAssignedUserId($values['team_id']);
 
-                if ($assignedUserId) {
-                    $ticket->assignees()->attach($assignedUserId); 
+                        if ($assignedUserId) {
+                            $ticket->assignees()->attach($assignedUserId); 
+                        }
+
+                        $assignedUser = $this->user_service->getUser($assignedUserId);
+                        $enum_action = TicketAction::ASSIGN_TICKET;
+
+                        // Registrar en los logs
+                        $this->log_ticket_service->logAction(
+                            $ticket,
+                            $enum_action,
+                            'update',
+                            'tickets/create',
+                            sprintf(
+                                '%s %s',
+                            $assignedUser->first_name,
+                            $assignedUser->last_name
+                            ),   
+                        );
+
+                        //Se instancia automaticamente a en progreso
+                        $enum_action_progress = TicketAction::STATUS_IN_PROGRESS;
+
+                        $notificacionTwo = new TicketNotification();
+                
+                        //Obtener accion asignar
+                        $actionAssingId = $this->repo->getActionTicketByUid(TicketAction::ASSIGN_TICKET->value);
+
+                        $this->repo->updateStatus(2, $ticket->id);
+
+                        //guardar logs sobre el paso de estatus 1 a 2
+                        $this->log_ticket_service->logAction(
+                                $ticket,
+                                $enum_action_progress,
+                                'update',
+                                'tickets/create',
+                                null,
+                                null,
+                                null
+                        );
+
+
+                        $userBot = $this->getUserBotHelpDesk();
+
+                        //Para el usuario que se le asigno el ticket
+                        $notificacionTwo->fill([
+                            'ticket_id'        => $ticket->id,
+                            'ticket_action_id' => $actionAssingId->id,
+                            'user_id'          => $assignedUser->id,
+                            'title'            => 'asignó el ticket',
+                            'description'      => sprintf(
+                                'El ticket “%s - %s” te fue asignado por el %s (%s) el %s',
+                                $ticket->uid,
+                                $ticket->title,
+                                $userBot->first_name,
+                                $userBot->email,
+                                Carbon::parse($ticket?->created_at)->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
+                            ),
+                        ]);
+
+                        $notificacionTwo->save();
+
+                        //Enviar correo
+                        SendTicketEmailJob::dispatch(
+                            $ticket,
+                            'assigned',
+                            $assignedUser->email,  // Destinatario principal
+                            'wgonzalez@megatravel.com.mx',    // CC
+                            sprintf(
+                                '%s %s',
+                            $assignedUser->first_name,
+                            $assignedUser->last_name
+                            ),   
+                            null,
+                            session('umo.session.token') // Token para el cURL
+                        );
                 }
-
-                $assignedUser = $this->user_service->getUser($assignedUserId);
-                $enum_action = TicketAction::ASSIGN_TICKET;
-
-                // Registrar en los logs
-                $this->log_ticket_service->logAction(
-                    $ticket,
-                    $enum_action,
-                    'update',
-                    'tickets/create',
-                    sprintf(
-                        '%s %s',
-                    $assignedUser->first_name,
-                    $assignedUser->last_name
-                    ),   
-                );
-
-            //Se instancia automaticamente a en progreso
-            $enum_action_progress = TicketAction::STATUS_IN_PROGRESS;
-
-            $notificacionTwo = new TicketNotification();
-           
-            //Obtener accion asignar
-            $actionAssingId = $this->repo->getActionTicketByUid(TicketAction::ASSIGN_TICKET->value);
-
-            $this->repo->updateStatus(2, $ticket->id);
-
-             //guardar logs sobre el paso de estatus 1 a 2
-            $this->log_ticket_service->logAction(
-                    $ticket,
-                    $enum_action_progress,
-                    'update',
-                    'tickets/create',
-                    null,
-                    null,
-                    null
-            );
-
-
-            $userBot = $this->getUserBotHelpDesk();
-
-            //Para el usuario que se le asigno el ticket
-            $notificacionTwo->fill([
-                'ticket_id'        => $ticket->id,
-                'ticket_action_id' => $actionAssingId->id,
-                'user_id'          => $assignedUser->id,
-                'title'            => 'asignó el ticket',
-                'description'      => sprintf(
-                    'El ticket “%s - %s” te fue asignado por el %s (%s) el %s',
-                    $ticket->uid,
-                    $ticket->title,
-                    $userBot->first_name,
-                    $userBot->email,
-                    Carbon::parse($ticket?->created_at)->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i a')
-                ),
-            ]);
-
-            $notificacionTwo->save();
-
-            //Enviar correo
-            SendTicketEmailJob::dispatch(
-                $ticket,
-                'assigned',
-                $assignedUser->email,  // Destinatario principal
-                'wgonzalez@megatravel.com.mx',    // CC
-                sprintf(
-                    '%s %s',
-                $assignedUser->first_name,
-                $assignedUser->last_name
-                ),   
-                null,
-                session('umo.session.token') // Token para el cURL
-             );
-
-           }
-       }
+            }
+            
+        }
 
        return $ticket;
 

@@ -21,7 +21,7 @@ class User extends Authenticatable
     //Se usara el uid para localizar el rol
     const SISTEMAS = 'ROL123WS';
     const JEFEEQUIPO = 'ROL241FF';
-    const USUARIO = 'ROL720QW';
+    const USUARIO = 'ROL720QW'; 
     const ENCARGADO = 'ROL517AS';
 
     /**

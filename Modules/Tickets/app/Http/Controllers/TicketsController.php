@@ -268,6 +268,8 @@ class TicketsController extends Controller
             $priorities = $this->service->getAllPriorities();
             $teams = $this->userService->getTeams();
 
+            // dd($teams);
+
             return response()->json([
                 'teams' => $teams,
                 'ticket_priorities' => $priorities

@@ -27,6 +27,18 @@ class CategoriesController extends Controller
 
             $data = $this->service->getCategoriesByTeam($request);
 
+            $rolFirst = auth()?->user()?->roles?->first() ?? null;
+
+            if ($rolFirst) {
+                if ($rolFirst->uid === User::USUARIO) {
+                    return 
+                        response()->json([
+                           'data' => TicketCategory::where('status', 1)->get()
+                        ], 200);
+                }
+            
+            }
+
             return response()->json([
                'data' => $data
             ], 200);
