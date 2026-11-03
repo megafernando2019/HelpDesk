@@ -39,7 +39,7 @@
     }
 
     .all-tugui-option-wave {
-        background-image: url(http://127.0.0.1:8000/build/img/icons/wave_tugui.svg);
+        background-image: url(https://helpdesk.megatravel.online/build/img/icons/wave_tugui.svg);
         background-repeat: no-repeat;
         background-position: bottom;
         cursor: pointer;
