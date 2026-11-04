@@ -22,7 +22,7 @@ class SSOAutoLogin
         $response = $broker->getUserInfo();
         $request->session()->put('umo', $response);
         
-        // dd($request->session()->get('umo', ['session']));   
+        //dd($request->session()->get('umo', ['session']));
 
         // If client is logged out in SSO server but still logged in broker.
         if (

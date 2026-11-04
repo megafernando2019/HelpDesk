@@ -1,4 +1,235 @@
 {
+  "Modules/Categories/resources/assets/js/index.js": {
+    "file": "js/index2.js",
+    "name": "index",
+    "src": "Modules/Categories/resources/assets/js/index.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "Modules/RecurringIncidents/resources/assets/js/app.js": {
+    "file": "js/app2.js",
+    "name": "app",
+    "src": "Modules/RecurringIncidents/resources/assets/js/app.js",
+    "isEntry": true
+  },
+  "Modules/Reports/resources/assets/css/reports_category.css": {
+    "file": "css/reports_category.min.css",
+    "src": "Modules/Reports/resources/assets/css/reports_category.css",
+    "isEntry": true,
+    "name": "reports_user_assing",
+    "names": [
+      "reports_category.css",
+      "reports_service.css",
+      "reports_user_assing.css"
+    ]
+  },
+  "Modules/Reports/resources/assets/css/reports_service.css": {
+    "file": "css/reports_category.min.css",
+    "src": "Modules/Reports/resources/assets/css/reports_category.css",
+    "isEntry": true,
+    "name": "reports_user_assing",
+    "names": [
+      "reports_category.css",
+      "reports_service.css",
+      "reports_user_assing.css"
+    ]
+  },
+  "Modules/Reports/resources/assets/css/reports_user_assing.css": {
+    "file": "css/reports_category.min.css",
+    "src": "Modules/Reports/resources/assets/css/reports_category.css",
+    "isEntry": true,
+    "name": "reports_user_assing",
+    "names": [
+      "reports_category.css",
+      "reports_service.css",
+      "reports_user_assing.css"
+    ]
+  },
+  "Modules/Reports/resources/assets/js/reports_category.js": {
+    "file": "js/reports_category2.js",
+    "name": "reports_category",
+    "src": "Modules/Reports/resources/assets/js/reports_category.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "Modules/Reports/resources/assets/js/reports_service.js": {
+    "file": "js/reports_service2.js",
+    "name": "reports_service",
+    "src": "Modules/Reports/resources/assets/js/reports_service.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "Modules/Reports/resources/assets/js/reports_user_assing.js": {
+    "file": "js/reports_user_assing2.js",
+    "name": "reports_user_assing",
+    "src": "Modules/Reports/resources/assets/js/reports_user_assing.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "Modules/Services/resources/assets/js/index.js": {
+    "file": "js/index3.js",
+    "name": "index",
+    "src": "Modules/Services/resources/assets/js/index.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "Modules/Tags/resources/assets/js/index.js": {
+    "file": "js/index4.js",
+    "name": "index",
+    "src": "Modules/Tags/resources/assets/js/index.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/css/archive.css": {
+    "file": "css/archive.min.css",
+    "src": "Modules/Tickets/resources/assets/css/archive.css",
+    "isEntry": true,
+    "name": "archive",
+    "names": [
+      "archive.css"
+    ]
+  },
+  "Modules/Tickets/resources/assets/css/create.css": {
+    "file": "css/create.min.css",
+    "src": "Modules/Tickets/resources/assets/css/create.css",
+    "isEntry": true,
+    "name": "create",
+    "names": [
+      "create.css"
+    ]
+  },
+  "Modules/Tickets/resources/assets/css/my_daily_job.css": {
+    "file": "css/my_daily_job.min.css",
+    "src": "Modules/Tickets/resources/assets/css/my_daily_job.css",
+    "isEntry": true,
+    "name": "my_daily_job",
+    "names": [
+      "my_daily_job.css"
+    ]
+  },
+  "Modules/Tickets/resources/assets/css/my_team.css": {
+    "file": "css/my_team.min.css",
+    "src": "Modules/Tickets/resources/assets/css/my_team.css",
+    "isEntry": true,
+    "name": "my_team",
+    "names": [
+      "my_team.css"
+    ]
+  },
+  "Modules/Tickets/resources/assets/css/show.css": {
+    "file": "css/show.min.css",
+    "src": "Modules/Tickets/resources/assets/css/show.css",
+    "isEntry": true,
+    "name": "show",
+    "names": [
+      "show.css"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/archive.js": {
+    "file": "js/archive2.js",
+    "name": "archive",
+    "src": "Modules/Tickets/resources/assets/js/archive.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "resources/js/helpers/helper.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/assing.js": {
+    "file": "js/assing.js",
+    "name": "assing",
+    "src": "Modules/Tickets/resources/assets/js/assing.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/create.js": {
+    "file": "js/create2.js",
+    "name": "create",
+    "src": "Modules/Tickets/resources/assets/js/create.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "resources/js/helpers/helper.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/index.js": {
+    "file": "js/index.js",
+    "name": "index",
+    "src": "Modules/Tickets/resources/assets/js/index.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "resources/js/helpers/helper.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/my_daily_job.js": {
+    "file": "js/my_daily_job2.js",
+    "name": "my_daily_job",
+    "src": "Modules/Tickets/resources/assets/js/my_daily_job.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "resources/js/helpers/helper.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/my_team.js": {
+    "file": "js/my_team2.js",
+    "name": "my_team",
+    "src": "Modules/Tickets/resources/assets/js/my_team.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/reassing.js": {
+    "file": "js/reassing.js",
+    "name": "reassing",
+    "src": "Modules/Tickets/resources/assets/js/reassing.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js"
+    ]
+  },
+  "Modules/Tickets/resources/assets/js/show.js": {
+    "file": "js/show2.js",
+    "name": "show",
+    "src": "Modules/Tickets/resources/assets/js/show.js",
+    "isEntry": true,
+    "imports": [
+      "_index-B9ygI19o.js",
+      "resources/js/helpers/helper.js",
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "_index-B9ygI19o.js": {
+    "file": "assets/index-B9ygI19o.js",
+    "name": "index"
+  },
+  "_sweetalert2.esm.all-DE6NlnlT.js": {
+    "file": "assets/sweetalert2.esm.all-DE6NlnlT.js",
+    "name": "sweetalert2.esm.all"
+  },
   "resources/css/app.css": {
     "file": "css/app.min.css",
     "src": "resources/css/app.css",
@@ -100,6 +331,27 @@
   "resources/img/theme/pattern-03.png": {
     "file": "icons/pattern-03.png",
     "src": "resources/img/theme/pattern-03.png"
+  },
+  "resources/js/change_rol.js": {
+    "file": "js/change_rol.js",
+    "name": "change_rol",
+    "src": "resources/js/change_rol.js",
+    "isEntry": true
+  },
+  "resources/js/helpers/helper.js": {
+    "file": "js/helper.js",
+    "name": "helper",
+    "src": "resources/js/helpers/helper.js",
+    "isEntry": true,
+    "imports": [
+      "_sweetalert2.esm.all-DE6NlnlT.js"
+    ]
+  },
+  "resources/js/offcanvas.js": {
+    "file": "js/offcanvas.js",
+    "name": "offcanvas",
+    "src": "resources/js/offcanvas.js",
+    "isEntry": true
   },
   "resources/js/script.js": {
     "file": "js/script.js",

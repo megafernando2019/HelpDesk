@@ -13,9 +13,74 @@
     color: #fff !important;
 }
 
+.btn-mega:hover {
+    box-shadow: rgba(21, 94, 239, 0.5) 0px 3px 10px !important;
+    background-color: rgb(14, 80, 210) !important;
+    color: rgb(255, 255, 255) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: rgb(14, 80, 210) !important;
+    border-image: none !important;
+}
+
 .btn-outline-mega {
     border: 1px solid #0049fc !important;
     color: #0049fc !important;
+}
+
+.btn-grey{
+    background: #a3a4ac !important;
+    border: 1px solid #a3a4ac !important;
+    color: #fff !important;
+}
+
+/* Colores de los estatus por ticket */
+.bg-closed-status {
+    background-color: #fef3c7 !important;
+    border: 1px solid #fef3c7 !important;
+    color: #f59e0b !important;
+}
+
+.bg-completed-status {
+    background: #dcfce7 !important;
+    border: 1px solid #dcfce7 !important;
+    color: #1d8844 !important;
+}
+
+.bg-cancel-status {
+    background: #fee2e2 !important;
+    border: 1px solid #fee2e2 !important;
+    color: #ef4444 !important;
+}
+
+.bg-pending-status {
+    background: #f1f5f9 !important;
+    border: 1px solid #f1f5f9 !important;
+    color: #64748b !important;
+}
+
+.bg-progress-status {
+    background: #dbeafe !important;
+    border: 1px solid #dbeafe !important;
+    color: #3b82f6 !important;
+}
+
+.bg-to-assing-status {
+    background: #f0e8ff !important;
+    border: 1px solid #f0e8ff !important;
+    color: #8a5cf6 !important;
+}
+
+.text-mega {
+    color: #0049fc !important;
+}
+
+.text-primary-deep {
+    color: #001528 !important;
+}
+
+.text-success {
+    color: #3EB780 !important;
 }
 
 .border-none {
@@ -28,6 +93,25 @@
 
 .float-right {
     float: right !important;
+}
+
+.item-disabled {
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+}
+
+.current-rounded {
+    border-radius: 11px !important;
+}
+
+.focus-input {
+    border: 1px solid #155EEF !important;
+    box-shadow: 0.0 0.15px 9px 1px #155EEF !important;
+}
+
+/* Override BS */
+.shadow {
+    box-shadow: 0 0.5rem 0.7rem rgba(0, 0, 0, 0.15) !important;
 }
 
 .sidebar .sidebar-menu > ul > li > ul > li.submenu > a.subdrop,  a.subdrop .menu-arrow {
@@ -46,4 +130,25 @@
 
 .sidebar .sidebar-menu > ul > li > ul > li.submenu > a.subdrop .menu-arrow::before {
     border-color:  #0049fc !important;
+}
+
+.toggle-theme {
+    display: none !important;
+}
+
+.selected_menu {
+    background: #f3f6ff !important;
+    color: #212b36 !important;
+}
+
+.page-wrapper {
+    margin-bottom: 1.5em;
+}
+
+.dropdown-item.active {
+    color: #31343b;
+}
+
+span.select2-selection__clear {
+    margin-right: 0.8em !important;
 }

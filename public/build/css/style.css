@@ -18024,7 +18024,7 @@ body.layout-mode-rtl .item-list p::before {
 [data-layout=modern] .page-wrapper::after {
   content: none;
   height: 168px;
-  background: url("../img/bg/modern-bg.png");
+  /* background: url("../img/bg/modern-bg.png"); */
   background-repeat: no-repeat;
   width: 60%;
   position: absolute;
